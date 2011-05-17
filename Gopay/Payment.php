@@ -164,6 +164,9 @@ class Payment extends Object
 	
 /* === Status =============================================================== */
 
+	/** @var int */
+	private $failureInfo;
+
 	/**
 	 * Returns TRUE if payment is verified by Gopay as paid
 	 *
@@ -172,7 +175,7 @@ class Payment extends Object
 	 */
 	public function isPaid($paymentSessionId)
 	{
-		return GopaySoap::isEshopPaymentDone(
+		$this->failureInfo = GopaySoap::isEshopPaymentDone(
 			$paymentSessionId,
 			$this->gopayIdentification->id,
 			$this->variable,
@@ -180,6 +183,8 @@ class Payment extends Object
 			$this->product,
 			$this->gopayIdentification->secretKey
 		);
+
+		return $this->failureInfo === 1;
 	}
 
 

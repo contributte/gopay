@@ -23,7 +23,7 @@ Then register it as service (eg. in your `bootstrap.php`):
 
 First you create form with appropriate payment buttons.
 Every payment channel has its own button. You can easily
-add buttons to your form with `bindForm` method:
+add buttons to your form with `bindForm()` method:
 
 	$gopay->bindForm($form, array(
 		callback($this, 'submittedForm'),
@@ -94,7 +94,7 @@ Received response will take the user to Payment Gate.
 
 	$this->sendResponse($response);
 
-But in moment of `pay` two things may go wrong:
+But in moment of `pay()` two things may go wrong:
 
 1. Parameters provided to Gopay service or Payment aren't okay
 2. Something is wrong with official Gopay Web Service (WS)

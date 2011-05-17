@@ -4,9 +4,9 @@ For Nette Framework 2.0
 
 ## Installation
 
-Just copy /Gopay directory to your /libs directory.
+Just copy `/Gopay` directory to your `/libs` directory.
 
-Then register it as service (eg. in your bootstrap.php):
+Then register it as service (eg. in your `bootstrap.php`):
 
 	$container->addService('gopay', function ($container) {
 		return new \VojtechDobes\Gopay\Helper(array(
@@ -15,7 +15,7 @@ Then register it as service (eg. in your bootstrap.php):
 			'imagePath' => '%wwwDir%/images',
 			'testMode'  => FALSE,
 		));
-	}
+	});
 
 ## Use
 
@@ -23,7 +23,7 @@ Then register it as service (eg. in your bootstrap.php):
 
 First you create form with appropriate payment buttons.
 Every payment channel has its own button. You can easily
-add buttons to your form with 'bindForm' method:
+add buttons to your form with `bindForm` method:
 
 	$gopay->bindForm($form, array(
 		callback($this, 'submittedForm'),

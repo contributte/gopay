@@ -74,6 +74,8 @@ class Helper extends Object
 		}
 		
 		GopayHelper::$testMode = $this->testMode;
+		
+		$this->setupChannels();
 	}
 
 	/**

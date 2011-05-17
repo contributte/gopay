@@ -59,7 +59,7 @@ class Helper extends Object
 	{
 		$this->soap = new GopaySoap;
 		
-		foreach ($this->getParameters() as $param) {
+		foreach (array('id', 'secretKey', 'imagePath', 'testMode') as $param) {
 			if (isset($values[$param])) {
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
@@ -70,12 +70,6 @@ class Helper extends Object
 	{
 		return new self($values);
 	}
-	
-	private function getParameters()
-	{
-		return array('id', 'secretKey');
-	}
-	
 	private function getIdentification()
 	{
 		return (object) array(

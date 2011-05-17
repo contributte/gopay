@@ -46,6 +46,9 @@ class Payment extends Object
 	
 	/** @var string */
 	private $product;
+
+	/** @var \stdClass */
+	private $customer;
 	
 /* === Verification ========================================================= */
 	
@@ -119,6 +122,22 @@ class Payment extends Object
 	public function setProduct($product)
 	{
 		$this->product = $product;
+	}
+
+	public function getCustomer()
+	{
+		return $this->customer;
+	}
+
+	public function setCustomer($customer)
+	{
+		$this->customer = (object) $customer;
+
+		foreach (array() as $key) {
+			if (!isset($this->customer->$key)) {
+				$this->customer->$key = '';
+			}
+		}
 	}
 	
 /* === Security ============================================================= */

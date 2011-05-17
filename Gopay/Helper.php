@@ -12,7 +12,7 @@ use GopayHelper;
 use GopaySoap;
 
 use Nette\Object;
-use Nette\Application\RedirectingResponse;
+use Nette\Application\Responses\RedirectResponse;
 
 use InvalidArgumentException;
 
@@ -341,7 +341,7 @@ class Helper extends Object
 				. "&sessionInfo.encryptedSignature=" . $signature
 				. "&paymentChannel=" . $channel;
 		
-		return new RedirectingResponse($url);
+		return new RedirectResponse($url);
 	}
 
 	/**

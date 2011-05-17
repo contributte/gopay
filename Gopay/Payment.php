@@ -24,10 +24,10 @@ use stdClass;
 class Payment extends Object
 {
 	
-	/** @var VojtechDobes\Gopay\Helper */
+	/** @var \VojtechDobes\Gopay\Helper */
 	private $gopay;
 	
-	/** @var stdClass */
+	/** @var \stdClass */
 	private $gopayIdentification;
 	
 	/** @var int */
@@ -51,7 +51,13 @@ class Payment extends Object
 	
 	/** @var array */
 	private $valuesToBeVerified = array();
-	
+
+	/**
+	 * @param  \VojtechDobes\Gopay\Helper $gopay
+	 * @param  \stdClass $identification
+	 * @param  array $values
+	 * @param  array $valuesToBeVerified
+	 */
 	public function __construct(Helper $gopay, stdClass $identification, $values, array $valuesToBeVerified = array())
 	{
 		$this->gopay = $gopay;
@@ -116,7 +122,12 @@ class Payment extends Object
 	}
 	
 /* === Security ============================================================= */
-	
+
+	/**
+	 * Returns TRUE if payment is declared fraud by Gopay
+	 *
+	 * @return bool
+	 */
 	public function isFraud()
 	{
 		error_reporting(E_ALL ^ E_NOTICE);
@@ -133,7 +144,13 @@ class Payment extends Object
 	}
 	
 /* === Status =============================================================== */
-	
+
+	/**
+	 * Returns TRUE if payment is verified by Gopay as paid
+	 *
+	 * @param  string $paymentSessionId
+	 * @return bool
+	 */
 	public function isPaid($paymentSessionId)
 	{
 		return GopaySoap::isEshopPaymentDone(

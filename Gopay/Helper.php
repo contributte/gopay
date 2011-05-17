@@ -1,8 +1,7 @@
 <?php
 
 /**
- * Gopay Helper with Happy API
- * 
+ * Simple Gopay Service with Happy API
  * 
  * @author Vojtech Dobes
  */
@@ -65,11 +64,24 @@ class Helper extends Object
 			}
 		}
 	}
-	
+
+	/**
+	 * Static factory
+	 *
+	 * @static
+	 * @param  array $values
+	 * @return \VojtechDobes\Gopay\Helper
+	 */
 	public static function create(array $values)
 	{
 		return new self($values);
 	}
+
+	/**
+	 * Returns simple envelope with identification of eshop
+	 *
+	 * @return \stdClass
+	 */
 	private function getIdentification()
 	{
 		return (object) array(
@@ -139,7 +151,9 @@ class Helper extends Object
 	/**
 	 * Denies payment channel
 	 * 
-	 * @param  string
+	 * @param  string $channel
+	 * @return provides a fluent interface
+	 * @throws \InvalidArgumentException on undefined or already denied channel
 	 */
 	public function denyChannel($channel)
 	{
@@ -150,7 +164,7 @@ class Helper extends Object
 	 * Creates new Payment with given default values
 	 * 
 	 * @param  array $values
-	 * @return VojtechDobes\Gopay\Payment
+	 * @return \VojtechDobes\Gopay\Payment
 	 */
 	public function createPayment(array $values = array())
 	{
@@ -160,7 +174,10 @@ class Helper extends Object
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 * 
-	 * @param  VojtechDobes\Gopay\Payment $payment
+	 * @param  \VojtechDobes\Gopay\Payment $payment
+	 * @param  string $channel
+	 * @return \Nette\Application\Responses\RedirectResponse
+	 * @throws \InvalidArgumentException on undefined channel
 	 */
 	public function pay(Payment $payment, $channel)
 	{

@@ -94,6 +94,21 @@ Received response will take the user to Payment Gate.
 
 	$this->sendResponse($response);
 
+But in moment of `pay` two things may go wrong:
+
+1. Parameters provided to Gopay service or Payment aren't okay
+2. Something is wrong with official Gopay Web Service (WS)
+
+First error should never happen, because it implies something wrong
+in your code. The second reason can happen anytime, therefore
+generates `GopayException`. So the code should look like this:
+
+	try {
+		$gopay->pay($payment, Helper::CARD_VISA);
+	} catch (GopayException $e) {
+		echo 'Payment service is unfortunately offline now. Please try again later.';
+	}
+
 ### After the payment
 
 Shall be continued ...

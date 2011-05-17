@@ -367,12 +367,10 @@ class Helper extends Object
 		
 		$payment->setId($id);
 		
-		$signature = $this->createSignature($id);
-		
 		$url = GopayHelper::fullIntegrationURL()
 				. "?sessionInfo.eshopGoId=" . $this->goId
 				. "&sessionInfo.paymentSessionId=" . $id
-				. "&sessionInfo.encryptedSignature=" . $signature
+				. "&sessionInfo.encryptedSignature=" . $this->createSignature($id)
 				. "&paymentChannel=" . $channel;
 		
 		return new RedirectResponse($url);

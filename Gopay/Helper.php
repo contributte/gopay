@@ -46,12 +46,15 @@ class Helper extends Object
 	
 	/** @var array */
 	private $channels = array(
-		self::SUPERCASH   => 'superCASH',
-		self::MOJE_PLATBA => 'Mojeplatba',
-		self::EPLATBY     => 'ePlatby',
-		self::MPENIZE     => 'mPeníze',
-		self::BANK        => 'Bankovní převod',
-		self::PURSE       => 'GoPay peněženka',
+		self::SUPERCASH    => 'superCASH',
+		self::MOJE_PLATBA  => 'Mojeplatba',
+		self::EPLATBY      => 'ePlatby',
+		self::MPENIZE      => 'mPeníze',
+		self::BANK         => 'Bankovní převod',
+		self::PURSE        => 'GoPay peněženka',
+		self::MONEYBOOKERS => 'Moneybookers peněženka',
+		self::CARD_VISA    => 'Platební karty MasterCard, Maestro a Visa',
+		self::CARD_EXPRES  => 'Platební karty American Expres a JCB',
 	);
 	
 	public function __construct($values)
@@ -136,16 +139,33 @@ class Helper extends Object
 		$this->failure = $failure;
 	}
 	
-/* === Payments ============================================================= */
+/* === Payment Channels ===================================================== */
+	
+	/** @var array */
+	private $allowedChannels = array();
+	
+	/** @var array */
+	private $deniedChannels = array();
 	
 	/**
 	 * Allows payment channel
 	 * 
-	 * @param  string
+	 * @param  string $channel
+	 * @return provides a fluent interface
+	 * @throws \InvalidArgumentException on undefined or already allowed channel
 	 */
 	public function allowChannel($channel)
 	{
-		$this->channels[$channel] = $this->knownChannels[$channel];
+		if (isset($this->allowedChannels[$channel])) {
+			throw InvalidArgumentException("Channel with name '$channel' is already allowed.");
+		} else if (!isset($this->deniedChannels[$channel])) {
+			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
+		}
+		
+		$this->allowedChannels[$channel] = $this->deniedChannels[$channel];
+		unset($this->deniedChannels[$channel]);
+
+		return $this;
 	}
 	
 	/**
@@ -157,8 +177,98 @@ class Helper extends Object
 	 */
 	public function denyChannel($channel)
 	{
-		unset($this->channels[$channel]);
+		if (isset($this->deniedChannels[$channel])) {
+			throw InvalidArgumentException("Channel with name '$channel' is already denied.");
+		} else if (!isset($this->allowedChannels[$channel])) {
+			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
+		}
+		
+		$this->deniedChannels[$channel] = $this->allowedChannels[$channel];
+		unset($this->allowedChannels[$channel]);
+
+		return $this;
 	}
+	
+	/**
+	 * Adds custom payment channel
+	 *
+	 * @param  string $channel
+	 * @param  string $title
+	 * @param  string|NULL $image
+	 * @return provides a fluent interface
+	 * @throws \InvalidArgumentException on channel name conflict
+	 */
+	public function addChannel($channel, $title, $image = NULL)
+	{
+		if (isset($this->allowedChannels[$channel]) || isset($this->deniedChannels[$channel])) {
+			throw InvalidArgumentException("Channel with name '$channel' is already defined.");
+		}
+
+		$this->allowedChannels[$channel] = (object) array(
+			'title' => $title,
+		);
+		
+		if (isset($image)) {
+			$this->allowedChannels[$channel]->image = $image;
+		}
+
+		return $this;
+	}
+	
+	/**
+	 * Returns list of allowed payment channels
+	 * 
+	 * @return array
+	 */
+	public function getChannels()
+	{
+		return $this->allowedChannels;
+	}
+	
+	/**
+	 * Setups default set of payment channels
+	 */
+	protected function setupChannels()
+	{
+		foreach (array(
+			Helper::CARD_VISA => array(
+				'image' => 'gopay_payment_cards.gif',
+				'title' => 'Zaplatit GoPay - Platební karty MasterCard, Maestro a Visa',
+			),
+			Helper::MPENIZE => array(
+				'image' => 'gopay_payment_mpenize.gif',
+				'title' => 'Zaplatit GoPay - mPeníze',
+			),
+			Helper::EPLATBY => array(
+				'image' => 'gopay_payment_eplatby.gif',
+				'title' => 'Zaplatit GoPay - ePlatby',
+			),
+			Helper::MOJE_PLATBA => array(
+				'image' => 'gopay_payment_mojeplatba.gif',
+				'title' => 'Zaplatit GoPay - MojePlatba',
+			),
+			Helper::BANK => array(
+				'image' => 'gopay_payment_bank.gif',
+				'title' => 'Zaplatit GoPay - platební karty',
+			),
+			Helper::PURSE => array(
+				'image' => 'gopay_payment_gopay.gif',
+				'title' => 'Zaplatit GoPay - GoPay peněženka',
+			),
+			Helper::MONEYBOOKERS => array(
+				'image' => 'gopay_payment_moneybookers.gif',
+				'title' => 'Zaplatit GoPay - MoneyBookers',
+			),
+			Helper::SUPERCASH => array(
+				'image' => 'gopay_payment_supercash.gif',
+				'title' => 'Zaplatit GoPay - SUPERCASH',
+			),
+		) as $name => $channel) {
+			$this->addChannel($name, $channel['title'], $channel['image']);
+		}
+	}
+	
+/* === Payments ============================================================= */
 	
 	/**
 	 * Creates new Payment with given default values
@@ -183,7 +293,7 @@ class Helper extends Object
 	{
 		error_reporting(E_ALL ^ E_NOTICE);
 		
-		if (!isset($this->channels[$channel])) {
+		if (!isset($this->allowedChannels[$channel])) {
 			throw new InvalidArgumentException("Payment channel '$channel' is not supported");
 		}
 		
@@ -195,8 +305,8 @@ class Helper extends Object
 			$this->success,
 			$this->failure,
 			$this->secretKey,
-			array_keys($this->channels)
-		);
+				array_keys($this->allowedChannels)
+			);
 		
 		$payment->setId($id);
 		

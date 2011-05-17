@@ -41,7 +41,7 @@ class Helper extends Object
 	/** @var string */
 	private $secretKey;
 	
-	/** @var GopaySoap */
+	/** @var \GopaySoap */
 	private $soap;
 	
 	/** @var array */

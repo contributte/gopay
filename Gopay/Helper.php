@@ -41,6 +41,12 @@ class Helper extends Object
 	/** @var string */
 	private $secretKey;
 	
+	/** @var string */
+	private $imagePath;
+	
+	/** @var bool */
+	private $testMode = FALSE;
+	
 	/** @var \GopaySoap */
 	private $soap;
 	
@@ -66,6 +72,8 @@ class Helper extends Object
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
 		}
+		
+		GopayHelper::$testMode = $this->testMode;
 	}
 
 	/**
@@ -101,6 +109,16 @@ class Helper extends Object
 	public function setSecretKey($secretKey)
 	{
 		$this->secretKey = $secretKey;
+	}
+	
+	public function setImagePath($imagePath)
+	{
+		$this->imagePath = $imagePath;
+	}
+	
+	public function setTestMode($testMode = TRUE)
+	{
+		$this->testMode = $testMode;
 	}
 	
 /* === URL ================================================================== */

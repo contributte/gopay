@@ -343,7 +343,14 @@ class Helper extends Object
 		
 		return new RedirectingResponse($url);
 	}
-	
+
+	/**
+	 * Returns payment after visiting Payment Gate
+	 *
+	 * @param  array $values
+	 * @param  array $valuesToBeVerified
+	 * @return \VojtechDobes\Gopay\Payment
+	 */
 	public function getReceivedPayment(array $values, array $valuesToBeVerified)
 	{
 		return new Payment($this, $this->getIdentification(), $values, $valuesToBeVerified);

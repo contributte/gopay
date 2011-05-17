@@ -26,7 +26,7 @@ class Helper extends Object
 {
 	
 	/** @const string */
-	const SUPERCASH   = GopayHelper::SUPERCASH,
+	const SUPERCASH = GopayHelper::SUPERCASH,
 		MOJE_PLATBA   = GopayHelper::CZ_KB,
 		EPLATBY       = GopayHelper::CZ_RB,
 		MPENIZE       = GopayHelper::CZ_MB,

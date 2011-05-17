@@ -58,7 +58,7 @@ class Payment extends Object
 		$this->gopayIdentification = $identification;
 		$this->valuesToBeVerified = $valuesToBeVerified;
 		
-		foreach ($this->getParameters() as $param) {
+		foreach (array('sum', 'variable', 'specific', 'constant', 'product', 'customer') as $param) {
 			if (isset($values[$param])) {
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
@@ -113,12 +113,6 @@ class Payment extends Object
 	public function setProduct($product)
 	{
 		$this->product = $product;
-	}
-	
-	
-	private function getParameters()
-	{
-		return array('sum', 'variable', 'specific', 'constant', 'product');
 	}
 	
 /* === Security ============================================================= */

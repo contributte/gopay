@@ -314,6 +314,8 @@ class Helper extends Object
 	 * @param  string $channel
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \InvalidArgumentException on undefined channel
+	 * @throws \VojtechDobes\Gopay\GopayFatalException on maldefined parameters
+	 * @throws \VojtechDobes\Gopay\GopayException on failed communication with WS
 	 */
 	public function pay(Payment $payment, $channel)
 	{
@@ -355,6 +357,12 @@ class Helper extends Object
 				$this->secretKey,
 				array_keys($this->allowedChannels)
 			);
+		}
+
+		if ($id === -1) {
+			throw new GopayFatalException("Execution of payment failed due to invalid parameters.");
+		} else if ($id === -2) {
+			throw new GopayException("Execution of payment failed due to communication with WS.");
 		}
 		
 		$payment->setId($id);
@@ -429,3 +437,7 @@ class Helper extends Object
 
 
 }
+
+class GopayFatalException extends \Exception {}
+
+class GopayException extends GopayFatalException {}

@@ -31,7 +31,10 @@ class Helper extends Object
 		EPLATBY       = GopayHelper::CZ_RB,
 		MPENIZE       = GopayHelper::CZ_MB,
 		BANK          = GopayHelper::CZ_BANK,
-		PURSE         = GopayHelper::CZ_GP_W;
+		PURSE         = GopayHelper::CZ_GP_W,
+		MONEYBOOKERS  = GopayHelper::EU_MB_W,
+		CARD_VISA     = GopayHelper::EU_MB_A,
+		CARD_EXPRES   = GopayHelper::EU_MB_B;
 	
 	/** @var int */
 	private $goId;

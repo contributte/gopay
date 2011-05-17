@@ -62,7 +62,12 @@ class Helper extends Object
 		self::CARD_VISA    => 'Platební karty MasterCard, Maestro a Visa',
 		self::CARD_EXPRES  => 'Platební karty American Expres a JCB',
 	);
-	
+
+	/**
+	 * Accepts initial directives (possibly from config)
+	 *
+	 * @param  array $values
+	 */
 	public function __construct($values)
 	{
 		$this->soap = new GopaySoap;

@@ -13,6 +13,7 @@ use GopaySoap;
 
 use Nette\Object;
 use Nette\Application\Responses\RedirectResponse;
+use Nette\Forms\Form;
 
 use InvalidArgumentException;
 
@@ -396,6 +397,34 @@ class Helper extends Object
 				$this->secretKey
 			)
 		), $this->secretKey);
+	}
+
+/* === Form ================================================================= */
+	
+	/**
+	 * Binds form to Gopay
+	 * - adds payment buttons
+	 *
+	 * @param  \Nette\Forms\Form $form
+	 * @param  array|callable $callbacks
+	 */
+	public function bindForm(Form $form, $callbacks)
+	{
+		foreach ($this->allowedChannels as $name => $channel) {
+			if (!isset($channel->image)) {
+				$button = $form['method' . $name] = new PaymentButton($channel->title);
+			} else {
+				$button = $form['method' . $name] = new ImagePaymentButton($this->imagePath . '/' . $channel->image, $channel->title);
+			}
+
+			if (!is_array($callbacks)) $callbacks = array($callbacks);
+			foreach ($callbacks as $callback) {
+				$button->onClick[] = $callback;
+			}
+			
+			$button->setChannel($name);
+			$this->allowedChannels[$name]->control = 'method' . $name;
+		}
 	}
 
 

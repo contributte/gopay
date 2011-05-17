@@ -296,17 +296,40 @@ class Helper extends Object
 		if (!isset($this->allowedChannels[$channel])) {
 			throw new InvalidArgumentException("Payment channel '$channel' is not supported");
 		}
-		
-		$id = GopaySoap::createEshopPayment(
-			$this->goId,
-			$payment->getProduct(),
-			$payment->getSum(),
-			$payment->getVariable(),
-			$this->success,
-			$this->failure,
-			$this->secretKey,
+
+		if ($channel == self::CARD_VISA || $channel == self::CARD_EXPRES) {
+			$customer = $payment->getCustomer();
+			$id = GopaySoap::createCustomerEshopPayment(
+				$this->goId,
+				$payment->getProduct(),
+				$payment->getSum() * 100, // given in cents
+				$payment->getSpecific(),
+				$this->success,
+				$this->failure,
+				$this->secretKey,
+				array_keys($this->allowedChannels),
+				// customer info
+				$customer->firstName,
+				$customer->lastName,
+				$customer->city,
+				$customer->street,
+				$customer->postalCode,
+				$customer->countryCode,
+				$customer->email,
+				$customer->phoneNumber
+			);
+		} else {
+			$id = GopaySoap::createEshopPayment(
+				$this->goId,
+				$payment->getProduct(),
+				$payment->getSum() * 100, // given in cents
+				$payment->getSpecific(),
+				$this->success,
+				$this->failure,
+				$this->secretKey,
 				array_keys($this->allowedChannels)
 			);
+		}
 		
 		$payment->setId($id);
 		

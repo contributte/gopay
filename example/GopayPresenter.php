@@ -51,14 +51,16 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		// redirect to Gopay Payment Gate
 		$this->terminate($toPayResponse);
 	}
+
+/* === Called from Gopay Payment Gate ======================================= */
 	
 	/**
-	 * Handles response from Gopay Gate
+	 * Handles response from Gopay Payment Gate
 	 *
-	 * @param  type $paymentSessionId
-	 * @param  type $eshopGoId
-	 * @param  type $variableSymbol
-	 * @param  type $encryptedSignature 
+	 * @param  string $paymentSessionId
+	 * @param  string $eshopGoId
+	 * @param  int $variableSymbol
+	 * @param  string $encryptedSignature
 	 */
 	public function actionSuccess($paymentSessionId, $eshopGoId, $variableSymbol, $encryptedSignature)
 	{

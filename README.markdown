@@ -1,12 +1,13 @@
 # Simple Gopay Helper
 
-For Nette Framework 2.0
+Pro Nette Framework 2.0
 
-## Installation
+## Instalace
 
-Just copy `/Gopay` directory to your `/libs` directory.
+Nejprve zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte
+RobotLoader, není nic víc potřeba.
 
-Then register it as service (eg. in your `bootstrap.php`):
+Samotná knihovna se registruje jako služba, například v `bootstrap.php`:
 
 	$container->addService('gopay', function ($container) {
 		return new \VojtechDobes\Gopay\Helper(array(
@@ -17,61 +18,76 @@ Then register it as service (eg. in your `bootstrap.php`):
 		));
 	});
 
-## Use
+Nebo v `NEON` konfiguraci:
 
-### Before the payment
+	services:
+		gopay:
+			class: VojtechDobes\Gopay\Helper
+			arguments:
+				- [id=***, secretKey=***, imagePath=%wwwDir%/images, testMode=FALSE]
 
-First you create form with appropriate payment buttons.
-Every payment channel has its own button. You can easily
-add buttons to your form with `bindForm()` method:
+A přístup v presenteru pak bude vypadat:
+
+	$gopay = $this->context->gopay;
+
+## Použití
+
+### Před platbou
+
+Nejprvě je třeba vytvořit formulář s odpovídajícími platebními tlačítky.
+Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře můžete
+tlačítka jednoduše přidat metodou `bindForm()`:
 
 	$gopay->bindForm($form, array(
 		callback($this, 'submittedForm'),
 	);
 
-Provided callback will be called after valid click on some
-of the payment buttons. You can get chosen channel from button:
+Předaný `callback` bude zavolán po úspěšném odeslání formuláře jedním
+z platebních tlačítek (tedy jako po zavolání `->onValid[]` na daném tlačítku).
+Zvolený kanál lze získat z tlačítka:
 
 	public function submittedForm(\Nette\Forms\Controls\SubmitButton $button)
 	{
 		$channel = $button->getChannel();
 	}
 
-If you need to manually render the form, get list of used
-channels to easily iterate over the buttons:
+Pokud chcete formulář renderovat manuálně (např. s využitím formulářových
+maker), je nejlepší si do šablony předat seznam použitých kanálů a iterovat
+nad ním:
 
 	$this->template->channels = $gopay->getChannels();
 
 	{foreach $channels as $channel}
-		{$form['gopayChannel' . $channel]->control}
+		{input "gopayChannel.$channel"}
 	{/foreach}
 
-#### Custom payment channels
+#### Vlastní platební kanály
 
-You can add your own custom channels:
+Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:
 
 	$gopay->addChannel('name', 'My channel', 'my-channel.png');
 
-You can also deny or then allow again predefined channels:
+Také můžete zakázat či povolit kterýkoliv předdefinovaný (nebo i váš vlastní)
+platební kanál:
 
-	$gopay->denyChannel(\VojtechDobes\Gopay\Helper::CARD_VISA);
-	$gopay->allowChannel(\VojtechDobes\Gopay\Helper::BANK);
+	$gopay->denyChannel($gopay::CARD_VISA);
+	$gopay->allowChannel($gopay::BANK);
 
-### Payment
+### Provedení platby
 
-Executing the payment can be done in following steps. First, you create
-the Payment:
+Platbu lze uskutečnit v následující krocích. Nejprve je třeba si vytvořit
+novou instanci platby:
 
 	$payment = $gopay->createPayment(array(
-		'sum'      => $sum,      // paid ammount
-		'variable' => $variable, // variable symbol
-		'specific' => $specific, // specific symbol
-		'product'  => $product,  // name of bought product
-		'customer' => array(     // for payment via credit card
+		'sum'      => $sum,      // placená částka
+		'variable' => $variable, // variabilní symbol
+		'specific' => $specific, // specifický symbol
+		'product'  => $product,  // název produktu (popis účelu platby)
+		'customer' => array(     // při platbě kartou lze poskytnou tyto údaje
 			'firstName'   => $name,
-			'lastName'    => NULL, // all params are voluntary
-			'street'      => NULL, // if not provided, Helper will
-			'city'        => NULL, // provide empty string
+			'lastName'    => NULL, // všechna parametry jsou volitelné
+			'street'      => NULL, // pokud některý neuvedete,
+			'city'        => NULL, // použije se prázdný řetězec
 			'postalCode'  => $postal,
 			'countryCode' => 'CZE',
 			'email'       => $email,
@@ -79,36 +95,38 @@ the Payment:
 		),
 	));
 
-Secondly, you setup URLs for successful or failed response from
-Gopay Payment Gate.
+Zadruhé nastavit adresy, na které Gopay platební brána přesměruje při úspěchu či
+naopak selhání platby.
 
 	$gopay->success = $this->link('//success');
 	$gopay->failure = $this->link('//failure');
 
-And then you pay :) (like this):
+A nakonec s platbou zaplatíte :) (takto):
 
-	$response = $gopay->pay($payment, \VojtechDobes\Gopay\Helper::CARD_VISA);
+	$response = $gopay->pay($payment, $gopay::CARD_VISA);
 
-You have to provide the payment channel as second argument.
-Received response will take the user to Payment Gate.
+Druhý parametr je platební kanál, kterým má být platba uskutečněna. Akce vrátí
+`Response` objekt, který aplikaci přesměruje na platební bránu Gopay.
 
 	$this->sendResponse($response);
 
-But in moment of `pay()` two things may go wrong:
+V okamžiku zavolání `pay()` se mohou pokazit dvě věci:
 
-1. Parameters provided to Gopay service or Payment aren't okay
-2. Something is wrong with official Gopay Web Service (WS)
+1. Někde jsou poskytnuty špatné parametry
+2. Je pokažená oficiální platební brána Gopay
 
-First error should never happen, because it implies something wrong
-in your code. The second reason can happen anytime, therefore
-generates `GopayException`. So the code should look like this:
+První chyba by nikdy neměl nastat. Znamená totiž nějakou chybu ve vašem kódu.
+Druhá se může přihodit kdykoliv, proto generuje mírně odlišnou vyjímku, kterou
+je třeba zachytit a podle ní informovat zákazníka, že chyba právě není na vaší
+straně.
 
 	try {
-		$gopay->pay($payment, Helper::CARD_VISA);
+		$gopay->pay($payment, $gopay::CARD_VISA);
 	} catch (GopayException $e) {
-		echo 'Payment service is unfortunately offline now. Please try again later.';
+		echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
+		prosím za chvíli.';
 	}
 
-### After the payment
+### Po platbě
 
 Shall be continued ...

@@ -3,7 +3,6 @@
 /**
  * Gopay Helper with Happy API
  * 
- * 
  * @author Vojtech Dobes
  */
 

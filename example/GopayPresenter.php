@@ -49,7 +49,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		$order->storePaymentId($payment->id);
 
 		// redirect to Gopay Payment Gate
-		$this->terminate($toPayResponse);
+		$this->sendResponse($toPayResponse);
 	}
 
 /* === Called from Gopay Payment Gate ======================================= */
@@ -96,7 +96,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		} else {
 			$this->redirect('failure');
 		}
-		
+
 		echo 'Paid!';
 	}
 	

@@ -101,12 +101,19 @@ naopak selhání platby.
 	$gopay->success = $this->link('//success');
 	$gopay->failure = $this->link('//failure');
 
-A nakonec s platbou zaplatíte :) (takto):
+A nakonec s platbou zaplatíte :) (takto, druhý parametr je platební kanál,
+kterým má být platba uskutečněna):
 
 	$response = $gopay->pay($payment, $gopay::CARD_VISA);
 
-Druhý parametr je platební kanál, kterým má být platba uskutečněna. Akce vrátí
-`Response` objekt, který aplikaci přesměruje na platební bránu Gopay.
+
+Akce `pay()` vrátí `Response` objekt, který aplikaci přesměruje na platební
+bránu Gopay. Ještě předtím, než to provedeme, je však užitečné si poznačit ID
+platby (například pokud se má platba vázat k nějaké objednávce apod.):
+
+	$order->setPaymentId($payment->id);
+
+Nyní můžeme zákazníka poslat na platební bránu:
 
 	$this->sendResponse($response);
 
@@ -115,8 +122,8 @@ V okamžiku zavolání `pay()` se mohou pokazit dvě věci:
 1. Někde jsou poskytnuty špatné parametry
 2. Je pokažená oficiální platební brána Gopay
 
-První chyba by nikdy neměl nastat. Znamená totiž nějakou chybu ve vašem kódu.
-Druhá se může přihodit kdykoliv, proto generuje mírně odlišnou vyjímku, kterou
+První chyba by nikdy neměla nastat. Znamená totiž nějakou krpu ve vašem kódu.
+Druhá se může přihodit kdykoliv, proto generuje mírně odlišnou výjimku, kterou
 je třeba zachytit a podle ní informovat zákazníka, že chyba právě není na vaší
 straně.
 
@@ -129,4 +136,54 @@ straně.
 
 ### Po platbě
 
-Shall be continued ...
+Váš zákazník provede potřebné úkony na Gopay platební bráně, a jakmile je proces
+dokončen, je přesměrován zpátky do vaší aplikace, buď na `success`
+nebo `failure` adresu. Obě dvě dostanou od Gopay následující sadu parametrů:
+
+	- paymentSessionId
+	- eshopGoId
+	- variableSymbol
+	- encryptedSignature
+
+První parametr je totožný s tím, který jsme si v předchozí kapitole uložili do
+naší interní modelové reprezentace objednávky. Můžeme jej tedy použít k jejímu
+opětovnému načtení.
+
+Všechny tyto údaje + údaje z načtené objednávky pak použijeme ke znovusestavení
+objektu platby:
+
+	$order = $database->getOrderByPaymentId($paymentSessionId);
+
+	$payment = $gopay->getReceivedPayment(array(
+		'sum'      => $order->price,
+		'variable' => $order->varSymbol,
+		'specific' => $order->specSymbol,
+		'product'  => $order->product,
+	), array(
+		'paymentSessionId'   => $paymentSessionId,
+		'eshopGoId'          => $eshopGoId,
+		'variableSymbol'     => $variableSymbol,
+		'encryptedSignature' => $encryptedSignature,
+	));
+
+Na objektu platby lze zavolat dvě kontrolní metody: `isFradu()` a `isPaid()`.
+První nás informuje, jestli je platba pravá, respektive jestli se nejedná
+o podvrh (interně se zde kontroluje ona čtveřice parametrů předaných z platební
+brány.
+
+Druhá `isPaid()` pak vrátí `TRUE`, pokud je platba skutečně zaplacena. Pokud
+ano, proces je u konce, můžeme si poznačit, že objednávka je zaplacena a poslat
+třeba zákazníkovi email.
+
+V případě neúspěšně platby jsou opět předány všechny čtyři parametry, je tedy
+opět možné načíst si informace o související objednávce. Nic však kontrolovat
+není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
+
+Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/vojtech-dobes/Simple-Gopay-Helper/blob/master/example/GopayPresenter.php).
+
+## Co tahle věc neumí a co s tím
+
+Tahle mini-knihovnička, spíše snippet kódu nepokrývá velkou část Gopay API.
+Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište,
+klidně i pošlete jako pul-request. Stejně tak můžete v issues informovat
+o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).

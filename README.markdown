@@ -185,5 +185,5 @@ Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém pres
 
 Tahle mini-knihovnička, spíše snippet kódu nepokrývá velkou část Gopay API.
 Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište,
-klidně i pošlete jako pul-request. Stejně tak můžete v issues informovat
+klidně i pošlete jako pull-request. Stejně tak můžete v issues informovat
 o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).

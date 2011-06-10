@@ -13,8 +13,6 @@ use GopaySoap;
 
 use Nette\Object;
 
-use stdClass;
-
 /**
  * Gopay helper with simple API
  * 
@@ -60,7 +58,7 @@ class Payment extends Object
 	 * @param  array $values
 	 * @param  array $valuesToBeVerified
 	 */
-	public function __construct(Helper $gopay, stdClass $identification, $values, array $valuesToBeVerified = array())
+	public function __construct(Helper $gopay, \stdClass $identification, $values, array $valuesToBeVerified = array())
 	{
 		$this->gopay = $gopay;
 		$this->gopayIdentification = $identification;
@@ -162,6 +160,9 @@ class Payment extends Object
 	}
 	
 /* === Status =============================================================== */
+
+	const FAILURE_SUPERCASH = -3,
+		FAILURE_BANK        = -7;
 
 	/** @var int */
 	private $failureInfo;

@@ -170,13 +170,12 @@ class Payment extends Object
 	/**
 	 * Returns TRUE if payment is verified by Gopay as paid
 	 *
-	 * @param  string $paymentSessionId
 	 * @return bool
 	 */
-	public function isPaid($paymentSessionId)
+	public function isPaid()
 	{
 		$this->failureInfo = GopaySoap::isEshopPaymentDone(
-			$paymentSessionId,
+			$this->valuesToBeVerified['paymentSessionId'],
 			$this->gopayIdentification->id,
 			$this->variable,
 			$this->sum,

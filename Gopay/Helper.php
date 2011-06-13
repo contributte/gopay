@@ -6,7 +6,7 @@
  * @author Vojtech Dobes
  */
 
-namespace VojtechDobes\Gopay;
+namespace Gopay;
 
 use GopayHelper;
 use GopaySoap;

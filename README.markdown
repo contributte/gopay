@@ -10,7 +10,7 @@ RobotLoader, není nic víc potřeba.
 Samotná knihovna se registruje jako služba, například v `bootstrap.php`:
 
 	$container->addService('gopay', function ($container) {
-		return new \VojtechDobes\Gopay\Helper(array(
+		return new \Gopay\Helper(array(
 			'id'        => '***',
 			'secretKey' => '***',
 			'imagePath' => '%wwwDir%/images',
@@ -22,7 +22,7 @@ Nebo v `NEON` konfiguraci:
 
 	services:
 		gopay:
-			class: VojtechDobes\Gopay\Helper
+			class: Gopay\Helper
 			arguments:
 				- [id=***, secretKey=***, imagePath=%wwwDir%/images, testMode=FALSE]
 

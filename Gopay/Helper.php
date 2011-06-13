@@ -89,7 +89,7 @@ class Helper extends Object
 	 *
 	 * @static
 	 * @param  array $values
-	 * @return \VojtechDobes\Gopay\Helper
+	 * @return \Gopay\Helper
 	 */
 	public static function create(array $values)
 	{
@@ -300,7 +300,7 @@ class Helper extends Object
 	 * Creates new Payment with given default values
 	 * 
 	 * @param  array $values
-	 * @return \VojtechDobes\Gopay\Payment
+	 * @return \Gopay\Payment
 	 */
 	public function createPayment(array $values = array())
 	{
@@ -310,12 +310,12 @@ class Helper extends Object
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 * 
-	 * @param  \VojtechDobes\Gopay\Payment $payment
+	 * @param  \Gopay\Payment $payment
 	 * @param  string $channel
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \InvalidArgumentException on undefined channel
-	 * @throws \VojtechDobes\Gopay\GopayFatalException on maldefined parameters
-	 * @throws \VojtechDobes\Gopay\GopayException on failed communication with WS
+	 * @throws \Gopay\GopayFatalException on maldefined parameters
+	 * @throws \Gopay\GopayException on failed communication with WS
 	 */
 	public function pay(Payment $payment, $channel)
 	{
@@ -381,7 +381,7 @@ class Helper extends Object
 	 *
 	 * @param  array $values
 	 * @param  array $valuesToBeVerified
-	 * @return \VojtechDobes\Gopay\Payment
+	 * @return \Gopay\Payment
 	 */
 	public function getReceivedPayment(array $values, array $valuesToBeVerified)
 	{

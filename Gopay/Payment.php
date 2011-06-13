@@ -21,7 +21,7 @@ use Nette\Object;
 class Payment extends Object
 {
 	
-	/** @var \VojtechDobes\Gopay\Helper */
+	/** @var \Gopay\Helper */
 	private $gopay;
 	
 	/** @var \stdClass */
@@ -53,7 +53,7 @@ class Payment extends Object
 	private $valuesToBeVerified = array();
 
 	/**
-	 * @param  \VojtechDobes\Gopay\Helper $gopay
+	 * @param  \Gopay\Helper $gopay
 	 * @param  \stdClass $identification
 	 * @param  array $values
 	 * @param  array $valuesToBeVerified

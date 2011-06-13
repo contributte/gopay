@@ -1,7 +1,5 @@
 <?php
 
-use Nette;
-
 final class PaymentPresenter extends Nette\Application\UI\Presenter
 {
 

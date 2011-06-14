@@ -12,41 +12,13 @@ use GopayHelper;
 use GopaySoap;
 
 /**
- * Representation of payment
+ * Representation of payment returned from Gopay Payment Gate
  * 
  * @author  Vojtech Dobes
  * @package Gopay Wrapper
  */
 class ReturnedPayment extends Payment
 {
-	
-	/** @var \Gopay\Helper */
-	private $gopay;
-	
-	/** @var \stdClass */
-	private $gopayIdentification;
-	
-	/** @var int */
-	private $id;
-	
-/* === Description ========================================================== */	
-	
-	/** @var int */
-	private $sum;
-	
-	/** @var int */
-	private $variable;
-	
-	/** @var int */
-	private $specific;
-	
-	/** @var string */
-	private $product;
-
-	/** @var \stdClass */
-	private $customer;
-	
-/* === Verification ========================================================= */
 	
 	/** @var array */
 	private $valuesToBeVerified = array();

@@ -58,7 +58,7 @@ nad ním:
 	$this->template->channels = $gopay->getChannels();
 
 	{foreach $channels as $channel}
-		{input "gopayChannel.$channel"}
+		{input $channel->control}
 	{/foreach}
 
 #### Vlastní platební kanály

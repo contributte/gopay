@@ -166,7 +166,7 @@ objektu platby:
 		'encryptedSignature' => $encryptedSignature,
 	));
 
-Na objektu platby lze zavolat dvě kontrolní metody: `isFradu()` a `isPaid()`.
+Na objektu platby lze zavolat dvě kontrolní metody: `isFraud()` a `isPaid()`.
 První nás informuje, jestli je platba pravá, respektive jestli se nejedná
 o podvrh (interně se zde kontroluje ona čtveřice parametrů předaných z platební
 brány.

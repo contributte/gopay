@@ -154,7 +154,7 @@ objektu platby:
 
 	$order = $database->getOrderByPaymentId($paymentSessionId);
 
-	$payment = $gopay->getReceivedPayment(array(
+	$payment = $gopay->restorePayment(array(
 		'sum'      => $order->price,
 		'variable' => $order->varSymbol,
 		'specific' => $order->specSymbol,

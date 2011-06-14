@@ -383,7 +383,7 @@ class Helper extends Object
 	 * @param  array $valuesToBeVerified
 	 * @return \Gopay\Payment
 	 */
-	public function getReceivedPayment(array $values, array $valuesToBeVerified)
+	public function restorePayment(array $values, array $valuesToBeVerified)
 	{
 		return new Payment($this, $this->getIdentification(), $values, $valuesToBeVerified);
 	}

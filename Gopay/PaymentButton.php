@@ -20,9 +20,10 @@ class PaymentButton extends SubmitButton
 	
 	/** @var string */
 	private $channel;
-	
-	public function setChannel($channel)
+
+	public function __construct($channel, $caption = NULL)
 	{
+		parent::__construct($caption);
 		$this->channel = $channel;
 	}
 	

@@ -418,9 +418,9 @@ class Helper extends Object
 	{
 		foreach ($this->allowedChannels as $name => $channel) {
 			if (!isset($channel->image)) {
-				$button = $form['gopayChannel' . $name] = new PaymentButton($channel->title);
+				$button = $form['gopayChannel' . $name] = new PaymentButton($name, $channel->title);
 			} else {
-				$button = $form['gopayChannel' . $name] = new ImagePaymentButton($this->imagePath . '/' . $channel->image, $channel->title);
+				$button = $form['gopayChannel' . $name] = new ImagePaymentButton($name, $this->imagePath . '/' . $channel->image, $channel->title);
 			}
 
 			if (!is_array($callbacks)) $callbacks = array($callbacks);
@@ -428,7 +428,6 @@ class Helper extends Object
 				$button->onClick[] = $callback;
 			}
 			
-			$button->setChannel($name);
 			$this->allowedChannels[$name]->control = 'gopayChannel' . $name;
 		}
 	}

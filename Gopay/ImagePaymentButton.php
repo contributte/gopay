@@ -20,9 +20,10 @@ class ImagePaymentButton extends ImageButton
 	
 	/** @var string */
 	private $channel;
-	
-	public function setChannel($channel)
+
+	public function __construct($channel, $src = NULL, $alt = NULL)
 	{
+		parent::__construct($src, $alt);
 		$this->channel = $channel;
 	}
 	

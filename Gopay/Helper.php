@@ -313,13 +313,17 @@ class Helper extends Object
 	 * @param  \Gopay\Payment $payment
 	 * @param  string $channel
 	 * @return \Nette\Application\Responses\RedirectResponse
-	 * @throws \InvalidArgumentException on undefined channel
+	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws \Gopay\GopayFatalException on maldefined parameters
 	 * @throws \Gopay\GopayException on failed communication with WS
 	 */
 	public function pay(Payment $payment, $channel)
 	{
 		error_reporting(E_ALL ^ E_NOTICE);
+
+		if ($payment instanceof ReturnedPayment) {
+			throw new InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
+		}
 		
 		if (!isset($this->allowedChannels[$channel])) {
 			throw new InvalidArgumentException("Payment channel '$channel' is not supported");
@@ -385,7 +389,7 @@ class Helper extends Object
 	 */
 	public function restorePayment(array $values, array $valuesToBeVerified)
 	{
-		return new Payment($this, $this->getIdentification(), $values, $valuesToBeVerified);
+		return new ReturnedPayment($this, $this->getIdentification(), $values, $valuesToBeVerified);
 	}
 	
 	/**

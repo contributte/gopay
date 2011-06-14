@@ -22,47 +22,40 @@ class Payment extends Object
 {
 	
 	/** @var \Gopay\Helper */
-	private $gopay;
+	protected $gopay;
 	
 	/** @var \stdClass */
-	private $gopayIdentification;
+	protected $gopayIdentification;
 	
 	/** @var int */
-	private $id;
+	protected $id;
 	
 /* === Description ========================================================== */	
 	
 	/** @var int */
-	private $sum;
+	protected $sum;
 	
 	/** @var int */
-	private $variable;
+	protected $variable;
 	
 	/** @var int */
-	private $specific;
+	protected $specific;
 	
 	/** @var string */
-	private $product;
+	protected $product;
 
 	/** @var \stdClass */
-	private $customer;
-	
-/* === Verification ========================================================= */
-	
-	/** @var array */
-	private $valuesToBeVerified = array();
+	protected $customer;
 
 	/**
 	 * @param  \Gopay\Helper $gopay
 	 * @param  \stdClass $identification
 	 * @param  array $values
-	 * @param  array $valuesToBeVerified
 	 */
-	public function __construct(Helper $gopay, \stdClass $identification, $values, array $valuesToBeVerified = array())
+	public function __construct(Helper $gopay, \stdClass $identification, $values)
 	{
 		$this->gopay = $gopay;
 		$this->gopayIdentification = $identification;
-		$this->valuesToBeVerified = $valuesToBeVerified;
 		
 		foreach (array('sum', 'variable', 'specific', 'constant', 'product', 'customer') as $param) {
 			if (isset($values[$param])) {
@@ -135,55 +128,6 @@ class Payment extends Object
 				$this->customer->$key = '';
 			}
 		}
-	}
-	
-/* === Security ============================================================= */
-
-	/**
-	 * Returns TRUE if payment is declared fraud by Gopay
-	 *
-	 * @return bool
-	 */
-	public function isFraud()
-	{
-		error_reporting(E_ALL ^ E_NOTICE);
-		
-		return GopayHelper::checkPaymentIdentity(
-			$this->valuesToBeVerified['eshopGoId'],
-			$this->valuesToBeVerified['paymentSessionId'],
-			$this->valuesToBeVerified['variableSymbol'],
-			$this->valuesToBeVerified['encryptedSignature'],
-			$this->gopayIdentification->id,
-			$this->variable,
-			$this->gopayIdentification->secretKey
-		);
-	}
-	
-/* === Status =============================================================== */
-
-	const FAILURE_SUPERCASH = -3,
-		FAILURE_BANK        = -7;
-
-	/** @var int */
-	private $failureInfo;
-
-	/**
-	 * Returns TRUE if payment is verified by Gopay as paid
-	 *
-	 * @return bool
-	 */
-	public function isPaid()
-	{
-		$this->failureInfo = GopaySoap::isEshopPaymentDone(
-			$this->valuesToBeVerified['paymentSessionId'],
-			$this->gopayIdentification->id,
-			$this->variable,
-			$this->sum,
-			$this->product,
-			$this->gopayIdentification->secretKey
-		);
-
-		return $this->failureInfo === 1;
 	}
 
 

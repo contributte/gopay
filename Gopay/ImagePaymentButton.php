@@ -8,7 +8,7 @@
 
 namespace Gopay;
 
-use Nette\Forms\ImageButton;
+use Nette\Forms\Controls\ImageButton;
 
 /**
  * Payment button

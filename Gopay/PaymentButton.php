@@ -8,7 +8,7 @@
 
 namespace Gopay;
 
-use Nette\Forms\SubmitButton;
+use Nette\Forms\Controls\SubmitButton;
 
 /**
  * Payment button

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Simple Gopay Service with Happy API
+ * Gopay Wrapper
  * 
  * @author Vojtech Dobes
  */
@@ -18,9 +18,18 @@ use Nette\Forms\Form;
 use InvalidArgumentException;
 
 /**
- * Gopay helper with simple API
- * 
- * @author Vojtech Dobes
+ * Gopay wrapper with simple API
+ *
+ * @author         Vojtech Dobes
+ * @dependency     mcrypt
+ * @package        Gopay Wrapper
+ * @property-read  $channels
+ * @property-write $id
+ * @property-write $secretKey
+ * @property-write $imagePath
+ * @property-write $testMode
+ * @property-write $success
+ * @property-write $failure
  */
 class Helper extends Object
 {

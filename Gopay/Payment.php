@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Gopay Helper with Happy API
+ * Gopay Wrapper
  * 
  * @author Vojtech Dobes
  */
@@ -14,9 +14,16 @@ use GopaySoap;
 use Nette\Object;
 
 /**
- * Gopay helper with simple API
+ * Representation of payment
  * 
- * @author Vojtech Dobes
+ * @author   Vojtech Dobes
+ * @package  Gopay Wrapper
+ * @property $id
+ * @property $sum
+ * @property $variable
+ * @property $specific
+ * @property $product
+ * @property $customer
  */
 class Payment extends Object
 {

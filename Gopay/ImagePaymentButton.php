@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Gopay Helper with Happy API
+ * Gopay Wrapper
  * 
  * @author Vojtech Dobes
  */
@@ -13,7 +13,8 @@ use Nette\Forms\Controls\ImageButton;
 /**
  * Payment button
  *
- * @property-read   $channel
+ * @package       Gopay Wrapper
+ * @property-read $channel
  */
 class ImagePaymentButton extends ImageButton
 {

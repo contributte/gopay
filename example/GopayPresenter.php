@@ -69,7 +69,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		$shop = $this->context->shopModel;
 		$order = $shop->findOrderByPaymentId($paymentSessionId);
 
-		// restores Payment object
+		// restores Payment object (as instance of ReturnedPayment)
 		$payment = $gopay->restorePayment(array(
 			'sum'      => $order->price,
 			'variable' => $order->varSymbol,

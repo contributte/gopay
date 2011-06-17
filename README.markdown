@@ -188,9 +188,7 @@ Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište
 klidně i pošlete jako pull-request. Stejně tak můžete v issues informovat
 o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).
 
-- - -
-
-## License - Original BSD
+## Licence: Original BSD
 
 Copyright (c) 2011, Vojtěch Dobeš. Všechna práva vyhrazena.
 

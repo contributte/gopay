@@ -101,19 +101,22 @@ naopak selhání platby.
 	$gopay->success = $this->link('//success');
 	$gopay->failure = $this->link('//failure');
 
+Je užitečné si poznačit ID platby (například pokud se má platba vázat
+k nějaké objednávce apod.). Toho lze docílit předáním callbacku jako třetího
+parametru metodě `pay()`.
+
+	$storeIdCallback = function ($paymentId) use ($order) {
+		$order->setPaymentId($payment->id);
+	};
+
 A nakonec s platbou zaplatíte :) (takto, druhý parametr je platební kanál,
 kterým má být platba uskutečněna):
 
-	$response = $gopay->pay($payment, $gopay::CARD_VISA);
+	$response = $gopay->pay($payment, $gopay::CARD_VISA, $storeIdCallback);
 
 
 Akce `pay()` vrátí `Response` objekt, který aplikaci přesměruje na platební
-bránu Gopay. Ještě předtím, než to provedeme, je však užitečné si poznačit ID
-platby (například pokud se má platba vázat k nějaké objednávce apod.):
-
-	$order->setPaymentId($payment->id);
-
-Nyní můžeme zákazníka poslat na platební bránu:
+bránu Gopay.
 
 	$this->sendResponse($response);
 

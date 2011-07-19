@@ -34,9 +34,6 @@ class Payment extends Object
 	/** @var \stdClass */
 	protected $gopayIdentification;
 	
-	/** @var int */
-	protected $id;
-	
 /* === Description ========================================================== */	
 	
 	/** @var int */
@@ -69,16 +66,6 @@ class Payment extends Object
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
 		}
-	}
-	
-	public function getId()
-	{
-		return $this->id;
-	}
-	
-	public function setId($id)
-	{
-		$this->id = $id;
 	}
 	
 	public function getSum()

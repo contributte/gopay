@@ -315,25 +315,26 @@ class Helper extends Object
 	{
 		return new Payment($this, $this->getIdentification(), $values);
 	}
-	
+
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 * 
 	 * @param  \Gopay\Payment $payment
 	 * @param  string $channel
+	 * @param  callback $callback
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws \Gopay\GopayFatalException on maldefined parameters
 	 * @throws \Gopay\GopayException on failed communication with WS
 	 */
-	public function pay(Payment $payment, $channel)
+	public function pay(Payment $payment, $channel, $callback = NULL)
 	{
 		error_reporting(E_ALL ^ E_NOTICE);
 
 		if ($payment instanceof ReturnedPayment) {
 			throw new InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
 		}
-		
+
 		if (!isset($this->allowedChannels[$channel])) {
 			throw new InvalidArgumentException("Payment channel '$channel' is not supported");
 		}
@@ -377,7 +378,7 @@ class Helper extends Object
 		} else if ($id === -2) {
 			throw new GopayException("Execution of payment failed due to communication with WS.");
 		}
-		
+
 		$payment->setId($id);
 		
 		$url = GopayHelper::fullIntegrationURL()
@@ -385,7 +386,11 @@ class Helper extends Object
 				. "&sessionInfo.paymentSessionId=" . $id
 				. "&sessionInfo.encryptedSignature=" . $this->createSignature($id)
 				. "&paymentChannel=" . $channel;
-		
+
+		if (isset($callback)) {
+			call_user_func_array($callback, array($id));
+		}
+
 		return new RedirectResponse($url);
 	}
 

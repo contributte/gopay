@@ -38,13 +38,15 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 			'customer' => $customer,
 		));
 
-		// here we communicate with Gopay Web Service (via soap)
-		$toPayResponse = $gopay->pay($payment, $channel);
-
 		// to be able to connect our internal Order with Gopay Payment,
-		// we have to store its generated ID (which was created during
-		// calling 'pay' method
-		$order->storePaymentId($payment->id);
+		// we have to store its generated ID (which will be created during
+		// 'pay' method call - this callback will be provided in next step
+		$storePaymentId = function ($paymentId) use ($order) {
+			$order->storePaymentId($paymentId);
+		};
+
+		// here we communicate with Gopay Web Service (via soap)
+		$toPayResponse = $gopay->pay($payment, $channel, $storePaymentId);
 
 		// redirect to Gopay Payment Gate
 		$this->sendResponse($toPayResponse);

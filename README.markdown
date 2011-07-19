@@ -106,7 +106,7 @@ k nějaké objednávce apod.). Toho lze docílit předáním callbacku jako tře
 parametru metodě `pay()`.
 
 	$storeIdCallback = function ($paymentId) use ($order) {
-		$order->setPaymentId($payment->id);
+		$order->setPaymentId($paymentId);
 	};
 
 A nakonec s platbou zaplatíte :) (takto, druhý parametr je platební kanál,

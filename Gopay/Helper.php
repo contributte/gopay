@@ -33,33 +33,33 @@ use Nette\InvalidArgumentException;
  */
 class Helper extends Object
 {
-	
+
 	/** @const string */
-	const SUPERCASH = GopayHelper::SUPERCASH,
-		MOJE_PLATBA   = GopayHelper::CZ_KB,
-		EPLATBY       = GopayHelper::CZ_RB,
-		MPENIZE       = GopayHelper::CZ_MB,
-		BANK          = GopayHelper::CZ_BANK,
-		PURSE         = GopayHelper::CZ_GP_W,
-		MONEYBOOKERS  = GopayHelper::EU_MB_W,
-		CARD_VISA     = GopayHelper::EU_MB_A,
-		CARD_EXPRES   = GopayHelper::EU_MB_B;
-	
+	const SUPERCASH     = GopayHelper::SUPERCASH;
+	const MOJE_PLATBA   = GopayHelper::CZ_KB;
+	const EPLATBY       = GopayHelper::CZ_RB;
+	const MPENIZE       = GopayHelper::CZ_MB;
+	const BANK          = GopayHelper::CZ_BANK;
+	const PURSE         = GopayHelper::CZ_GP_W;
+	const MONEYBOOKERS  = GopayHelper::EU_MB_W;
+	const CARD_VISA     = GopayHelper::EU_MB_A;
+	const CARD_EXPRES   = GopayHelper::EU_MB_B;
+
 	/** @var int */
 	private $goId;
-	
+
 	/** @var string */
 	private $secretKey;
-	
+
 	/** @var string */
 	private $imagePath;
-	
+
 	/** @var bool */
 	private $testMode = FALSE;
-	
+
 	/** @var \GopaySoap */
 	private $soap;
-	
+
 	/** @var array */
 	private $channels = array(
 		self::SUPERCASH    => 'superCASH',
@@ -73,10 +73,11 @@ class Helper extends Object
 		self::CARD_EXPRES  => 'Platební karty American Expres a JCB',
 	);
 
+
 	/**
 	 * Accepts initial directives (possibly from config)
 	 *
-	 * @param  array $values
+	 * @param  array
 	 */
 	public function __construct($values)
 	{
@@ -96,14 +97,14 @@ class Helper extends Object
 	/**
 	 * Static factory
 	 *
-	 * @static
-	 * @param  array $values
 	 * @return \Gopay\Helper
+	 * @param  array
 	 */
 	public static function create(array $values)
 	{
 		return new self($values);
 	}
+
 
 	/**
 	 * Returns simple envelope with identification of eshop
@@ -117,54 +118,113 @@ class Helper extends Object
 			'secretKey' => $this->secretKey,
 		);
 	}
-	
+
+
+	/**
+	 * Sets Gopay ID number
+	 *
+	 * @param  float
+	 * @return provides a fluent interface
+	 */
 	public function setId($id)
 	{
 		$this->goId = (float) $id;
+		return $this;
 	}
-	
+
+
+	/**
+	 * Sets Gopay secret key
+	 *
+	 * @param  string
+	 * @return provides a fluent interface
+	 */
 	public function setSecretKey($secretKey)
 	{
-		$this->secretKey = $secretKey;
+		$this->secretKey = (string) $secretKey;
+		return $this;
 	}
-	
+
+
+	/**
+	 * Sets path to image for payment buttons
+	 *
+	 * @param  string
+	 * @return provides a fluent interface
+	 */
 	public function setImagePath($imagePath)
 	{
-		$this->imagePath = $imagePath;
+		$this->imagePath = (string) $imagePath;
+		return $this;
 	}
-	
+
+
+	/**
+	 * Sets state of test mode
+	 *
+	 * @param  bool
+	 * @return provides a fluent interface
+	 */
 	public function setTestMode($testMode = TRUE)
 	{
-		$this->testMode = $testMode;
+		$this->testMode = (bool) $testMode;
+		return $this;
 	}
-	
+
 /* === URL ================================================================== */
-	
+
 	/** @var string */
 	private $success;
-	
+
+	/** @var string */
+	private $failure;
+
+
+	/**
+	 * Returns URL when successful
+	 *
+	 * @return string
+	 */
 	public function getSuccess()
 	{
 		return $this->success;
 	}
-	
+
+
+	/**
+	 * Sets URL when successful
+	 *
+	 * @param  string
+	 * @return provides a fluent interface
+	 */
 	public function setSuccess($success)
 	{
 		if (substr($success, 0, 7) !== 'http://') {
-			$success = 'http:/' . $success;
+			$success = 'http://' . $success;
 		}
-		
+
 		$this->success = $success;
+		return $this;
 	}
-	
-	/** @var string */
-	private $failure;
-	
+
+
+	/**
+	 * Returns URL when failed
+	 *
+	 * @return string
+	 */
 	public function getFailure()
 	{
 		return $this->failure;
 	}
-	
+
+
+	/**
+	 * Sets URL when failed
+	 *
+	 * @param  string
+	 * @return provides a fluent interface
+	 */
 	public function setFailure($failure)
 	{
 		if (substr($failure, 0, 7) !== 'http://') {
@@ -172,6 +232,7 @@ class Helper extends Object
 		}
 
 		$this->failure = $failure;
+		return $this;
 	}
 
 /* === Payment Channels ===================================================== */

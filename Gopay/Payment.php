@@ -13,116 +13,170 @@ use GopaySoap;
 
 use Nette\Object;
 
+
 /**
  * Representation of payment
  * 
  * @author   Vojtech Dobes
  * @package  Gopay Wrapper
- * @property $id
  * @property $sum
  * @property $variable
  * @property $specific
- * @property $product
  * @property $customer
  */
 class Payment extends Object
 {
-	
-	/** @var \Gopay\Helper */
+
+	/** @var \Gopay\Service */
 	protected $gopay;
-	
-	/** @var \stdClass */
-	protected $gopayIdentification;
-	
-/* === Description ========================================================== */	
-	
-	/** @var int */
-	protected $sum;
-	
-	/** @var int */
-	protected $variable;
-	
-	/** @var int */
-	protected $specific;
-	
-	/** @var string */
-	protected $product;
 
 	/** @var \stdClass */
-	protected $customer;
+	protected $gopayIdentification;
+
+/* === Description ========================================================== */	
+
+	/** @var int */
+	private $sum;
+
+	/** @var int */
+	private $variable;
+
+	/** @var int */
+	private $specific;
+
+	/** @var string */
+	public $product;
+
+	/** @var \stdClass */
+	private $customer;
+
 
 	/**
 	 * @param  \Gopay\Helper $gopay
-	 * @param  \stdClass $identification
-	 * @param  array $values
+	 * @param  \stdClass
+	 * @param  array|\stdClass
 	 */
 	public function __construct(Helper $gopay, \stdClass $identification, $values)
 	{
 		$this->gopay = $gopay;
 		$this->gopayIdentification = $identification;
 		
+		$values = (array) $values;
 		foreach (array('sum', 'variable', 'specific', 'constant', 'product', 'customer') as $param) {
 			if (isset($values[$param])) {
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
 		}
 	}
-	
+
+
+	/**
+	 * Returns sum of payment
+	 *
+	 * @return float
+	 */
 	public function getSum()
 	{
 		return $this->sum;
 	}
-	
+
+
+	/**
+	 * Sets sum of payment
+	 *
+	 * @param  float
+	 * @return provides a fluent interface
+	 */
 	public function setSum($sum)
 	{
 		$this->sum = (float) $sum;
+		return $this;
 	}
-	
+
+
+	/**
+	 * Returns variable symbol
+	 *
+	 * @return int
+	 */
 	public function getVariable()
 	{
-		return $this->variable = 200;
+		return $this->variable;
 	}
-	
+
+
+	/**
+	 * Sets variable symbol
+	 *
+	 * @param  int
+	 * @return provides a fluent interface 
+	 */
 	public function setVariable($variable)
 	{
-		$this->variable = $variable;
+		$this->variable = (int) $variable;
+		return $this;
 	}
-	
+
+
 	public function getSpecific()
 	{
 		return $this->specific;
 	}
-	
+
+
+	/**
+	 * Sets specific symbol
+	 *
+	 * @param  int
+	 * @return provides a fluent interface
+	 */
 	public function setSpecific($specific)
 	{
-		$this->specific = $specific;
-	}
-	
-	public function getProduct()
-	{
-		return $this->product;
-	}
-	
-	public function setProduct($product)
-	{
-		$this->product = $product;
+		$this->specific = (int) $specific;
+		return $this;
 	}
 
+
+	/**
+	 * Returns customer data
+	 *
+	 * @return \stdClass
+	 */
 	public function getCustomer()
 	{
 		return $this->customer;
 	}
 
+
+	/**
+	 * Sets customer data
+	 *
+	 * @param  array|\stdClass
+	 * @return provides a fluent interface
+	 */
 	public function setCustomer($customer)
 	{
-		$this->customer = (object) $customer;
+		$allowedKeys = array(
+			'firstName',
+			'lastName',
+			'street',
+			'city',
+			'postalCode',
+			'countryCode',
+			'email',
+			'phoneNumber',
+		);
+		$this->customer = (object) array_intersect_key(
+			(array) $customer,
+			array_flip($allowedKeys)
+		);
 
-		foreach (array() as $key) {
+		foreach ($allowedKeys as $key) {
 			if (!isset($this->customer->$key)) {
 				$this->customer->$key = '';
 			}
 		}
+		return $this;
 	}
-
 
 }

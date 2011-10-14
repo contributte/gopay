@@ -11,6 +11,7 @@ namespace Gopay;
 use GopayHelper;
 use GopaySoap;
 
+
 /**
  * Representation of payment returned from Gopay Payment Gate
  * 
@@ -19,22 +20,23 @@ use GopaySoap;
  */
 class ReturnedPayment extends Payment
 {
-	
+
 	/** @var array */
 	private $valuesToBeVerified = array();
 
+
 	/**
 	 * @param  \Gopay\Helper $gopay
-	 * @param  \stdClass $identification
-	 * @param  array $values
-	 * @param  array $valuesToBeVerified
+	 * @param  \stdClass
+	 * @param  array
+	 * @param  array
 	 */
 	public function __construct(Helper $gopay, \stdClass $identification, $values, array $valuesToBeVerified = array())
 	{
 		parent::__construct($gopay, $identification, $values);
 		$this->valuesToBeVerified = $valuesToBeVerified;
 	}
-	
+
 /* === Security ============================================================= */
 
 	/**
@@ -45,7 +47,7 @@ class ReturnedPayment extends Payment
 	public function isFraud()
 	{
 		error_reporting(E_ALL ^ E_NOTICE);
-		
+
 		return GopayHelper::checkPaymentIdentity(
 			$this->valuesToBeVerified['eshopGoId'],
 			$this->valuesToBeVerified['paymentSessionId'],
@@ -56,7 +58,7 @@ class ReturnedPayment extends Payment
 			$this->gopayIdentification->secretKey
 		);
 	}
-	
+
 /* === Status =============================================================== */
 
 	const FAILURE_SUPERCASH = -3,
@@ -64,6 +66,7 @@ class ReturnedPayment extends Payment
 
 	/** @var int */
 	private $failureInfo;
+
 
 	/**
 	 * Returns TRUE if payment is verified by Gopay as paid
@@ -83,6 +86,5 @@ class ReturnedPayment extends Payment
 
 		return $this->failureInfo === 1;
 	}
-
 
 }

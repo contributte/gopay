@@ -170,22 +170,23 @@ class Helper extends Object
 		if (substr($failure, 0, 7) !== 'http://') {
 			$failure = 'http:/' . $failure;
 		}
-		
+
 		$this->failure = $failure;
 	}
-	
+
 /* === Payment Channels ===================================================== */
-	
+
 	/** @var array */
 	private $allowedChannels = array();
-	
+
 	/** @var array */
 	private $deniedChannels = array();
-	
+
+
 	/**
 	 * Allows payment channel
 	 * 
-	 * @param  string $channel
+	 * @param  string
 	 * @return provides a fluent interface
 	 * @throws \Nette\InvalidArgumentException on undefined or already allowed channel
 	 */
@@ -196,17 +197,18 @@ class Helper extends Object
 		} else if (!isset($this->deniedChannels[$channel])) {
 			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
-		
+
 		$this->allowedChannels[$channel] = $this->deniedChannels[$channel];
 		unset($this->deniedChannels[$channel]);
 
 		return $this;
 	}
-	
+
+
 	/**
 	 * Denies payment channel
 	 * 
-	 * @param  string $channel
+	 * @param  string
 	 * @return provides a fluent interface
 	 * @throws \Nette\InvalidArgumentException on undefined or already denied channel
 	 */
@@ -217,19 +219,20 @@ class Helper extends Object
 		} else if (!isset($this->allowedChannels[$channel])) {
 			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
-		
+
 		$this->deniedChannels[$channel] = $this->allowedChannels[$channel];
 		unset($this->allowedChannels[$channel]);
 
 		return $this;
 	}
-	
+
+
 	/**
 	 * Adds custom payment channel
 	 *
-	 * @param  string $channel
-	 * @param  string $title
-	 * @param  string|NULL $image
+	 * @param  string
+	 * @param  string
+	 * @param  string|NULL
 	 * @return provides a fluent interface
 	 * @throws \Nette\InvalidArgumentException on channel name conflict
 	 */
@@ -242,14 +245,15 @@ class Helper extends Object
 		$this->allowedChannels[$channel] = (object) array(
 			'title' => $title,
 		);
-		
+
 		if (isset($image)) {
 			$this->allowedChannels[$channel]->image = $image;
 		}
 
 		return $this;
 	}
-	
+
+
 	/**
 	 * Returns list of allowed payment channels
 	 * 
@@ -259,42 +263,43 @@ class Helper extends Object
 	{
 		return $this->allowedChannels;
 	}
-	
+
+
 	/**
 	 * Setups default set of payment channels
 	 */
 	protected function setupChannels()
 	{
 		foreach (array(
-			Helper::CARD_VISA => array(
+			self::CARD_VISA => array(
 				'image' => 'gopay_payment_cards.gif',
 				'title' => 'Zaplatit GoPay - Platební karty MasterCard, Maestro a Visa',
 			),
-			Helper::MPENIZE => array(
+			self::MPENIZE => array(
 				'image' => 'gopay_payment_mpenize.gif',
 				'title' => 'Zaplatit GoPay - mPeníze',
 			),
-			Helper::EPLATBY => array(
+			self::EPLATBY => array(
 				'image' => 'gopay_payment_eplatby.gif',
 				'title' => 'Zaplatit GoPay - ePlatby',
 			),
-			Helper::MOJE_PLATBA => array(
+			self::MOJE_PLATBA => array(
 				'image' => 'gopay_payment_mojeplatba.gif',
 				'title' => 'Zaplatit GoPay - MojePlatba',
 			),
-			Helper::BANK => array(
+			self::BANK => array(
 				'image' => 'gopay_payment_bank.gif',
 				'title' => 'Zaplatit GoPay - platební karty',
 			),
-			Helper::PURSE => array(
+			self::PURSE => array(
 				'image' => 'gopay_payment_gopay.gif',
 				'title' => 'Zaplatit GoPay - GoPay peněženka',
 			),
-			Helper::MONEYBOOKERS => array(
+			self::MONEYBOOKERS => array(
 				'image' => 'gopay_payment_moneybookers.gif',
 				'title' => 'Zaplatit GoPay - MoneyBookers',
 			),
-			Helper::SUPERCASH => array(
+			self::SUPERCASH => array(
 				'image' => 'gopay_payment_supercash.gif',
 				'title' => 'Zaplatit GoPay - SUPERCASH',
 			),
@@ -302,26 +307,27 @@ class Helper extends Object
 			$this->addChannel($name, $channel['title'], $channel['image']);
 		}
 	}
-	
+
 /* === Payments ============================================================= */
-	
+
 	/**
 	 * Creates new Payment with given default values
 	 * 
-	 * @param  array $values
+	 * @param  array
 	 * @return \Gopay\Payment
 	 */
-	public function createPayment(array $values = array())
+	public function createPayment($values = array())
 	{
-		return new Payment($this, $this->getIdentification(), $values);
+		return new Payment($this, $this->getIdentification(), (array) $values);
 	}
+
 
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 * 
-	 * @param  \Gopay\Payment $payment
-	 * @param  string $channel
-	 * @param  callback $callback
+	 * @param  \Gopay\Payment
+	 * @param  string
+	 * @param  callback
 	 * @return \Nette\Application\Responses\RedirectResponse
 	 * @throws \Nette\InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws \Gopay\GopayFatalException on maldefined parameters
@@ -380,7 +386,7 @@ class Helper extends Object
 		}
 
 		$payment->setId($id);
-		
+
 		$url = GopayHelper::fullIntegrationURL()
 				. "?sessionInfo.eshopGoId=" . $this->goId
 				. "&sessionInfo.paymentSessionId=" . $id
@@ -394,22 +400,24 @@ class Helper extends Object
 		return new RedirectResponse($url);
 	}
 
+
 	/**
 	 * Returns payment after visiting Payment Gate
 	 *
-	 * @param  array $values
-	 * @param  array $valuesToBeVerified
+	 * @param  array
+	 * @param  array
 	 * @return \Gopay\Payment
 	 */
-	public function restorePayment(array $values, array $valuesToBeVerified)
+	public function restorePayment($values, $valuesToBeVerified)
 	{
-		return new ReturnedPayment($this, $this->getIdentification(), $values, $valuesToBeVerified);
+		return new ReturnedPayment($this, $this->getIdentification(), (array) $values, (array) $valuesToBeVerified);
 	}
-	
+
+
 	/**
 	 * Creates encrypted signature for given given payment session id
 	 * 
-	 * @param  int $paymentId
+	 * @param  int
 	 * @return string
 	 */
 	private function createSignature($paymentId)
@@ -424,13 +432,13 @@ class Helper extends Object
 	}
 
 /* === Form ================================================================= */
-	
+
 	/**
 	 * Binds form to Gopay
 	 * - adds payment buttons
 	 *
-	 * @param  \Nette\Forms\Form $form
-	 * @param  array|callable $callbacks
+	 * @param  \Nette\Forms\Form
+	 * @param  array|callable
 	 */
 	public function bindForm(Form $form, $callbacks)
 	{
@@ -445,11 +453,10 @@ class Helper extends Object
 			foreach ($callbacks as $callback) {
 				$button->onClick[] = $callback;
 			}
-			
+
 			$this->allowedChannels[$name]->control = 'gopayChannel' . $name;
 		}
 	}
-
 
 }
 

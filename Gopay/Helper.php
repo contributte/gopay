@@ -14,6 +14,7 @@ use GopaySoap;
 use Nette\Object;
 use Nette\Application\Responses\RedirectResponse;
 use Nette\Forms\Form;
+use Nette\DI\IContainer;
 use Nette\InvalidArgumentException;
 
 
@@ -79,28 +80,31 @@ class Service extends Object
 	 *
 	 * @param  array
 	 */
-	public function __construct($values)
+	public function __construct($values, GopaySoap $soap = NULL)
 	{
-		$this->soap = new GopaySoap;
-		
+		$this->soap = $soap === NULL ? new GopaySoap : $soap;
+
+		$values = (array) $values;
 		foreach (array('id', 'secretKey', 'imagePath', 'testMode') as $param) {
 			if (isset($values[$param])) {
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
 		}
-		
+
 		GopayHelper::$testMode = $this->testMode;
-		
+
 		$this->setupChannels();
 	}
+
 
 	/**
 	 * Static factory
 	 *
+	 * @param  \Nette\DI\IContainer
 	 * @param  array
 	 * @return \Gopay\Service
 	 */
-	public static function create(array $values)
+	public static function create(IContainer $cont, $values)
 	{
 		return new self($values);
 	}

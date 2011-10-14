@@ -26,12 +26,12 @@ class ReturnedPayment extends Payment
 
 
 	/**
-	 * @param  \Gopay\Helper $gopay
+	 * @param  \Gopay\Service
 	 * @param  \stdClass
 	 * @param  array
 	 * @param  array
 	 */
-	public function __construct(Helper $gopay, \stdClass $identification, $values, array $valuesToBeVerified = array())
+	public function __construct(Service $gopay, \stdClass $identification, $values, array $valuesToBeVerified = array())
 	{
 		parent::__construct($gopay, $identification, $values);
 		$this->valuesToBeVerified = $valuesToBeVerified;

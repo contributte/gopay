@@ -31,7 +31,7 @@ use Nette\InvalidArgumentException;
  * @property-write $success
  * @property-write $failure
  */
-class Helper extends Object
+class Service extends Object
 {
 
 	/** @const string */
@@ -97,8 +97,8 @@ class Helper extends Object
 	/**
 	 * Static factory
 	 *
-	 * @return \Gopay\Helper
 	 * @param  array
+	 * @return \Gopay\Service
 	 */
 	public static function create(array $values)
 	{

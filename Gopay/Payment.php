@@ -52,11 +52,11 @@ class Payment extends Object
 
 
 	/**
-	 * @param  \Gopay\Helper $gopay
+	 * @param  \Gopay\Service
 	 * @param  \stdClass
 	 * @param  array|\stdClass
 	 */
-	public function __construct(Helper $gopay, \stdClass $identification, $values)
+	public function __construct(Service $gopay, \stdClass $identification, $values)
 	{
 		$this->gopay = $gopay;
 		$this->gopayIdentification = $identification;

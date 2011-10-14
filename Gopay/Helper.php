@@ -14,8 +14,8 @@ use GopaySoap;
 use Nette\Object;
 use Nette\Application\Responses\RedirectResponse;
 use Nette\Forms\Form;
+use Nette\InvalidArgumentException;
 
-use InvalidArgumentException;
 
 /**
  * Gopay wrapper with simple API
@@ -187,7 +187,7 @@ class Helper extends Object
 	 * 
 	 * @param  string $channel
 	 * @return provides a fluent interface
-	 * @throws \InvalidArgumentException on undefined or already allowed channel
+	 * @throws \Nette\InvalidArgumentException on undefined or already allowed channel
 	 */
 	public function allowChannel($channel)
 	{
@@ -208,7 +208,7 @@ class Helper extends Object
 	 * 
 	 * @param  string $channel
 	 * @return provides a fluent interface
-	 * @throws \InvalidArgumentException on undefined or already denied channel
+	 * @throws \Nette\InvalidArgumentException on undefined or already denied channel
 	 */
 	public function denyChannel($channel)
 	{
@@ -231,7 +231,7 @@ class Helper extends Object
 	 * @param  string $title
 	 * @param  string|NULL $image
 	 * @return provides a fluent interface
-	 * @throws \InvalidArgumentException on channel name conflict
+	 * @throws \Nette\InvalidArgumentException on channel name conflict
 	 */
 	public function addChannel($channel, $title, $image = NULL)
 	{
@@ -323,7 +323,7 @@ class Helper extends Object
 	 * @param  string $channel
 	 * @param  callback $callback
 	 * @return \Nette\Application\Responses\RedirectResponse
-	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
+	 * @throws \Nette\InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws \Gopay\GopayFatalException on maldefined parameters
 	 * @throws \Gopay\GopayException on failed communication with WS
 	 */

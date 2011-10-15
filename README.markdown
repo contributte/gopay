@@ -22,15 +22,15 @@ Nebo v `NEON` konfiguraci:
 
 	services:
 		gopay:
-			class: Gopay\Helper
-			arguments: [%gopay%]
+			factroy   : Gopay\Service::create
+			arguments : [%gopay%]
 
 	params:
 		gopay:
-			id:        ***
-			secretKey: ***
-			imagePath: %wwwDir%/images
-			testMode:  off
+			id        : ***
+			secretKey : ***
+			imagePath : %wwwDir%/images
+			testMode  : off
 
 A přístup v presenteru pak bude vypadat:
 

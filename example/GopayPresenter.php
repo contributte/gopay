@@ -57,10 +57,10 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	/**
 	 * Handles response from Gopay Payment Gate
 	 *
-	 * @param  string $paymentSessionId
-	 * @param  string $eshopGoId
-	 * @param  int $variableSymbol
-	 * @param  string $encryptedSignature
+	 * @param  string
+	 * @param  string
+	 * @param  int
+	 * @param  string
 	 */
 	public function actionSuccess($paymentSessionId, $eshopGoId, $variableSymbol, $encryptedSignature)
 	{
@@ -101,12 +101,18 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	}
 
 
+	/**
+	 * View for failure 
+	 */
 	public function actionFailure()
 	{
 		echo 'Not paid!';
 	}
 
 
+	/**
+	 * View for fraud 
+	 */
 	public function actionFraud()
 	{
 		echo 'Not paid! Attempt of fraud!';

@@ -6,8 +6,8 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	/**
 	 * Creates and send payment request to GoPay
 	 * 
-	 * @param  int $id
-	 * @param  string $channel
+	 * @param  int
+	 * @param  string
 	 */
 	public function actionPay($id, $channel)
 	{
@@ -53,7 +53,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	}
 
 /* === Called from Gopay Payment Gate ======================================= */
-	
+
 	/**
 	 * Handles response from Gopay Payment Gate
 	 *
@@ -99,16 +99,17 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 
 		echo 'Paid!';
 	}
-	
+
+
 	public function actionFailure()
 	{
 		echo 'Not paid!';
 	}
 
+
 	public function actionFraud()
 	{
 		echo 'Not paid! Attempt of fraud!';
 	}
-
 
 }

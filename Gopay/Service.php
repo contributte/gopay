@@ -80,9 +80,9 @@ class Service extends Object
 	 *
 	 * @param  array
 	 */
-	public function __construct($values, GopaySoap $soap = NULL)
+	public function __construct($values, GopaySoap $soap)
 	{
-		$this->soap = $soap === NULL ? new GopaySoap : $soap;
+		$this->soap = $soap;
 
 		$values = (array) $values;
 		foreach (array('id', 'secretKey', 'imagePath', 'testMode') as $param) {
@@ -104,9 +104,9 @@ class Service extends Object
 	 * @param  array
 	 * @return \Gopay\Service
 	 */
-	public static function create(IContainer $cont, $values)
+	public static function create(IContainer $cont, $values, GopaySoap $soap = NULL)
 	{
-		return new self($values);
+		return new self($values, $soap === NULL ? new GopaySoap : $soap);
 	}
 
 

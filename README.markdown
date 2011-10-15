@@ -22,7 +22,7 @@ Nebo v `NEON` konfiguraci:
 
 	services:
 		gopay:
-			factroy   : Gopay\Service::create
+			factory   : Gopay\Service::create
 			arguments : [%gopay%]
 
 	params:

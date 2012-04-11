@@ -22,7 +22,7 @@ use Nette\InvalidArgumentException;
 /**
  * Gopay wrapper with simple API
  *
- * @author         Vojtech Dobes
+ * @author         Vojtěch Dobeš
  * @dependency     mcrypt
  * @package        Gopay Wrapper
  * @property-read  $channels

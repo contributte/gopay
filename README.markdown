@@ -67,6 +67,10 @@ nad ním:
 		{input $channel->control}
 	{/foreach}
 
+Volání `getChannels()` je dobré obalit zachytáváním výjimky `GopayException`,
+protože napoprvé se v ní provádí dotaz na Gopay server kvůli získání výchozího
+seznamu.
+
 #### Vlastní platební kanály
 
 Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:

@@ -1,6 +1,7 @@
 # Simple Gopay Helper
 
-Pro Nette Framework 2.0
+- pro Nette Framework 2.0
+- a Gopay API 1.9
 
 ## Instalace
 

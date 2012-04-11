@@ -16,15 +16,14 @@ Samotná knihovna se registruje jako služba, například v `bootstrap.php`:
 			'secretKey' => '***',
 			'imagePath' => '%wwwDir%/images',
 			'testMode'  => FALSE,
-		));
+		), new \GopaySoap);
 	});
 
-Nebo v `NEON` konfiguraci:
+Nejlépe pak v `NEON` konfiguraci:
 
 	services:
 		gopay:
-			factory   : Gopay\Service::create
-			arguments : [%gopay%]
+			factory : Gopay\Service( %gopay%, GopaySoap() )
 
 	params:
 		gopay:

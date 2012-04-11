@@ -10,6 +10,7 @@ namespace Gopay;
 
 use GopayHelper;
 use GopaySoap;
+use PaymentMethodElement;
 
 use Nette\Object;
 use Nette\Application\Responses\RedirectResponse;
@@ -36,15 +37,23 @@ class Service extends Object
 {
 
 	/** @const string */
-	const SUPERCASH     = GopayHelper::SUPERCASH;
-	const MOJE_PLATBA   = GopayHelper::CZ_KB;
-	const EPLATBY       = GopayHelper::CZ_RB;
-	const MPENIZE       = GopayHelper::CZ_MB;
-	const BANK          = GopayHelper::CZ_BANK;
-	const PURSE         = GopayHelper::CZ_GP_W;
-	const MONEYBOOKERS  = GopayHelper::EU_MB_W;
-	const CARD_VISA     = GopayHelper::EU_MB_A;
-	const CARD_EXPRES   = GopayHelper::EU_MB_B;
+	const BANK = 'cz_bank';
+	const CARD_EXPRES = 'eu_mb_b';
+	const CARD_JCB = 'eu_mb_b';
+	const CARD_MAESTRO = 'eu_mb_b';
+	const CARD_MASTERCARD = 'eu_mb_a';
+	const CARD_VISA = 'eu_mb_a';
+	const EPLATBY = 'cz_rb';
+	const FIO = 'cz_fio';
+	const GE = 'cz_ge';
+	const MOJE_PLATBA = 'cz_kb';
+	const MONEYBOOKERS = 'eu_mb_w';
+	const MPENIZE = 'cz_mb';
+	const PREMIUM_SMS = 'cs_sms';
+	const PURSE = 'cz_gp_w';
+	const SUPERCASH = 'SUPERCASH';
+	const VOLKSBANK = 'cz_vb';
+	const WEBPAY = 'cz_gp_c';
 
 	/** @var int */
 	private $goId;
@@ -61,24 +70,15 @@ class Service extends Object
 	/** @var \GopaySoap */
 	private $soap;
 
-	/** @var array */
-	private $channels = array(
-		self::SUPERCASH    => 'superCASH',
-		self::MOJE_PLATBA  => 'Mojeplatba',
-		self::EPLATBY      => 'ePlatby',
-		self::MPENIZE      => 'mPeníze',
-		self::BANK         => 'Bankovní převod',
-		self::PURSE        => 'GoPay peněženka',
-		self::MONEYBOOKERS => 'Moneybookers peněženka',
-		self::CARD_VISA    => 'Platební karty MasterCard, Maestro a Visa',
-		self::CARD_EXPRES  => 'Platební karty American Expres a JCB',
-	);
+	/** @var bool */
+	private $gopayChannelsLoaded = FALSE;
 
 
 	/**
 	 * Accepts initial directives (possibly from config)
 	 *
-	 * @param  array
+	 * @param  array [id, secretKey, imagePath, testMode, loadChannels]
+	 * @param  GopaySoap
 	 */
 	public function __construct($values, GopaySoap $soap)
 	{
@@ -91,9 +91,11 @@ class Service extends Object
 			}
 		}
 
-		GopayHelper::$testMode = $this->testMode;
+		if (isset($values['loadChannels']) && !$values['loadChannels']) {
+			$this->gopayChannelsLoaded = TRUE;
+		}
 
-		$this->setupChannels();
+		GopayHelper::$testMode = $this->testMode;
 	}
 
 
@@ -301,21 +303,34 @@ class Service extends Object
 	 * @return provides a fluent interface
 	 * @throws \Nette\InvalidArgumentException on channel name conflict
 	 */
-	public function addChannel($channel, $title, $image = NULL)
+	public function addChannel($channel, $title, array $params = array())
 	{
 		if (isset($this->allowedChannels[$channel]) || isset($this->deniedChannels[$channel])) {
 			throw InvalidArgumentException("Channel with name '$channel' is already defined.");
 		}
 
-		$this->allowedChannels[$channel] = (object) array(
+		$this->allowedChannels[$channel] = (object) array_merge($params, array(
 			'title' => $title,
-		);
-
-		if (isset($image)) {
-			$this->allowedChannels[$channel]->image = $image;
-		}
+		));
 
 		return $this;
+	}
+
+
+	/**
+	 * Adds payment channel received from Gopay WS
+	 *
+	 * @param  PaymentMethodElement
+	 * @return provides a fluent interface
+	 * @throws \Nette\InvalidArgumentException on channel name conflict
+	 */
+	public function addRawChannel(PaymentMethodElement $element)
+	{
+		return $this->addChannel($element->code, $element->paymentMethod, array(
+			'image' => $element->logo,
+			'offline' => $element->offline,
+			'description' => $element->description,
+		));
 	}
 
 
@@ -326,51 +341,29 @@ class Service extends Object
 	 */
 	public function getChannels()
 	{
+		if (!$this->gopayChannelsLoaded) {
+			$this->loadGopayChannels();
+		}
 		return $this->allowedChannels;
 	}
 
 
 	/**
 	 * Setups default set of payment channels
+	 *
+	 * @return provides a fluent interface
+	 * @throws \Gopay\GopayException on failed communication with WS
 	 */
-	protected function setupChannels()
+	public function loadGopayChannels()
 	{
-		foreach (array(
-			self::CARD_VISA => array(
-				'image' => 'gopay_payment_cards.gif',
-				'title' => 'Zaplatit GoPay - Platební karty MasterCard, Maestro a Visa',
-			),
-			self::MPENIZE => array(
-				'image' => 'gopay_payment_mpenize.gif',
-				'title' => 'Zaplatit GoPay - mPeníze',
-			),
-			self::EPLATBY => array(
-				'image' => 'gopay_payment_eplatby.gif',
-				'title' => 'Zaplatit GoPay - ePlatby',
-			),
-			self::MOJE_PLATBA => array(
-				'image' => 'gopay_payment_mojeplatba.gif',
-				'title' => 'Zaplatit GoPay - MojePlatba',
-			),
-			self::BANK => array(
-				'image' => 'gopay_payment_bank.gif',
-				'title' => 'Zaplatit GoPay - platební karty',
-			),
-			self::PURSE => array(
-				'image' => 'gopay_payment_gopay.gif',
-				'title' => 'Zaplatit GoPay - GoPay peněženka',
-			),
-			self::MONEYBOOKERS => array(
-				'image' => 'gopay_payment_moneybookers.gif',
-				'title' => 'Zaplatit GoPay - MoneyBookers',
-			),
-			self::SUPERCASH => array(
-				'image' => 'gopay_payment_supercash.gif',
-				'title' => 'Zaplatit GoPay - SUPERCASH',
-			),
-		) as $name => $channel) {
-			$this->addChannel($name, $channel['title'], $channel['image']);
+		$methodList = GopaySoap::paymentMethodList();
+		if ($methodList === NULL) {
+			throw new GopayException('Loading of native Gopay payment channels failed due to communication with WS.');
 		}
+		foreach ($methodList as $method) {
+			$this->addRawChannel($method);
+		}
+		return $this;
 	}
 
 /* === Payments ============================================================= */

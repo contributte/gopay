@@ -39,7 +39,7 @@ tlačítka jednoduše přidat metodou `bindForm()`:
 	);
 
 Předaný `callback` bude zavolán po úspěšném odeslání formuláře jedním
-z platebních tlačítek (tedy jako po zavolání `->onValid[]` na daném tlačítku).
+z platebních tlačítek (tedy jako po zavolání `->onClick[]` na daném tlačítku).
 Zvolený kanál lze získat z tlačítka:
 
 	public function submittedForm(\Nette\Forms\Controls\SubmitButton $button)

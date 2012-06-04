@@ -1,4 +1,4 @@
-# Simple Gopay Helper
+# Markette :: Gopay
 
 - pro Nette Framework 2.0
 - a Gopay API 1.9
@@ -8,33 +8,23 @@
 Nejprve zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte
 RobotLoader, není nic víc potřeba.
 
-Samotná knihovna se registruje jako služba, například v `bootstrap.php`:
+Samotnou knihovnu lze nejsnáze zaregistrovat pomocí rozšíření v `bootstrap.php`:
 
-	$container->addService('gopay', function ($container) {
-		return new \Gopay\Helper(array(
-			'id'        => '***',
-			'secretKey' => '***',
-			'imagePath' => '%wwwDir%/images',
-			'testMode'  => FALSE,
-		), new \GopaySoap);
-	});
+	$configurator->onCompile[] = function ($configurator, $compiler) {
+		$compiler->addExtension('gopay', new Markette\Gopay\Extension);
+	};
 
-Nejlépe pak v `NEON` konfiguraci:
+Poté můžeme v konfiguračním souboru nastavit parametry:
 
-	services:
-		gopay:
-			factory : Gopay\Service( %gopay%, GopaySoap() )
-
-	params:
-		gopay:
-			id        : ***
-			secretKey : ***
-			imagePath : %wwwDir%/images
-			testMode  : off
+	gopay:
+		id        : ***
+		secretKey : ***
+		imagePath : %wwwDir%/images
+		testMode  : off
 
 A přístup v presenteru pak bude vypadat:
 
-	$gopay = $this->context->gopay;
+	$gopay = $this->context->gopay->service;
 
 ## Použití
 
@@ -75,13 +65,25 @@ seznamu.
 
 Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:
 
-	$gopay->addChannel('name', 'My channel', 'my-channel.png');
+	$gopay->addChannel('name', 'My channel', array(
+		'image' => 'my-channel.png',
+	));
 
 Také můžete zakázat či povolit kterýkoliv předdefinovaný (nebo i váš vlastní)
 platební kanál:
 
 	$gopay->denyChannel($gopay::CARD_VISA);
 	$gopay->allowChannel($gopay::BANK);
+
+Tato nastavení můžeme provést i v konfiguračním souboru:
+
+	gopay:
+		channels:
+			card_visa: no # deny
+			bank: yes # allow (in default, all Gopay channels are allowed)
+			name: # add new one
+				title: My channel
+				image: my-channel.png
 
 ### Provedení platby
 

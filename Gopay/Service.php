@@ -1,30 +1,33 @@
 <?php
 
 /**
- * Gopay Wrapper
- * 
- * @author Vojtech Dobes
+ * Markette - payment methods integration for Nette Framework
+ *
+ * @license New BSD
+ * @package Markette
+ * @author  Vojtěch Dobeš
  */
 
-namespace Gopay;
+namespace Markette\Gopay;
 
 use GopayHelper;
 use GopaySoap;
-use PaymentMethodElement;
-
-use Nette\Object;
+use Nette;
 use Nette\Application\Responses\RedirectResponse;
 use Nette\Forms\Form;
-use Nette\DI\IContainer;
+use Nette\DI\Container;
 use Nette\InvalidArgumentException;
+use PaymentMethodElement;
+use stdClass;
 
 
 /**
  * Gopay wrapper with simple API
  *
- * @author         Vojtěch Dobeš
- * @dependency     mcrypt
- * @package        Gopay Wrapper
+ * @author     Vojtěch Dobeš
+ * @subpackage Gopay
+ * @dependency mcrypt
+ *
  * @property-read  $channels
  * @property-write $id
  * @property-write $secretKey
@@ -33,7 +36,7 @@ use Nette\InvalidArgumentException;
  * @property-write $success
  * @property-write $failure
  */
-class Service extends Object
+class Service extends Nette\Object
 {
 
 	/** @const string */
@@ -67,11 +70,12 @@ class Service extends Object
 	/** @var bool */
 	private $testMode = FALSE;
 
-	/** @var \GopaySoap */
+	/** @var GopaySoap */
 	private $soap;
 
 	/** @var bool */
 	private $gopayChannelsLoaded = FALSE;
+
 
 
 	/**
@@ -99,23 +103,11 @@ class Service extends Object
 	}
 
 
-	/**
-	 * Static factory
-	 *
-	 * @param  \Nette\DI\IContainer
-	 * @param  array
-	 * @return \Gopay\Service
-	 */
-	public static function create(IContainer $cont, $values, GopaySoap $soap = NULL)
-	{
-		return new self($values, $soap === NULL ? new GopaySoap : $soap);
-	}
-
 
 	/**
 	 * Returns simple envelope with identification of eshop
 	 *
-	 * @return \stdClass
+	 * @return stdClass
 	 */
 	private function getIdentification()
 	{
@@ -124,6 +116,7 @@ class Service extends Object
 			'secretKey' => $this->secretKey,
 		);
 	}
+
 
 
 	/**
@@ -139,6 +132,7 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Sets Gopay secret key
 	 *
@@ -150,6 +144,7 @@ class Service extends Object
 		$this->secretKey = (string) $secretKey;
 		return $this;
 	}
+
 
 
 	/**
@@ -165,6 +160,7 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Sets state of test mode
 	 *
@@ -177,13 +173,18 @@ class Service extends Object
 		return $this;
 	}
 
+
+
 /* === URL ================================================================== */
+
+
 
 	/** @var string */
 	private $success;
 
 	/** @var string */
 	private $failure;
+
 
 
 	/**
@@ -195,6 +196,7 @@ class Service extends Object
 	{
 		return $this->success;
 	}
+
 
 
 	/**
@@ -214,6 +216,7 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Returns URL when failed
 	 *
@@ -223,6 +226,7 @@ class Service extends Object
 	{
 		return $this->failure;
 	}
+
 
 
 	/**
@@ -241,7 +245,11 @@ class Service extends Object
 		return $this;
 	}
 
+
+
 /* === Payment Channels ===================================================== */
+
+
 
 	/** @var array */
 	private $allowedChannels = array();
@@ -250,12 +258,13 @@ class Service extends Object
 	private $deniedChannels = array();
 
 
+
 	/**
 	 * Allows payment channel
 	 * 
 	 * @param  string
 	 * @return provides a fluent interface
-	 * @throws \Nette\InvalidArgumentException on undefined or already allowed channel
+	 * @throws InvalidArgumentException on undefined or already allowed channel
 	 */
 	public function allowChannel($channel)
 	{
@@ -272,12 +281,13 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Denies payment channel
 	 * 
 	 * @param  string
 	 * @return provides a fluent interface
-	 * @throws \Nette\InvalidArgumentException on undefined or already denied channel
+	 * @throws InvalidArgumentException on undefined or already denied channel
 	 */
 	public function denyChannel($channel)
 	{
@@ -294,6 +304,7 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Adds custom payment channel
 	 *
@@ -301,7 +312,7 @@ class Service extends Object
 	 * @param  string
 	 * @param  string|NULL
 	 * @return provides a fluent interface
-	 * @throws \Nette\InvalidArgumentException on channel name conflict
+	 * @throws InvalidArgumentException on channel name conflict
 	 */
 	public function addChannel($channel, $title, array $params = array())
 	{
@@ -317,12 +328,13 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Adds payment channel received from Gopay WS
 	 *
 	 * @param  PaymentMethodElement
 	 * @return provides a fluent interface
-	 * @throws \Nette\InvalidArgumentException on channel name conflict
+	 * @throws InvalidArgumentException on channel name conflict
 	 */
 	public function addRawChannel(PaymentMethodElement $element)
 	{
@@ -332,6 +344,7 @@ class Service extends Object
 			'description' => $element->description,
 		));
 	}
+
 
 
 	/**
@@ -348,11 +361,12 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Setups default set of payment channels
 	 *
 	 * @return provides a fluent interface
-	 * @throws \Gopay\GopayException on failed communication with WS
+	 * @throws GopayException on failed communication with WS
 	 */
 	public function loadGopayChannels()
 	{
@@ -366,13 +380,17 @@ class Service extends Object
 		return $this;
 	}
 
+
+
 /* === Payments ============================================================= */
+
+
 
 	/**
 	 * Creates new Payment with given default values
 	 * 
 	 * @param  array
-	 * @return \Gopay\Payment
+	 * @return Payment
 	 */
 	public function createPayment($values = array())
 	{
@@ -380,16 +398,17 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 * 
-	 * @param  \Gopay\Payment
+	 * @param  Payment
 	 * @param  string
 	 * @param  callback
-	 * @return \Nette\Application\Responses\RedirectResponse
-	 * @throws \Nette\InvalidArgumentException on undefined channel or provided ReturnedPayment
-	 * @throws \Gopay\GopayFatalException on maldefined parameters
-	 * @throws \Gopay\GopayException on failed communication with WS
+	 * @return RedirectResponse
+	 * @throws InvalidArgumentException on undefined channel or provided ReturnedPayment
+	 * @throws GopayFatalException on maldefined parameters
+	 * @throws GopayException on failed communication with WS
 	 */
 	public function pay(Payment $payment, $channel, $callback = NULL)
 	{
@@ -459,17 +478,19 @@ class Service extends Object
 	}
 
 
+
 	/**
 	 * Returns payment after visiting Payment Gate
 	 *
 	 * @param  array
 	 * @param  array
-	 * @return \Gopay\Payment
+	 * @return ReturnedPayment
 	 */
 	public function restorePayment($values, $valuesToBeVerified)
 	{
 		return new ReturnedPayment($this, $this->getIdentification(), (array) $values, (array) $valuesToBeVerified);
 	}
+
 
 
 	/**
@@ -489,13 +510,17 @@ class Service extends Object
 		), $this->secretKey);
 	}
 
+
+
 /* === Form ================================================================= */
+
+
 
 	/**
 	 * Binds form to Gopay
 	 * - adds payment buttons
 	 *
-	 * @param  \Nette\Forms\Form
+	 * @param  Form
 	 * @param  array|callable
 	 */
 	public function bindForm(Form $form, $callbacks)
@@ -517,7 +542,3 @@ class Service extends Object
 	}
 
 }
-
-class GopayFatalException extends \Exception {}
-
-class GopayException extends GopayFatalException {}

@@ -1,36 +1,39 @@
 <?php
 
 /**
- * Gopay Wrapper
- * 
- * @author Vojtech Dobes
+ * Markette - payment methods integration for Nette Framework
+ *
+ * @license New BSD
+ * @package Markette
+ * @author  Vojtěch Dobeš
  */
 
-namespace Gopay;
+namespace Markette\Gopay;
 
 use GopayHelper;
 use GopaySoap;
-
-use Nette\Object;
+use Nette;
+use stdClass;
 
 
 /**
  * Representation of payment
  * 
- * @author   Vojtech Dobes
- * @package  Gopay Wrapper
- * @property $sum
- * @property $variable
- * @property $specific
- * @property $customer
+ * @author     Vojtěch Dobeš
+ * @subpackage Gopay
+ *
+ * @property      $sum
+ * @property      $variable
+ * @property      $specific
+ * @property      $customer
  */
-class Payment extends Object
+class Payment extends Nette\Object
 {
 
-	/** @var \Gopay\Service */
+	/** @var Service */
 	protected $gopay;
 
-	/** @var \stdClass */
+	/** @var stdClass */
 	protected $gopayIdentification;
 
 /* === Description ========================================================== */	
@@ -47,16 +50,17 @@ class Payment extends Object
 	/** @var string */
 	public $product;
 
-	/** @var \stdClass */
+	/** @var stdClass */
 	private $customer;
 
 
+
 	/**
-	 * @param  \Gopay\Service
-	 * @param  \stdClass
-	 * @param  array|\stdClass
+	 * @param  Service
+	 * @param  stdClass
+	 * @param  array|stdClass
 	 */
-	public function __construct(Service $gopay, \stdClass $identification, $values)
+	public function __construct(Service $gopay, stdClass $identification, $values)
 	{
 		$this->gopay = $gopay;
 		$this->gopayIdentification = $identification;
@@ -70,6 +74,7 @@ class Payment extends Object
 	}
 
 
+
 	/**
 	 * Returns sum of payment
 	 *
@@ -79,6 +84,7 @@ class Payment extends Object
 	{
 		return $this->sum;
 	}
+
 
 
 	/**
@@ -94,6 +100,7 @@ class Payment extends Object
 	}
 
 
+
 	/**
 	 * Returns variable symbol
 	 *
@@ -103,6 +110,7 @@ class Payment extends Object
 	{
 		return $this->variable;
 	}
+
 
 
 	/**
@@ -118,10 +126,17 @@ class Payment extends Object
 	}
 
 
+
+	/**
+	 * Returns specific symbol
+	 *
+	 * @return int
+	 */
 	public function getSpecific()
 	{
 		return $this->specific;
 	}
+
 
 
 	/**
@@ -137,10 +152,11 @@ class Payment extends Object
 	}
 
 
+
 	/**
 	 * Returns customer data
 	 *
-	 * @return \stdClass
+	 * @return stdClass
 	 */
 	public function getCustomer()
 	{
@@ -148,10 +164,11 @@ class Payment extends Object
 	}
 
 
+
 	/**
 	 * Sets customer data
 	 *
-	 * @param  array|\stdClass
+	 * @param  array|stdClass
 	 * @return provides a fluent interface
 	 */
 	public function setCustomer($customer)

@@ -1,20 +1,24 @@
 <?php
 
 /**
- * Gopay Wrapper
- * 
- * @author Vojtech Dobes
+ * Markette - payment methods integration for Nette Framework
+ *
+ * @license New BSD
+ * @package Markette
+ * @author  Vojtěch Dobeš
  */
 
-namespace Gopay;
+namespace Markette\Gopay;
 
 use Nette\Forms\Controls\ImageButton;
 
 
 /**
- * Payment button
+ * Image payment button
+ * 
+ * @author     Vojtěch Dobeš
+ * @subpackage Gopay
  *
- * @package       Gopay Wrapper
  * @property-read $channel
  */
 class ImagePaymentButton extends ImageButton
@@ -22,6 +26,7 @@ class ImagePaymentButton extends ImageButton
 
 	/** @var string */
 	private $channel;
+
 
 
 	/**
@@ -34,6 +39,7 @@ class ImagePaymentButton extends ImageButton
 		parent::__construct($src, $alt);
 		$this->channel = $channel;
 	}
+
 
 
 	/**

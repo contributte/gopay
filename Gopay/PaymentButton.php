@@ -1,12 +1,14 @@
 <?php
 
 /**
- * Gopay Wrapper
- * 
- * @author Vojtech Dobes
+ * Markette - payment methods integration for Nette Framework
+ *
+ * @license New BSD
+ * @package Markette
+ * @author  Vojtěch Dobeš
  */
 
-namespace Gopay;
+namespace Markette\Gopay;
 
 use Nette\Forms\Controls\SubmitButton;
 
@@ -14,7 +16,9 @@ use Nette\Forms\Controls\SubmitButton;
 /**
  * Payment button
  *
- * @package       Gopay Wrapper
+ * @author     Vojtěch Dobeš
+ * @subpackage Gopay
+ *
  * @property-read $channel
  */
 class PaymentButton extends SubmitButton
@@ -22,6 +26,7 @@ class PaymentButton extends SubmitButton
 
 	/** @var string */
 	private $channel;
+
 
 
 	/**
@@ -33,6 +38,7 @@ class PaymentButton extends SubmitButton
 		parent::__construct($caption);
 		$this->channel = $channel;
 	}
+
 
 
 	/**

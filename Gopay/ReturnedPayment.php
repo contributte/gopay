@@ -1,22 +1,25 @@
 <?php
 
 /**
- * Gopay Wrapper
- * 
- * @author Vojtech Dobes
+ * Markette - payment methods integration for Nette Framework
+ *
+ * @license New BSD
+ * @package Markette
+ * @author  Vojtěch Dobeš
  */
 
-namespace Gopay;
+namespace Markette\Gopay;
 
 use GopayHelper;
 use GopaySoap;
+use stdClass;
 
 
 /**
  * Representation of payment returned from Gopay Payment Gate
- * 
- * @author  Vojtech Dobes
- * @package Gopay Wrapper
+ *
+ * @author     Vojtěch Dobeš
+ * @subpackage Gopay
  */
 class ReturnedPayment extends Payment
 {
@@ -25,19 +28,24 @@ class ReturnedPayment extends Payment
 	private $valuesToBeVerified = array();
 
 
+
 	/**
-	 * @param  \Gopay\Service
-	 * @param  \stdClass
+	 * @param  Service
+	 * @param  stdClass
 	 * @param  array
 	 * @param  array
 	 */
-	public function __construct(Service $gopay, \stdClass $identification, $values, array $valuesToBeVerified = array())
+	public function __construct(Service $gopay, stdClass $identification, $values, array $valuesToBeVerified = array())
 	{
 		parent::__construct($gopay, $identification, $values);
 		$this->valuesToBeVerified = $valuesToBeVerified;
 	}
 
+
+
 /* === Security ============================================================= */
+
+
 
 	/**
 	 * Returns TRUE if payment is declared fraud by Gopay
@@ -59,13 +67,19 @@ class ReturnedPayment extends Payment
 		);
 	}
 
+
+
 /* === Status =============================================================== */
 
+
+
+	/** @const int */
 	const FAILURE_SUPERCASH = -3,
 		FAILURE_BANK        = -7;
 
 	/** @var array */
 	private $result;
+
 
 
 	/**
@@ -80,6 +94,7 @@ class ReturnedPayment extends Payment
 	}
 
 
+
 	/**
 	 * Returns TRUE if payment is waiting to be paid
 	 *
@@ -90,6 +105,7 @@ class ReturnedPayment extends Payment
 		$this->getStatus();
 		return $this->result['code'] === GopayHelper::WAITING;
 	}
+
 
 
 	/**
@@ -104,6 +120,7 @@ class ReturnedPayment extends Payment
 	}
 
 
+
 	/**
 	 * Returns TRUE if payment time limit already expired
 	 *
@@ -116,6 +133,7 @@ class ReturnedPayment extends Payment
 	}
 
 
+
 	/**
 	 * Returns description of payment status received from Gopay WS
 	 *
@@ -126,6 +144,7 @@ class ReturnedPayment extends Payment
 		$this->getStatus();
 		return $this->result['description'];
 	}
+
 
 
 	/**

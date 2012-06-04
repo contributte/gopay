@@ -1,0 +1,20 @@
+{
+    "name": "Markette/Gopay",
+    "description": "Integrace platebního systému Gopay pro Nette Framework.",
+    "keywords": ["nette", "eshop", "payment", "gopay"],
+    "homepage": "http://github.com/Markette/Gopay",
+    "license": "New BSD",
+    "authors": [
+        {
+            "name": "Vojtěch Dobeš",
+            "email": "me@vojtechdobes.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "nette/nette": "2.0.*"
+    },
+    "autoload": {
+        "classmap": ["/"]
+    }
+}

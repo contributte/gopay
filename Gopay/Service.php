@@ -268,6 +268,8 @@ class Service extends Nette\Object
 	 */
 	public function allowChannel($channel)
 	{
+		$this->getChannels();
+
 		if (!isset($this->deniedChannels[$channel])) {
 			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
@@ -289,6 +291,8 @@ class Service extends Nette\Object
 	 */
 	public function denyChannel($channel)
 	{
+		$this->getChannels();
+
 		if (!isset($this->allowedChannels[$channel])) {
 			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
@@ -312,6 +316,8 @@ class Service extends Nette\Object
 	 */
 	public function addChannel($channel, $title, array $params = array())
 	{
+		$this->getChannels();
+
 		if (isset($this->allowedChannels[$channel]) || isset($this->deniedChannels[$channel])) {
 			throw InvalidArgumentException("Channel with name '$channel' is already defined.");
 		}

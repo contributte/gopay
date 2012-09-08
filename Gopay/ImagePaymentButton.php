@@ -38,6 +38,7 @@ class ImagePaymentButton extends ImageButton
 	{
 		parent::__construct($src, $alt);
 		$this->channel = $channel;
+		$this->control->title = $alt;
 	}
 
 

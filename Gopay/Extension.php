@@ -29,7 +29,7 @@ class Extension extends CompilerExtension
 		$container = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
-		$service = $this->addDefinition($this->prefix('service'))
+		$service = $container->addDefinition($this->prefix('service'))
 			->setClass('Markette\Gopay\Service', array(
 				$config,
 				'@\GopaySoap',

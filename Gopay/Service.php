@@ -358,8 +358,10 @@ class Service extends Nette\Object
 	public function getChannels()
 	{
 		if (!$this->gopayChannelsLoaded) {
+			$this->gopayChannelsLoaded = TRUE;
 			$this->loadGopayChannels();
 		}
+
 		return $this->allowedChannels;
 	}
 

@@ -208,7 +208,7 @@ class Service extends Nette\Object
 	 */
 	public function setSuccess($success)
 	{
-		if (substr($success, 0, 7) !== 'http://') {
+		if (substr($success, 0, 4) !== 'http') {
 			$success = 'http://' . $success;
 		}
 
@@ -238,8 +238,8 @@ class Service extends Nette\Object
 	 */
 	public function setFailure($failure)
 	{
-		if (substr($failure, 0, 7) !== 'http://') {
-			$failure = 'http:/' . $failure;
+		if (substr($failure, 0, 4) !== 'http') {
+			$failure = 'http://' . $failure;
 		}
 
 		$this->failure = $failure;
@@ -530,7 +530,11 @@ class Service extends Nette\Object
 			if (!isset($channel->image)) {
 				$button = $form['gopayChannel' . $name] = new PaymentButton($name, $channel->title);
 			} else {
-				$button = $form['gopayChannel' . $name] = new ImagePaymentButton($name, $this->imagePath . '/' . $channel->image, $channel->title);
+				$button = $form['gopayChannel' . $name] = new ImagePaymentButton(
+					$name,
+					substr($channel->image, 0, 4) === 'http' ? $channel->image : $this->imagePath . '/' . $channel->image,
+					$channel->title
+				);
 			}
 
 			if (!is_array($callbacks)) $callbacks = array($callbacks);

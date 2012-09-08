@@ -433,7 +433,7 @@ class Service extends Nette\Object
 				$this->goId,
 				$payment->getProduct(),
 				$payment->getSum() * 100, // given in cents
-				$payment->getSpecific(),
+				$payment->getVariable(),
 				$this->success,
 				$this->failure,
 				$this->secretKey,
@@ -453,7 +453,7 @@ class Service extends Nette\Object
 				$this->goId,
 				$payment->getProduct(),
 				$payment->getSum() * 100, // given in cents
-				$payment->getSpecific(),
+				$payment->getVariable(),
 				$this->success,
 				$this->failure,
 				$this->secretKey,

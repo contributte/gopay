@@ -12,6 +12,7 @@ namespace Markette\Gopay;
 
 use GopayHelper;
 use GopaySoap;
+use GopayConfig;
 use Nette;
 use Nette\Application\Responses\RedirectResponse;
 use Nette\Forms\Form;
@@ -99,7 +100,7 @@ class Service extends Nette\Object
 			$this->gopayChannelsLoaded = TRUE;
 		}
 
-		GopayHelper::$testMode = $this->testMode;
+		GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;
 	}
 
 
@@ -466,7 +467,7 @@ class Service extends Nette\Object
 
 		$payment->setId($id);
 
-		$url = GopayHelper::fullIntegrationURL()
+		$url = GopayConfig::fullIntegrationURL()
 				. "?sessionInfo.eshopGoId=" . $this->goId
 				. "&sessionInfo.paymentSessionId=" . $id
 				. "&sessionInfo.encryptedSignature=" . $this->createSignature($id)

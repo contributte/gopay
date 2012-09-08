@@ -55,8 +55,7 @@ class ReturnedPayment extends Payment
 	public function isFraud()
 	{
 		error_reporting(E_ALL ^ E_NOTICE);
-
-		return GopayHelper::checkPaymentIdentity(
+		return !GopayHelper::checkPaymentIdentity(
 			$this->valuesToBeVerified['eshopGoId'],
 			$this->valuesToBeVerified['paymentSessionId'],
 			$this->valuesToBeVerified['variableSymbol'],

@@ -48,7 +48,7 @@ class Payment extends Nette\Object
 	private $specific;
 
 	/** @var string */
-	public $product;
+	private $product;
 
 	/** @var stdClass */
 	private $customer;
@@ -194,6 +194,16 @@ class Payment extends Nette\Object
 			}
 		}
 		return $this;
+	}
+
+	public function setProduct($product)
+	{
+		$this->product = $product;
+	}
+
+	public function getProduct()
+	{
+		return $this->product;
 	}
 
 }

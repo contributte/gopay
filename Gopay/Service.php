@@ -491,6 +491,7 @@ class Service extends Nette\Object
 	 */
 	public function restorePayment($values, $valuesToBeVerified)
 	{
+		$values['sum'] *= 100;
 		return new ReturnedPayment($this, $this->getIdentification(), (array) $values, (array) $valuesToBeVerified);
 	}
 

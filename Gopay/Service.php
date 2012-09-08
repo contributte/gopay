@@ -465,8 +465,6 @@ class Service extends Nette\Object
 			throw new GopayException("Execution of payment failed due to communication with WS.");
 		}
 
-		$payment->setId($id);
-
 		$url = GopayConfig::fullIntegrationURL()
 				. "?sessionInfo.eshopGoId=" . $this->goId
 				. "&sessionInfo.paymentSessionId=" . $id

@@ -10,15 +10,15 @@
 
 namespace Markette\Gopay;
 
-use GopayHelper;
-use GopaySoap;
-use GopayConfig;
+use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
+use Markette\Gopay\Api\GopayConfig;
+use Markette\Gopay\Api\PaymentMethodElement;
 use Nette;
 use Nette\Application\Responses\RedirectResponse;
 use Nette\Forms\Form;
 use Nette\DI\Container;
 use Nette\InvalidArgumentException;
-use PaymentMethodElement;
 use stdClass;
 
 
@@ -341,7 +341,7 @@ class Service extends Nette\Object
 	 */
 	public function addRawChannel(PaymentMethodElement $element)
 	{
-		return $this->addChannel($element->code, $element->paymentMethod, array(
+		return $this->addChannel($element->code, $element->paymentMethodName, array(
 			'image' => $element->logo,
 			'offline' => $element->offline,
 			'description' => $element->description,

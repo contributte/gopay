@@ -10,8 +10,8 @@
 
 namespace Markette\Gopay;
 
-use GopayHelper;
-use GopaySoap;
+use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
 use Nette\Config\CompilerExtension;
 
 
@@ -29,10 +29,13 @@ class Extension extends CompilerExtension
 		$container = $this->getContainerBuilder();
 		$config = $this->getConfig();
 
+		$driver = $container->addDefinition($this->prefix('driver'))
+			->setClass('Markette\Gopay\Api\GopaySoap');
+
 		$service = $container->addDefinition($this->prefix('service'))
 			->setClass('Markette\Gopay\Service', array(
 				$config,
-				'@\GopaySoap',
+				$driver
 			));
 
 		if (isset($config['channels'])) {

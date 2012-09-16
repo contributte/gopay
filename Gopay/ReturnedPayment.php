@@ -10,8 +10,8 @@
 
 namespace Markette\Gopay;
 
-use GopayHelper;
-use GopaySoap;
+use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
 use stdClass;
 
 

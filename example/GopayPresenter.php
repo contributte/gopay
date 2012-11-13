@@ -1,7 +1,24 @@
 <?php
 
+use Markette\Gopay;
+
 final class PaymentPresenter extends Nette\Application\UI\Presenter
 {
+
+	/** @var Gopay\Service */
+	private $gopay;
+
+
+
+	/**
+	 * @param  Gopay\Service
+	 */
+	public function injectGopay(Gopay\Service $gopay)
+	{
+		$this->gopay = $gopay;
+	}
+
+
 
 	/**
 	 * Creates and send payment request to GoPay
@@ -11,8 +28,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	 */
 	public function actionPay($id, $channel)
 	{
-		// get Gopay service
-		$gopay = $this->context->gopay;
+		$gopay = $this->gopay;
 
 		// setup success and failure callbacks
 		$gopay->success = $this->link('//success', $id);
@@ -64,8 +80,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	 */
 	public function actionSuccess($paymentSessionId, $eshopGoId, $variableSymbol, $encryptedSignature)
 	{
-		// get Gopay service
-		$gopay = $this->context->gopay;
+		$gopay = $this->gopay;
 
 		// your custom communication with model
 		$shop = $this->context->shopModel;

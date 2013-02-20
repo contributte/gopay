@@ -8,6 +8,10 @@
         {
             "name": "Vojtěch Dobeš",
             "email": "me@vojtechdobes.com"
+        },
+        {
+            "name": "Jan Škrášek",
+            "email": "hrach.cz@gmail.com"
         }
     ],
     "require": {

@@ -1,11 +1,16 @@
 # Markette :: Gopay
 
 - pro Nette Framework 2.0
-- a Gopay API 1.9
+- a Gopay API 2.3
 
 ## Instalace
 
-Nejprve zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte
+Nejjednodušeji stáhněte Gopay přes Composer:
+```sh
+$ composer require Markette/Gopay
+```
+
+Pokud nepoužijete Composer, zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte
 RobotLoader, není nic víc potřeba.
 
 Samotnou knihovnu lze nejsnáze zaregistrovat pomocí rozšíření v `bootstrap.php`:
@@ -20,10 +25,9 @@ Poté můžeme v konfiguračním souboru nastavit parametry:
 
 ```neon
 gopay:
-	id        : ***
-	secretKey : ***
-	imagePath : %wwwDir%/images
-	testMode  : off
+	gopayId        : ***
+	gopaySecretKey : ***
+	testMode       : false
 ```
 
 A přístup v presenteru pak bude díky autowiringu vypadat:
@@ -32,7 +36,7 @@ A přístup v presenteru pak bude díky autowiringu vypadat:
 /** @var Markette\Gopay\Service */
 private $gopay;
 
-public function injectGopay(\Markette\Gopay\Service $gopay)
+public function injectGopay(Markette\Gopay\Service $gopay)
 {
 	$this->gopay = $gopay;
 }
@@ -42,12 +46,12 @@ public function injectGopay(\Markette\Gopay\Service $gopay)
 
 ### Před platbou
 
-Nejprvě je třeba vytvořit formulář s odpovídajícími platebními tlačítky.
+Před platbou je třeba vytvořit formulář s odpovídajícími platebními tlačítky.
 Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře můžete
-tlačítka jednoduše přidat metodou `bindForm()`:
+tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
 
 ```php
-$gopay->bindForm($form, array(
+$gopay->bindPaymentButtons($form, array(
 	callback($this, 'submittedForm'),
 );
 ```
@@ -57,7 +61,7 @@ z platebních tlačítek (tedy jako po zavolání `->onClick[]` na daném tlač�
 Zvolený kanál lze získat z tlačítka:
 
 ```php
-public function submittedForm(\Nette\Forms\Controls\SubmitButton $button)
+public function submittedForm(Markette\Gopay\PaymentButton $button)
 {
 	$channel = $button->getChannel();
 }
@@ -77,7 +81,7 @@ $this->template->channels = $gopay->getChannels();
 {/foreach}
 ```
 
-Volání `getChannels()` je dobré obalit zachytáváním výjimky `GopayException`,
+Volání `getChannels()` je dobré obalit zachytáváním výjimky `GopayFatalException`,
 protože napoprvé se v ní provádí dotaz na Gopay server kvůli získání výchozího
 seznamu.
 
@@ -87,7 +91,7 @@ Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:
 
 ```php
 $gopay->addChannel('name', 'My channel', array(
-	'image' => 'my-channel.png',
+	'image' => '/my-channel.png', // absolutní cestka o brázku
 ));
 ```
 
@@ -95,8 +99,8 @@ Také můžete zakázat či povolit kterýkoliv předdefinovaný (nebo i váš v
 platební kanál:
 
 ```php
-$gopay->denyChannel($gopay::CARD_VISA);
-$gopay->allowChannel($gopay::BANK);
+$gopay->denyChannel($gopay::METHOD_TRANSFER);
+$gopay->allowChannel($gopay::METHOD_GOPAY);
 ```
 
 Tato nastavení můžeme provést i v konfiguračním souboru:
@@ -104,11 +108,11 @@ Tato nastavení můžeme provést i v konfiguračním souboru:
 ```neon
 gopay:
 	channels:
-		card_visa: no # deny
-		bank: yes # allow (in default, all Gopay channels are allowed)
+		transfer: no # deny
+		gopay: yes # allow (in default, all Gopay channels are allowed)
 		name: # add new one
 			title: My channel
-			image: my-channel.png
+			image: /my-channel.png
 ```
 
 ### Provedení platby
@@ -118,15 +122,15 @@ novou instanci platby:
 
 ```php
 $payment = $gopay->createPayment(array(
-	'sum'      => $sum,      // placená částka
-	'variable' => $variable, // variabilní symbol
-	'specific' => $specific, // specifický symbol
-	'product'  => $product,  // název produktu (popis účelu platby)
-	'customer' => array(     // při platbě kartou lze poskytnou tyto údaje
+	'sum'         => $sum,      // placená částka
+	'variable'    => $variable, // variabilní symbol
+	'specific'    => $specific, // specifický symbol
+	'productName' => $product,  // název produktu (popis účelu platby)
+	'customer' => array(
 		'firstName'   => $name,
-		'lastName'    => NULL, // všechna parametry jsou volitelné
-		'street'      => NULL, // pokud některý neuvedete,
-		'city'        => NULL, // použije se prázdný řetězec
+		'lastName'    => NULL,    // všechna parametry jsou volitelné
+		'street'      => NULL,    // pokud některý neuvedete,
+		'city'        => NULL,    // použije se prázdný řetězec
 		'postalCode'  => $postal,
 		'countryCode' => 'CZE',
 		'email'       => $email,
@@ -139,8 +143,8 @@ Zadruhé nastavit adresy, na které Gopay platební brána přesměruje při ús
 naopak selhání platby.
 
 ```php
-$gopay->success = $this->link('//success');
-$gopay->failure = $this->link('//failure');
+$gopay->successUrl = $this->link('//success');
+$gopay->failureUrl = $this->link('//failure');
 ```
 
 Je užitečné si poznačit ID platby (například pokud se má platba vázat
@@ -157,7 +161,7 @@ A nakonec s platbou zaplatíte :) (takto, druhý parametr je platební kanál,
 kterým má být platba uskutečněna):
 
 ```php
-$response = $gopay->pay($payment, $gopay::CARD_VISA, $storeIdCallback);
+$response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
 ```
 
 Akce `pay()` vrátí `Response` objekt, který aplikaci přesměruje na platební
@@ -179,7 +183,7 @@ straně.
 
 ```php
 try {
-	$gopay->pay($payment, $gopay::CARD_VISA);
+	$gopay->pay($payment, $gopay::TRANSFER);
 } catch (GopayException $e) {
 	echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
 	prosím za chvíli.';
@@ -189,12 +193,12 @@ try {
 ### Po platbě
 
 Váš zákazník provede potřebné úkony na Gopay platební bráně, a jakmile je proces
-dokončen, je přesměrován zpátky do vaší aplikace, buď na `success`
-nebo `failure` adresu. Obě dvě dostanou od Gopay následující sadu parametrů:
+dokončen, je přesměrován zpátky do vaší aplikace, buď na `successUrl`
+nebo `failureUrl` adresu. Obě dvě dostanou od Gopay následující sadu parametrů:
 
 - paymentSessionId
-- eshopGoId
-- variableSymbol
+- targetGoId
+- orderNumber // variabilní číslo
 - encryptedSignature
 
 První parametr je totožný s tím, který jsme si v předchozí kapitole uložili do
@@ -208,14 +212,14 @@ objektu platby:
 $order = $database->getOrderByPaymentId($paymentSessionId);
 
 $payment = $gopay->restorePayment(array(
-	'sum'      => $order->price,
-	'variable' => $order->varSymbol,
-	'specific' => $order->specSymbol,
-	'product'  => $order->product,
+	'sum'          => $order->price,
+	'variable'    => $order->varSymbol,
+	'specific'    => $order->specSymbol,
+	'productName' => $order->product,
 ), array(
 	'paymentSessionId'   => $paymentSessionId,
-	'eshopGoId'          => $eshopGoId,
-	'variableSymbol'     => $variableSymbol,
+	'targetGoId'         => $targetGoId,
+	'orderNumber'        => $orderNumber,
 	'encryptedSignature' => $encryptedSignature,
 ));
 ```
@@ -233,7 +237,7 @@ V případě neúspěšně platby jsou opět předány všechny čtyři parametr
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 
-Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/vojtech-dobes/Simple-Gopay-Helper/blob/master/example/GopayPresenter.php).
+Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/example/GopayPresenter.php).
 
 ## Co tahle věc neumí a co s tím
 

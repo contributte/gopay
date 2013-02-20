@@ -22,7 +22,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 
 	/**
 	 * Creates and send payment request to GoPay
-	 * 
+	 *
 	 * @param  int
 	 * @param  string
 	 */
@@ -31,8 +31,8 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		$gopay = $this->gopay;
 
 		// setup success and failure callbacks
-		$gopay->success = $this->link('//success', $id);
-		$gopay->failure = $this->link('//failure', $id);
+		$gopay->successUrl = $this->link('//success', $id);
+		$gopay->failureUrl = $this->link('//failure', $id);
 
 		// your custom communication with model
 		$shop = $this->context->shopModel;
@@ -42,16 +42,15 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		$customer = array(
 			'firstName'   => $order->name,
 			'email'       => $order->email,
-			'countryCode' => 'CZE',
 		);
 
 		// creation of payment
 		$payment = $gopay->createPayment(array(
-			'sum'      => $order->getPrice(),
-			'variable' => $order->varSymbol,
-			'specific' => $order->specSymbol,
-			'product'  => $order->product,
-			'customer' => $customer,
+			'sum'         => $order->getPrice(),
+			'variable'    => $order->varSymbol,
+			'specific'    => $order->specSymbol,
+			'productName' => $order->product,
+			'customer'    => $customer,
 		));
 
 		// to be able to connect our internal Order with Gopay Payment,
@@ -78,7 +77,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	 * @param  int
 	 * @param  string
 	 */
-	public function actionSuccess($paymentSessionId, $eshopGoId, $variableSymbol, $encryptedSignature)
+	public function actionSuccess($paymentSessionId, $targetGoId, $orderNumber, $encryptedSignature)
 	{
 		$gopay = $this->gopay;
 
@@ -88,14 +87,14 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 
 		// restores Payment object (as instance of ReturnedPayment)
 		$payment = $gopay->restorePayment(array(
-			'sum'      => $order->price,
-			'variable' => $order->varSymbol,
-			'specific' => $order->specSymbol,
-			'product'  => $order->product,
+			'sum'         => $order->price,
+			'variable'    => $order->varSymbol,
+			'specific'    => $order->specSymbol,
+			'productName' => $order->product,
 		), array(
 			'paymentSessionId'   => $paymentSessionId,
-			'eshopGoId'          => $eshopGoId,
-			'variableSymbol'     => $variableSymbol,
+			'targetGoId'         => $targetGoId,
+			'orderNumber'        => $orderNumber,
 			'encryptedSignature' => $encryptedSignature,
 		));
 
@@ -117,7 +116,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 
 
 	/**
-	 * View for failure 
+	 * View for failure
 	 */
 	public function actionFailure()
 	{
@@ -126,7 +125,7 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 
 
 	/**
-	 * View for fraud 
+	 * View for fraud
 	 */
 	public function actionFraud()
 	{

@@ -10,16 +10,16 @@
 
 namespace Markette\Gopay;
 
-use Markette\Gopay\Api\GopayHelper;
-use Markette\Gopay\Api\GopaySoap;
 use Nette\Config\CompilerExtension;
+use Nette\Reflection\ClassType;
+
 
 
 /**
  * Compiler extension for Nette Framework
- * 
- * @author     Vojtěch Dobeš
- * @subpackage Gopay
+ *
+ * @author Vojtěch Dobeš
+ * @author Jan Skrasek
  */
 class Extension extends CompilerExtension
 {
@@ -34,16 +34,18 @@ class Extension extends CompilerExtension
 
 		$service = $container->addDefinition($this->prefix('service'))
 			->setClass('Markette\Gopay\Service', array(
-				$config,
-				$driver
+				$driver,
+				$config['gopayId'],
+				$config['gopaySecretKey'],
+				isset($config['testMode']) ? $config['testMode'] : TRUE
 			));
 
 		if (isset($config['channels'])) {
 			$constants = ClassType::from('Markette\Gopay\Service');
 			foreach ($config['channels'] as $channel => $value) {
-				$constChannel = strtoupper($channel);
-				if (isset($constants[$constChannel])) {
-					$channel = $constants[$constChannel];
+				$constChannel = 'METHOD_' . strtoupper($channel);
+				if ($constants->hasConstant($constChannel)) {
+					$channel = $constants->getConstant($constChannel);
 				}
 				if (is_bool($value)) {
 					$service->addSetup($value ? 'allowChannel' : 'denyChannel', $channel);

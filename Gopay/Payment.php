@@ -10,36 +10,33 @@
 
 namespace Markette\Gopay;
 
-use Markette\Gopay\Api\GopayHelper;
-use Markette\Gopay\Api\GopaySoap;
 use Nette;
 use stdClass;
 
 
+
 /**
  * Representation of payment
- * 
- * @author     Vojtěch Dobeš
- * @subpackage Gopay
  *
- * @property      $sum
- * @property      $variable
- * @property      $specific
- * @property      $customer
+ * @author Vojtěch Dobeš
+ * @author Jan Skrasek
+ *
+ * @property       $sum
+ * @property-read  $sumInCents
+ * @property       $currency
+ * @property       $variable
+ * @property       $specific
+ * @property       $productName
+ * @property       $customer
  */
 class Payment extends Nette\Object
 {
 
-	/** @var Service */
-	protected $gopay;
-
-	/** @var stdClass */
-	protected $gopayIdentification;
-
-/* === Description ========================================================== */	
-
-	/** @var int */
+	/** @var float */
 	private $sum;
+
+	/** @var string */
+	private $currency = Service::CURRENCY_CZK;
 
 	/** @var int */
 	private $variable;
@@ -48,10 +45,16 @@ class Payment extends Nette\Object
 	private $specific;
 
 	/** @var string */
-	private $product;
+	private $productName;
 
 	/** @var stdClass */
 	private $customer;
+
+	/** @var array */
+	private $allowedCurrency = array(
+		Service::CURRENCY_CZK,
+		Service::CURRENCY_EUR,
+	);
 
 
 
@@ -60,13 +63,9 @@ class Payment extends Nette\Object
 	 * @param  stdClass
 	 * @param  array|stdClass
 	 */
-	public function __construct(Service $gopay, stdClass $identification, $values)
+	public function __construct(array $values)
 	{
-		$this->gopay = $gopay;
-		$this->gopayIdentification = $identification;
-		
-		$values = (array) $values;
-		foreach (array('sum', 'variable', 'specific', 'constant', 'product', 'customer') as $param) {
+		foreach (array('sum', 'currency', 'variable', 'specific', 'productName', 'customer') as $param) {
 			if (isset($values[$param])) {
 				$this->{'set' . ucfirst($param)}($values[$param]);
 			}
@@ -77,7 +76,6 @@ class Payment extends Nette\Object
 
 	/**
 	 * Returns sum of payment
-	 *
 	 * @return float
 	 */
 	public function getSum()
@@ -88,14 +86,51 @@ class Payment extends Nette\Object
 
 
 	/**
+	 * Return sum in cents
+	 * @return int
+	 */
+	public function getSumInCents()
+	{
+		return round($this->getSum() * 100);
+	}
+
+
+
+	/**
 	 * Sets sum of payment
-	 *
 	 * @param  float
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
 	public function setSum($sum)
 	{
 		$this->sum = (float) $sum;
+		return $this;
+	}
+
+
+
+	/**
+	 * Returns payment currency
+	 * @return string
+	 */
+	public function getCurrency()
+	{
+		return $this->currency;
+	}
+
+
+
+	/**
+	 * Sets payment currency
+	 * @param  string
+	 * @return static provides a fluent interface
+	 */
+	public function setCurrency($currency)
+	{
+		if (!in_array($currency, $this->allowedCurrency)) {
+			throw new \InvalidArgumentException('Not supported currency "' . $currency . '".');
+		}
+		$this->currency = (string) $currency;
 		return $this;
 	}
 
@@ -117,7 +152,7 @@ class Payment extends Nette\Object
 	 * Sets variable symbol
 	 *
 	 * @param  int
-	 * @return provides a fluent interface 
+	 * @return static provides a fluent interface
 	 */
 	public function setVariable($variable)
 	{
@@ -143,11 +178,37 @@ class Payment extends Nette\Object
 	 * Sets specific symbol
 	 *
 	 * @param  int
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
 	public function setSpecific($specific)
 	{
 		$this->specific = (int) $specific;
+		return $this;
+	}
+
+
+
+	/**
+	 * Returns product name
+	 *
+	 * @return string
+	 */
+	public function getProductName()
+	{
+		return $this->productName;
+	}
+
+
+
+	/**
+	 * Sets product name
+	 *
+	 * @param $name
+	 * @return static provides a fluent interface
+	 */
+	public function setProductName($name)
+	{
+		$this->productName = $name;
 		return $this;
 	}
 
@@ -169,7 +230,7 @@ class Payment extends Nette\Object
 	 * Sets customer data
 	 *
 	 * @param  array|stdClass
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
 	public function setCustomer($customer)
 	{
@@ -183,6 +244,7 @@ class Payment extends Nette\Object
 			'email',
 			'phoneNumber',
 		);
+
 		$this->customer = (object) array_intersect_key(
 			(array) $customer,
 			array_flip($allowedKeys)
@@ -194,16 +256,6 @@ class Payment extends Nette\Object
 			}
 		}
 		return $this;
-	}
-
-	public function setProduct($product)
-	{
-		$this->product = $product;
-	}
-
-	public function getProduct()
-	{
-		return $this->product;
 	}
 
 }

@@ -12,17 +12,23 @@ namespace Markette\Gopay;
 
 use Markette\Gopay\Api\GopayHelper;
 use Markette\Gopay\Api\GopaySoap;
-use stdClass;
+
 
 
 /**
  * Representation of payment returned from Gopay Payment Gate
  *
- * @author     Vojtěch Dobeš
- * @subpackage Gopay
+ * @author Vojtěch Dobeš
+ * @author Jan Skrasek
  */
 class ReturnedPayment extends Payment
 {
+
+	/** @var float */
+	private $gopayId;
+
+	/** @var string */
+	private $gopaySecretKey;
 
 	/** @var array */
 	private $valuesToBeVerified = array();
@@ -35,15 +41,13 @@ class ReturnedPayment extends Payment
 	 * @param  array
 	 * @param  array
 	 */
-	public function __construct(Service $gopay, stdClass $identification, $values, array $valuesToBeVerified = array())
+	public function __construct(array $values, $gopayId, $gopaySecretKey, array $valuesToBeVerified = array())
 	{
-		parent::__construct($gopay, $identification, $values);
+		parent::__construct($values);
+		$this->gopayId = (float) $gopayId;
+		$this->gopaySecretKey = (string) $gopaySecretKey;
 		$this->valuesToBeVerified = $valuesToBeVerified;
 	}
-
-
-
-/* === Security ============================================================= */
 
 
 
@@ -54,27 +58,24 @@ class ReturnedPayment extends Payment
 	 */
 	public function isFraud()
 	{
-		error_reporting(E_ALL ^ E_NOTICE);
-		return !GopayHelper::checkPaymentIdentity(
-			$this->valuesToBeVerified['eshopGoId'],
-			$this->valuesToBeVerified['paymentSessionId'],
-			$this->valuesToBeVerified['variableSymbol'],
-			$this->valuesToBeVerified['encryptedSignature'],
-			$this->gopayIdentification->id,
-			$this->variable,
-			$this->gopayIdentification->secretKey
-		);
+		try {
+			GopayHelper::checkPaymentIdentity(
+				(float) $this->valuesToBeVerified['targetGoId'],
+				(float) $this->valuesToBeVerified['paymentSessionId'],
+				null,
+				$this->valuesToBeVerified['orderNumber'],
+				$this->valuesToBeVerified['encryptedSignature'],
+				(float) $this->gopayId,
+				$this->getVariable(),
+				$this->gopaySecretKey
+			);
+			return FALSE;
+		} catch (\Exception $e) {
+			return TRUE;
+		}
 	}
 
 
-
-/* === Status =============================================================== */
-
-
-
-	/** @const int */
-	const FAILURE_SUPERCASH = -3,
-		FAILURE_BANK        = -7;
 
 	/** @var array */
 	private $result;
@@ -89,7 +90,8 @@ class ReturnedPayment extends Payment
 	public function isPaid()
 	{
 		$this->getStatus();
-		return $this->result['code'] === GopayHelper::PAYMENT_DONE;
+		dump($this->result);
+		return $this->result['sessionState'] === GopayHelper::PAID;
 	}
 
 
@@ -102,7 +104,7 @@ class ReturnedPayment extends Payment
 	public function isWaiting()
 	{
 		$this->getStatus();
-		return $this->result['code'] === GopayHelper::WAITING;
+		return $this->result['sessionState'] === GopayHelper::PAYMENT_METHOD_CHOSEN;
 	}
 
 
@@ -115,7 +117,7 @@ class ReturnedPayment extends Payment
 	public function isCanceled()
 	{
 		$this->getStatus();
-		return $this->result['code'] === GopayHelper::CANCELED;
+		return $this->result['sessionState'] === GopayHelper::CANCELED;
 	}
 
 
@@ -128,20 +130,7 @@ class ReturnedPayment extends Payment
 	public function isTimeouted()
 	{
 		$this->getStatus();
-		return $this->result['code'] === GopayHelper::CANCELED;
-	}
-
-
-
-	/**
-	 * Returns description of payment status received from Gopay WS
-	 *
-	 * @return string
-	 */
-	public function getDescription()
-	{
-		$this->getStatus();
-		return $this->result['description'];
+		return $this->result['sessionState'] === GopayHelper::TIMEOUTED;
 	}
 
 
@@ -153,14 +142,18 @@ class ReturnedPayment extends Payment
 	 */
 	public function getStatus()
 	{
-		if ($this->result !== NULL) return $this->result;
-		return $this->result = GopaySoap::isEshopPaymentDone(
-			$this->valuesToBeVerified['paymentSessionId'],
-			$this->gopayIdentification->id,
-			$this->variable,
-			$this->sum,
-			$this->product,
-			$this->gopayIdentification->secretKey
+		if ($this->result !== NULL) {
+			return $this->result;
+		}
+
+		return $this->result = GopaySoap::isPaymentDone(
+			(float) $this->valuesToBeVerified['paymentSessionId'],
+			(float) $this->gopayId,
+			$this->getVariable(),
+			(int) $this->getSumInCents(),
+			$this->getCurrency(),
+			$this->getProductName(),
+			$this->gopaySecretKey
 		);
 	}
 

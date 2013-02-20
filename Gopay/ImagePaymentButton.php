@@ -13,11 +13,11 @@ namespace Markette\Gopay;
 use Nette\Forms\Controls\ImageButton;
 
 
+
 /**
  * Image payment button
- * 
- * @author     Vojtěch Dobeš
- * @subpackage Gopay
+ *
+ * @author Vojtěch Dobeš
  *
  * @property-read $channel
  */

@@ -11,13 +11,12 @@
 namespace Markette\Gopay;
 
 
+
 /**
  * Thrown when wrong implementation
- * 
- * @author     Vojtěch Dobeš
- * @subpackage Gopay
+ *
+ * @author Vojtěch Dobeš
  */
 class GopayException extends GopayFatalException
 {
-
 }

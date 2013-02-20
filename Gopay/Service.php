@@ -16,106 +16,113 @@ use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Api\PaymentMethodElement;
 use Nette;
 use Nette\Application\Responses\RedirectResponse;
-use Nette\Forms\Form;
 use Nette\DI\Container;
-use Nette\InvalidArgumentException;
-use stdClass;
+
 
 
 /**
  * Gopay wrapper with simple API
  *
- * @author     Vojtěch Dobeš
- * @subpackage Gopay
- * @dependency mcrypt
+ * @author Vojtěch Dobeš
+ * @author Jan Skrasek
  *
- * @property-read  $channels
- * @property-write $id
- * @property-write $secretKey
- * @property-write $imagePath
+ * @property-write $gopayId
+ * @property-write $gopaySecretKey
  * @property-write $testMode
- * @property-write $success
- * @property-write $failure
  */
 class Service extends Nette\Object
 {
 
-	/** @const string */
-	const BANK = 'cz_bank';
-	const CARD_EXPRES = 'eu_mb_b';
-	const CARD_JCB = 'eu_mb_b';
-	const CARD_MAESTRO = 'eu_mb_b';
-	const CARD_MASTERCARD = 'eu_mb_a';
-	const CARD_VISA = 'eu_mb_a';
-	const EPLATBY = 'cz_rb';
-	const FIO = 'cz_fio';
-	const GE = 'cz_ge';
-	const MOJE_PLATBA = 'cz_kb';
-	const MONEYBOOKERS = 'eu_mb_w';
-	const MPENIZE = 'cz_mb';
-	const PREMIUM_SMS = 'cs_sms';
-	const PURSE = 'cz_gp_w';
-	const SUPERCASH = 'SUPERCASH';
-	const VOLKSBANK = 'cz_vb';
-	const WEBPAY = 'cz_gp_c';
+	/** @const Česká spořitelna, a.s. E-commerce 3-D Secure */
+	const METHOD_CARD_CESKAS = 'cz_cs_c';
+	/** @const UniCredit Bank - Global payments */
+	const METHOD_CARD_UNICREDITB = 'eu_gp_u';
 
-	/** @var int */
-	private $goId;
+	/** @const Terminál České pošty, Sazka a.s. */
+	const METHOD_SUPERCASH = 'SUPERCASH';
+	/** @const Mobilní telefon - Premium SMS */
+	const METHOD_PREMIUMSMS = 'eu_pr_sms';
+	/** @const Mobilní telefon - platební brána operátora */
+	const METHOD_MPLATBA = 'cz_mp';
 
-	/** @var string */
-	private $secretKey;
+	/** @const Platební tlačítko - Internetové bankovnictví Komerční banky a.s. */
+	const METHOD_KOMERCNIB = 'cz_kb';
+	/** @const Platební tlačítko - Internetové bankovnictví	Raiffeisenbank a.s. */
+	const METHOD_RAIFFEISENB = 'cz_rb';
+	/** @const Platební tlačítko - Internetové bankovnictví	MBank */
+	const METHOD_MBANK = 'cz_mb';
+	/** @const Platební tlačítko - Internetové bankovnictví	Fio banky */
+	const METHOD_FIOB = 'cz_fb';
+	/** @const Platební tlačítko - Internetové bankovnictví	UniCredit Bank a.s. */
+	const METHOD_UNICREDITB = 'sk_uni';
+	/** @const Platební tlačítko - Internetové bankovnictví	Slovenská sporiteľňa, a. s. */
+	const METHOD_SLOVENSKAS = 'sk_sp';
 
-	/** @var string */
-	private $imagePath;
+	/** @const Běžný bankovní převod */
+	const METHOD_TRANSFER = 'eu_bank';
+	/** @const Gopay - Elektronická peněženka. */
+	const METHOD_GOPAY = 'eu_gp_w';
 
-	/** @var bool */
-	private $testMode = FALSE;
+
+	/** @const Czech koruna */
+	const CURRENCY_CZK = 'CZK';
+	/** @const Euro */
+	const CURRENCY_EUR = 'EUR';
+
+
+	/** @const Czech */
+	const LANG_CS = 'CS';
+	/** @const English */
+	const LANG_EN = 'EN';
+
 
 	/** @var GopaySoap */
 	private $soap;
 
+	/** @var float */
+	private $gopayId;
+
+	/** @var string */
+	private $gopaySecretKey;
+
 	/** @var bool */
-	private $gopayChannelsLoaded = FALSE;
+	private $testMode = FALSE;
+
+	/** @var string */
+	private $lang = self::LANG_CS;
+
+	/** @var string */
+	private $successUrl;
+
+	/** @var string */
+	private $failureUrl;
+
+	/** @var array */
+	private $allowedChannels = NULL;
+
+	/** @var array */
+	private $deniedChannels = NULL;
+
+	/** @var array */
+	private $allowedLang = array(
+		self::LANG_CS,
+		self::LANG_EN,
+	);
 
 
 
 	/**
-	 * Accepts initial directives (possibly from config)
-	 *
-	 * @param  array [id, secretKey, imagePath, testMode, loadChannels]
-	 * @param  GopaySoap
+	 * @param GopaySoap
+	 * @param float
+	 * @param string
+	 * @param bool
 	 */
-	public function __construct($values, GopaySoap $soap)
+	public function __construct(GopaySoap $soap, $gopayId, $gopaySecretKey, $testMode)
 	{
 		$this->soap = $soap;
-
-		$values = (array) $values;
-		foreach (array('id', 'secretKey', 'imagePath', 'testMode') as $param) {
-			if (isset($values[$param])) {
-				$this->{'set' . ucfirst($param)}($values[$param]);
-			}
-		}
-
-		if (isset($values['loadChannels']) && !$values['loadChannels']) {
-			$this->gopayChannelsLoaded = TRUE;
-		}
-
-		GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;
-	}
-
-
-
-	/**
-	 * Returns simple envelope with identification of eshop
-	 *
-	 * @return stdClass
-	 */
-	private function getIdentification()
-	{
-		return (object) array(
-			'id'        => $this->goId,
-			'secretKey' => $this->secretKey,
-		);
+		$this->setGopayId($gopayId);
+		$this->setGopaySecretKey($gopaySecretKey);
+		$this->setTestMode($testMode);
 	}
 
 
@@ -124,11 +131,11 @@ class Service extends Nette\Object
 	 * Sets Gopay ID number
 	 *
 	 * @param  float
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
-	public function setId($id)
+	public function setGopayId($id)
 	{
-		$this->goId = (float) $id;
+		$this->gopayId = (float) $id;
 		return $this;
 	}
 
@@ -138,25 +145,11 @@ class Service extends Nette\Object
 	 * Sets Gopay secret key
 	 *
 	 * @param  string
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
-	public function setSecretKey($secretKey)
+	public function setGopaySecretKey($secretKey)
 	{
-		$this->secretKey = (string) $secretKey;
-		return $this;
-	}
-
-
-
-	/**
-	 * Sets path to image for payment buttons
-	 *
-	 * @param  string
-	 * @return provides a fluent interface
-	 */
-	public function setImagePath($imagePath)
-	{
-		$this->imagePath = (string) $imagePath;
+		$this->gopaySecretKey = (string) $secretKey;
 		return $this;
 	}
 
@@ -166,26 +159,31 @@ class Service extends Nette\Object
 	 * Sets state of test mode
 	 *
 	 * @param  bool
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
 	public function setTestMode($testMode = TRUE)
 	{
 		$this->testMode = (bool) $testMode;
+		GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;
 		return $this;
 	}
 
 
 
-/* === URL ================================================================== */
-
-
-
-	/** @var string */
-	private $success;
-
-	/** @var string */
-	private $failure;
-
+	/**
+	 * Sets payment gateway language
+	 * @param  string
+	 * @throws \InvalidArgumentException if language is not supported
+	 * @return static provides a fluent interface
+	 */
+	public function setLang($lang)
+	{
+		if (!in_array($lang, $this->allowedLang)) {
+			throw new \InvalidArgumentException('Not supported language "' . $lang . '".');
+		}
+		$this->lang = $lang;
+		return $this;
+	}
 
 
 	/**
@@ -193,9 +191,9 @@ class Service extends Nette\Object
 	 *
 	 * @return string
 	 */
-	public function getSuccess()
+	public function getSuccessUrl()
 	{
-		return $this->success;
+		return $this->successUrl;
 	}
 
 
@@ -204,15 +202,15 @@ class Service extends Nette\Object
 	 * Sets URL when successful
 	 *
 	 * @param  string
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
-	public function setSuccess($success)
+	public function setSuccessUrl($absoluteUrl)
 	{
-		if (substr($success, 0, 4) !== 'http') {
-			$success = 'http://' . $success;
+		if (substr($absoluteUrl, 0, 4) !== 'http') {
+			$absoluteUrl = 'http://' . $absoluteUrl;
 		}
 
-		$this->success = $success;
+		$this->successUrl = $absoluteUrl;
 		return $this;
 	}
 
@@ -223,9 +221,9 @@ class Service extends Nette\Object
 	 *
 	 * @return string
 	 */
-	public function getFailure()
+	public function getFailureUrl()
 	{
-		return $this->failure;
+		return $this->failureUrl;
 	}
 
 
@@ -234,45 +232,33 @@ class Service extends Nette\Object
 	 * Sets URL when failed
 	 *
 	 * @param  string
-	 * @return provides a fluent interface
+	 * @return static provides a fluent interface
 	 */
-	public function setFailure($failure)
+	public function setFailureUrl($absoluteUrl)
 	{
-		if (substr($failure, 0, 4) !== 'http') {
-			$failure = 'http://' . $failure;
+		if (substr($absoluteUrl, 0, 4) !== 'http') {
+			$absoluteUrl = 'http://' . $absoluteUrl;
 		}
 
-		$this->failure = $failure;
+		$this->failureUrl = $absoluteUrl;
 		return $this;
 	}
 
 
 
-/* === Payment Channels ===================================================== */
-
-
-
-	/** @var array */
-	private $allowedChannels = array();
-
-	/** @var array */
-	private $deniedChannels = array();
-
-
-
 	/**
 	 * Allows payment channel
-	 * 
+	 *
 	 * @param  string
-	 * @return provides a fluent interface
-	 * @throws InvalidArgumentException on undefined or already allowed channel
+	 * @return static provides a fluent interface
+	 * @throws \InvalidArgumentException on undefined or already allowed channel
 	 */
 	public function allowChannel($channel)
 	{
 		$this->getChannels();
 
 		if (!isset($this->deniedChannels[$channel])) {
-			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
+			throw new \InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
 
 		$this->allowedChannels[$channel] = $this->deniedChannels[$channel];
@@ -285,17 +271,17 @@ class Service extends Nette\Object
 
 	/**
 	 * Denies payment channel
-	 * 
+	 *
 	 * @param  string
-	 * @return provides a fluent interface
-	 * @throws InvalidArgumentException on undefined or already denied channel
+	 * @return static provides a fluent interface
+	 * @throws \InvalidArgumentException on undefined or already denied channel
 	 */
 	public function denyChannel($channel)
 	{
 		$this->getChannels();
 
 		if (!isset($this->allowedChannels[$channel])) {
-			throw InvalidArgumentException("Channel with name '$channel' isn't defined.");
+			throw new \InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
 
 		$this->deniedChannels[$channel] = $this->allowedChannels[$channel];
@@ -312,15 +298,15 @@ class Service extends Nette\Object
 	 * @param  string
 	 * @param  string
 	 * @param  string|NULL
-	 * @return provides a fluent interface
-	 * @throws InvalidArgumentException on channel name conflict
+	 * @return static provides a fluent interface
+	 * @throws \InvalidArgumentException on channel name conflict
 	 */
 	public function addChannel($channel, $title, array $params = array())
 	{
 		$this->getChannels();
 
 		if (isset($this->allowedChannels[$channel]) || isset($this->deniedChannels[$channel])) {
-			throw InvalidArgumentException("Channel with name '$channel' is already defined.");
+			throw new \InvalidArgumentException("Channel with name '$channel' is already defined.");
 		}
 
 		$this->allowedChannels[$channel] = (object) array_merge($params, array(
@@ -336,8 +322,8 @@ class Service extends Nette\Object
 	 * Adds payment channel received from Gopay WS
 	 *
 	 * @param  PaymentMethodElement
-	 * @return provides a fluent interface
-	 * @throws InvalidArgumentException on channel name conflict
+	 * @return static provides a fluent interface
+	 * @throws \InvalidArgumentException on channel name conflict
 	 */
 	public function addRawChannel(PaymentMethodElement $element)
 	{
@@ -352,13 +338,12 @@ class Service extends Nette\Object
 
 	/**
 	 * Returns list of allowed payment channels
-	 * 
+	 *
 	 * @return array
 	 */
 	public function getChannels()
 	{
-		if (!$this->gopayChannelsLoaded) {
-			$this->gopayChannelsLoaded = TRUE;
+		if ($this->allowedChannels === NULL || $this->deniedChannels === NULL) {
 			$this->loadGopayChannels();
 		}
 
@@ -368,116 +353,14 @@ class Service extends Nette\Object
 
 
 	/**
-	 * Setups default set of payment channels
-	 *
-	 * @return provides a fluent interface
-	 * @throws GopayException on failed communication with WS
-	 */
-	public function loadGopayChannels()
-	{
-		$methodList = GopaySoap::paymentMethodList();
-		if ($methodList === NULL) {
-			throw new GopayException('Loading of native Gopay payment channels failed due to communication with WS.');
-		}
-		foreach ($methodList as $method) {
-			$this->addRawChannel($method);
-		}
-		return $this;
-	}
-
-
-
-/* === Payments ============================================================= */
-
-
-
-	/**
 	 * Creates new Payment with given default values
-	 * 
+	 *
 	 * @param  array
 	 * @return Payment
 	 */
-	public function createPayment($values = array())
+	public function createPayment(array $values = array())
 	{
-		return new Payment($this, $this->getIdentification(), (array) $values);
-	}
-
-
-
-	/**
-	 * Executes payment via redirecting to GoPay payment gate
-	 * 
-	 * @param  Payment
-	 * @param  string
-	 * @param  callback
-	 * @return RedirectResponse
-	 * @throws InvalidArgumentException on undefined channel or provided ReturnedPayment
-	 * @throws GopayFatalException on maldefined parameters
-	 * @throws GopayException on failed communication with WS
-	 */
-	public function pay(Payment $payment, $channel, $callback = NULL)
-	{
-		error_reporting(E_ALL ^ E_NOTICE);
-
-		if ($payment instanceof ReturnedPayment) {
-			throw new InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
-		}
-
-		if (!isset($this->allowedChannels[$channel])) {
-			throw new InvalidArgumentException("Payment channel '$channel' is not supported");
-		}
-
-		if ($channel == self::CARD_VISA || $channel == self::CARD_EXPRES) {
-			$customer = $payment->getCustomer();
-			$id = GopaySoap::createCustomerEshopPayment(
-				$this->goId,
-				$payment->getProduct(),
-				$payment->getSum() * 100, // given in cents
-				$payment->getVariable(),
-				$this->success,
-				$this->failure,
-				$this->secretKey,
-				array_keys($this->allowedChannels),
-				// customer info
-				$customer->firstName,
-				$customer->lastName,
-				$customer->city,
-				$customer->street,
-				$customer->postalCode,
-				$customer->countryCode,
-				$customer->email,
-				$customer->phoneNumber
-			);
-		} else {
-			$id = GopaySoap::createEshopPayment(
-				$this->goId,
-				$payment->getProduct(),
-				$payment->getSum() * 100, // given in cents
-				$payment->getVariable(),
-				$this->success,
-				$this->failure,
-				$this->secretKey,
-				array_keys($this->allowedChannels)
-			);
-		}
-
-		if ($id === -1) {
-			throw new GopayFatalException("Execution of payment failed due to invalid parameters.");
-		} else if ($id === -2) {
-			throw new GopayException("Execution of payment failed due to communication with WS.");
-		}
-
-		$url = GopayConfig::fullIntegrationURL()
-				. "?sessionInfo.eshopGoId=" . $this->goId
-				. "&sessionInfo.paymentSessionId=" . $id
-				. "&sessionInfo.encryptedSignature=" . $this->createSignature($id)
-				. "&paymentChannel=" . $channel;
-
-		if (isset($callback)) {
-			call_user_func_array($callback, array($id));
-		}
-
-		return new RedirectResponse($url);
+		return new Payment($values);
 	}
 
 
@@ -491,32 +374,72 @@ class Service extends Nette\Object
 	 */
 	public function restorePayment($values, $valuesToBeVerified)
 	{
-		$values['sum'] *= 100;
-		return new ReturnedPayment($this, $this->getIdentification(), (array) $values, (array) $valuesToBeVerified);
+		return new ReturnedPayment($values, $this->gopayId, $this->gopaySecretKey, (array) $valuesToBeVerified);
 	}
 
 
 
 	/**
-	 * Creates encrypted signature for given given payment session id
-	 * 
-	 * @param  int
-	 * @return string
+	 * Executes payment via redirecting to GoPay payment gate
+	 *
+	 * @param  Payment
+	 * @param  string
+	 * @param  callback
+	 * @return RedirectResponse
+	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
+	 * @throws GopayFatalException on maldefined parameters
+	 * @throws GopayException on failed communication with WS
 	 */
-	private function createSignature($paymentId)
+	public function pay(Payment $payment, $channel, $callback = NULL)
 	{
-		return GopayHelper::encrypt(GopayHelper::hash(
-			GopayHelper::concatPaymentSession(
-				$this->goId,
-				$paymentId,
-				$this->secretKey
-			)
-		), $this->secretKey);
+		if ($payment instanceof ReturnedPayment) {
+			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
+		}
+
+		if (!isset($this->allowedChannels[$channel])) {
+			throw new \InvalidArgumentException("Payment channel '$channel' is not supported");
+		}
+
+		try {
+			$customer = $payment->getCustomer();
+			$paymentSessionId = GopaySoap::createPayment(
+				$this->gopayId,
+				$payment->getProductName(),
+				$payment->getSumInCents(),
+				$payment->getCurrency(),
+				$payment->getVariable(),
+				$this->successUrl,
+				$this->failureUrl,
+				array_keys($this->allowedChannels),
+				$channel,
+				$this->gopaySecretKey,
+				$customer->firstName,
+				$customer->lastName,
+				$customer->city,
+				$customer->street,
+				$customer->postalCode,
+				$customer->countryCode,
+				$customer->email,
+				$customer->phoneNumber,
+				NULL, NULL, NULL, NULL,
+				$this->lang
+			);
+		} catch(\Exception $e) {
+			throw new GopayException($e->getMessage(), 0, $e);
+		}
+
+		$url = GopayConfig::fullIntegrationURL()
+			. "?sessionInfo.targetGoId=" . $this->gopayId
+			. "&sessionInfo.paymentSessionId=" . $paymentSessionId
+			. "&sessionInfo.encryptedSignature=" . $this->createSignature($paymentSessionId);
+
+		$callback = new Nette\Callback($callback);
+		if ($callback->isCallable()) {
+			$callback->invokeArgs(array($paymentSessionId));
+		}
+
+		return new RedirectResponse($url);
 	}
-
-
-
-/* === Form ================================================================= */
 
 
 
@@ -527,17 +450,13 @@ class Service extends Nette\Object
 	 * @param  Form
 	 * @param  array|callable
 	 */
-	public function bindForm(Form $form, $callbacks)
+	public function bindPaymentButtons(Nette\Forms\Container $form, $callbacks)
 	{
 		foreach ($this->allowedChannels as $name => $channel) {
 			if (!isset($channel->image)) {
 				$button = $form['gopayChannel' . $name] = new PaymentButton($name, $channel->title);
 			} else {
-				$button = $form['gopayChannel' . $name] = new ImagePaymentButton(
-					$name,
-					substr($channel->image, 0, 4) === 'http' ? $channel->image : $this->imagePath . '/' . $channel->image,
-					$channel->title
-				);
+				$button = $form['gopayChannel' . $name] = new ImagePaymentButton($name, $channel->image, $channel->title);
 			}
 
 			if (!is_array($callbacks)) $callbacks = array($callbacks);
@@ -547,6 +466,47 @@ class Service extends Nette\Object
 
 			$this->allowedChannels[$name]->control = 'gopayChannel' . $name;
 		}
+	}
+
+
+
+	/**
+	 * Setups default set of payment channels
+	 *
+	 * @throws GopayException on failed communication with WS
+	 */
+	private function loadGopayChannels()
+	{
+		$this->allowedChannels = $this->deniedChannels = array();
+		$methodList = GopaySoap::paymentMethodList();
+		if ($methodList === NULL) {
+			throw new GopayFatalException('Loading of native Gopay payment channels failed due to communication with WS.');
+		}
+		foreach ($methodList as $method) {
+			$this->addRawChannel($method);
+		}
+	}
+
+
+
+	/**
+	 * Creates encrypted signature for given given payment session id
+	 *
+	 * @param  int
+	 * @return string
+	 */
+	private function createSignature($paymentSessionId)
+	{
+		return GopayHelper::encrypt(
+			GopayHelper::hash(
+				GopayHelper::concatPaymentSession(
+					(float) $this->gopayId,
+					(float) $paymentSessionId,
+					$this->gopaySecretKey
+				)
+			),
+			$this->gopaySecretKey
+		);
 	}
 
 }

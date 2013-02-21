@@ -62,4 +62,14 @@ class Extension extends CompilerExtension
 		}
 	}
 
+
+
+	public function afterCompile(ClassType $class)
+	{
+		$initialize = $class->methods['initialize'];
+		$initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtons($this->getService(?));', array(
+			$this->prefix('service'),
+		));
+	}
+
 }

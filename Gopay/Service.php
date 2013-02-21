@@ -538,4 +538,21 @@ class Service extends Nette\Object
 		);
 	}
 
+
+
+	/**
+	 * Registers 'addPaymentButtons' & 'addPaymentButton' methods to form
+	 *
+	 * @param  Service
+	 */
+	public static function registerAddPaymentButtons(Service $service)
+	{
+		Nette\Forms\Container::registerMethod('addPaymentButtons', function ($container, $callbacks) use ($service) {
+			$service->bindPaymentButtons($container, $callbacks);
+		});
+		Nette\Forms\Container::registerMethod('addPaymentButton', function ($container, $channel) use ($service) {
+			return $service->bindPaymentButton($channel, $container);
+		});
+	}
+
 }

@@ -33,9 +33,9 @@ use Nette\DI\Container;
 class Service extends Nette\Object
 {
 
-	/** @const Česká spořitelna, a.s. E-commerce 3-D Secure */
+	/** @const Platba kartou - Česká spořitelna, a.s. E-commerce 3-D Secure */
 	const METHOD_CARD_CESKAS = 'cz_cs_c';
-	/** @const UniCredit Bank - Global payments */
+	/** @const Platba kartou - UniCredit Bank - Global payments */
 	const METHOD_CARD_UNICREDITB = 'eu_gp_u';
 
 	/** @const Terminál České pošty, Sazka a.s. */
@@ -43,19 +43,19 @@ class Service extends Nette\Object
 	/** @const Mobilní telefon - Premium SMS */
 	const METHOD_PREMIUMSMS = 'eu_pr_sms';
 	/** @const Mobilní telefon - platební brána operátora */
-	const METHOD_MPLATBA = 'cz_mp';
+	const METHOD_MPLATBA = 'cz_mb';
 
-	/** @const Platební tlačítko - Internetové bankovnictví Komerční banky a.s. */
+	/** @const Platební tlačítko - Platba KB - Mojeplatba - Internetové bankovnictví Komerční banky a.s. */
 	const METHOD_KOMERCNIB = 'cz_kb';
-	/** @const Platební tlačítko - Internetové bankovnictví	Raiffeisenbank a.s. */
+	/** @const Platební tlačítko - Platba RB - ePlatby - Internetové bankovnictví Raiffeisenbank a.s. */
 	const METHOD_RAIFFEISENB = 'cz_rb';
-	/** @const Platební tlačítko - Internetové bankovnictví	MBank */
+	/** @const Platební tlačítko - Platba mBank - mPeníze - Internetové bankovnictví MBank */
 	const METHOD_MBANK = 'cz_mb';
-	/** @const Platební tlačítko - Internetové bankovnictví	Fio banky */
+	/** @const Platební tlačítko - Platba Fio Banky - Internetové bankovnictví Fio banky */
 	const METHOD_FIOB = 'cz_fb';
-	/** @const Platební tlačítko - Internetové bankovnictví	UniCredit Bank a.s. */
+	/** @const Platební tlačítko - Platba UniCredit Bank - uniplatba - Internetové bankovnictví UniCredit Bank a.s. */
 	const METHOD_UNICREDITB = 'sk_uni';
-	/** @const Platební tlačítko - Internetové bankovnictví	Slovenská sporiteľňa, a. s. */
+	/** @const Platební tlačítko - Platba SLSP - sporopay - Internetové bankovnictví Slovenská sporiteľňa, a. s. */
 	const METHOD_SLOVENSKAS = 'sk_sp';
 
 	/** @const Běžný bankovní převod */
@@ -98,10 +98,13 @@ class Service extends Nette\Object
 	private $failureUrl;
 
 	/** @var array */
-	private $allowedChannels = NULL;
+	private $allowedChannels = array();
 
 	/** @var array */
-	private $deniedChannels = NULL;
+	private $deniedChannels = array();
+
+	/** @var bool */
+	private $fetchedChannels = FALSE;
 
 	/** @var array */
 	private $allowedLang = array(
@@ -186,6 +189,7 @@ class Service extends Nette\Object
 	}
 
 
+
 	/**
 	 * Returns URL when successful
 	 *
@@ -255,8 +259,10 @@ class Service extends Nette\Object
 	 */
 	public function allowChannel($channel)
 	{
-		$this->getChannels();
-
+		$this->loadGopayChannels();
+		if (isset($this->allowedChannels[$channel])) {
+			return $this;
+		}
 		if (!isset($this->deniedChannels[$channel])) {
 			throw new \InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
@@ -278,8 +284,10 @@ class Service extends Nette\Object
 	 */
 	public function denyChannel($channel)
 	{
-		$this->getChannels();
-
+		$this->loadGopayChannels();
+		if (isset($this->deniedChannels[$channel])) {
+			return $this;
+		}
 		if (!isset($this->allowedChannels[$channel])) {
 			throw new \InvalidArgumentException("Channel with name '$channel' isn't defined.");
 		}
@@ -298,18 +306,17 @@ class Service extends Nette\Object
 	 * @param  string
 	 * @param  string
 	 * @param  string|NULL
+	 * @param  bool
 	 * @return static provides a fluent interface
 	 * @throws \InvalidArgumentException on channel name conflict
 	 */
-	public function addChannel($channel, $title, array $params = array())
+	public function addChannel($channel, $title, array $params = array(), $allowChannel = TRUE)
 	{
-		$this->getChannels();
-
 		if (isset($this->allowedChannels[$channel]) || isset($this->deniedChannels[$channel])) {
 			throw new \InvalidArgumentException("Channel with name '$channel' is already defined.");
 		}
 
-		$this->allowedChannels[$channel] = (object) array_merge($params, array(
+		$this->{$allowChannel ? 'allowedChannels' : 'deniedChannels'}[$channel] = (object) array_merge($params, array(
 			'title' => $title,
 		));
 
@@ -322,31 +329,28 @@ class Service extends Nette\Object
 	 * Adds payment channel received from Gopay WS
 	 *
 	 * @param  PaymentMethodElement
+	 * @param  bool
 	 * @return static provides a fluent interface
 	 * @throws \InvalidArgumentException on channel name conflict
 	 */
-	public function addRawChannel(PaymentMethodElement $element)
+	public function addRawChannel(PaymentMethodElement $element, $allowChannel = TRUE)
 	{
 		return $this->addChannel($element->code, $element->paymentMethodName, array(
 			'image' => $element->logo,
 			'offline' => $element->offline,
 			'description' => $element->description,
-		));
+		), $allowChannel);
 	}
 
 
 
-	/**
+	/*
 	 * Returns list of allowed payment channels
 	 *
 	 * @return array
 	 */
 	public function getChannels()
 	{
-		if ($this->allowedChannels === NULL || $this->deniedChannels === NULL) {
-			$this->loadGopayChannels();
-		}
-
 		return $this->allowedChannels;
 	}
 
@@ -444,8 +448,7 @@ class Service extends Nette\Object
 
 
 	/**
-	 * Binds form to Gopay
-	 * - adds payment buttons
+	 * Binds payment buttons fo form
 	 *
 	 * @param  Form
 	 * @param  array|callable
@@ -471,19 +474,23 @@ class Service extends Nette\Object
 
 
 	/**
-	 * Setups default set of payment channels
+	 * Loads all gopay channels
 	 *
 	 * @throws GopayException on failed communication with WS
 	 */
 	private function loadGopayChannels()
 	{
-		$this->allowedChannels = $this->deniedChannels = array();
+		if ($this->fetchedChannels) {
+			return;
+		}
+
+		$this->fetchedChannels = TRUE;
 		$methodList = GopaySoap::paymentMethodList();
 		if ($methodList === NULL) {
 			throw new GopayFatalException('Loading of native Gopay payment channels failed due to communication with WS.');
 		}
 		foreach ($methodList as $method) {
-			$this->addRawChannel($method);
+			$this->addRawChannel($method, FALSE);
 		}
 	}
 

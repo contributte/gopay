@@ -90,7 +90,6 @@ class ReturnedPayment extends Payment
 	public function isPaid()
 	{
 		$this->getStatus();
-		dump($this->result);
 		return $this->result['sessionState'] === GopayHelper::PAID;
 	}
 

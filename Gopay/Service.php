@@ -394,7 +394,7 @@ class Service extends Nette\Object
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function pay(Payment $payment, $channel, $callback = NULL)
+	public function pay(Payment $payment, $channel, $callback)
 	{
 		if ($payment instanceof ReturnedPayment) {
 			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");

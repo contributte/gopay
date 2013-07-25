@@ -43,7 +43,7 @@ class Service extends Nette\Object
 	/** @const Mobilní telefon - Premium SMS */
 	const METHOD_PREMIUMSMS = 'eu_pr_sms';
 	/** @const Mobilní telefon - platební brána operátora */
-	const METHOD_MPLATBA = 'cz_mb';
+	const METHOD_MPLATBA = 'cz_mp';
 
 	/** @const Platební tlačítko - Platba KB - Mojeplatba - Internetové bankovnictví Komerční banky a.s. */
 	const METHOD_KOMERCNIB = 'cz_kb';

@@ -10,7 +10,7 @@
 
 namespace Markette\Gopay;
 
-use Nette\Config\CompilerExtension;
+use Nette\DI\CompilerExtension;
 use Nette\Reflection\ClassType;
 
 

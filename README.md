@@ -1,7 +1,7 @@
 # Markette :: Gopay
 
-- pro Nette Framework 2.0
-- a Gopay API 2.3
+- pro Nette Framework 2.0.*
+- a Gopay API 2.4
 
 ## Instalace
 

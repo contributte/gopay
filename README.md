@@ -53,7 +53,7 @@ tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
 ```php
 $gopay->bindPaymentButtons($form, array(
 	callback($this, 'submittedForm'),
-);
+));
 ```
 
 Předaný `callback` bude zavolán po úspěšném odeslání formuláře jedním

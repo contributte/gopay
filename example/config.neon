@@ -1,0 +1,18 @@
+gopay:
+	gopayId: ***
+	gopaySecretKey: ******
+	testMode: true
+	channels:
+		gopay: yes
+		card_ceskas: yes
+		card_unicreditb: yes
+		supercash: yes
+		premiumsms: yes
+		mplatba: yes
+		komercnib: yes
+		raiffeisenb: yes
+		mbank: yes
+		fiob: yes
+		unicreditb: yes
+		slovenskas: yes
+		transfer: yes

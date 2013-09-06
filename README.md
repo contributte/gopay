@@ -1,6 +1,6 @@
 # Markette :: Gopay
 
-- pro Nette Framework 2.0.*
+- pro Nette Framework ~2.1.0
 - a Gopay API 2.4
 
 ## Instalace
@@ -243,5 +243,6 @@ Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém pres
 
 Tahle mini-knihovnička, spíše snippet kódu nepokrývá velkou část Gopay API.
 Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište,
-klidně i pošlete jako pull-request. Stejně tak můžete v issues informovat
-o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).
+klidně i pošlete jako pull-request (do větve gopay-2.4). Stejně tak můžete
+v issues informovat o aktualizaci oficiálního API (které se zrovna před
+nedávném rozšířilo).

@@ -106,7 +106,7 @@ Tato nastavení můžeme provést i v konfiguračním souboru:
 gopay:
 	channels:
 		transfer: no # deny
-		gopay: yes # allow (in default, all Gopay channels are allowed)
+		gopay: yes # allow (in default, all Gopay channels are disallowed)
 		name: # add new one
 			title: My channel
 			image: /my-channel.png

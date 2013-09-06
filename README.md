@@ -1,7 +1,7 @@
 # Markette :: Gopay
 
-- pro Nette Framework 2.0
-- a Gopay API 2.3
+- pro Nette Framework 2.0.*
+- a Gopay API 2.4
 
 ## Instalace
 
@@ -53,7 +53,7 @@ tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
 ```php
 $gopay->bindPaymentButtons($form, array(
 	callback($this, 'submittedForm'),
-);
+));
 ```
 
 Předaný `callback` bude zavolán po úspěšném odeslání formuláře jedním
@@ -109,7 +109,7 @@ Tato nastavení můžeme provést i v konfiguračním souboru:
 gopay:
 	channels:
 		transfer: no # deny
-		gopay: yes # allow (in default, all Gopay channels are allowed)
+		gopay: yes # allow (in default, all Gopay channels are disallowed)
 		name: # add new one
 			title: My channel
 			image: /my-channel.png

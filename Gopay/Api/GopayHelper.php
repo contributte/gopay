@@ -2,6 +2,7 @@
 
 namespace Markette\Gopay\Api;
 
+use Exception;
 
 /**
  * Předpokladem je PHP verze 5.1.2 a vyšší s modulem mcrypt.

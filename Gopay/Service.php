@@ -43,7 +43,7 @@ class Service extends Nette\Object
 	/** @const Mobilní telefon - Premium SMS */
 	const METHOD_PREMIUMSMS = 'eu_pr_sms';
 	/** @const Mobilní telefon - platební brána operátora */
-	const METHOD_MPLATBA = 'cz_mb';
+	const METHOD_MPLATBA = 'cz_mp';
 
 	/** @const Platební tlačítko - Platba KB - Mojeplatba - Internetové bankovnictví Komerční banky a.s. */
 	const METHOD_KOMERCNIB = 'cz_kb';
@@ -394,7 +394,7 @@ class Service extends Nette\Object
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function pay(Payment $payment, $channel, $callback = NULL)
+	public function pay(Payment $payment, $channel, $callback)
 	{
 		if ($payment instanceof ReturnedPayment) {
 			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");

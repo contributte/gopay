@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "nette/nette": "dev-master"
+        "nette/nette": "~2.1"
     },
     "autoload": {
         "classmap": ["/"]

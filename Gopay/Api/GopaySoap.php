@@ -8,6 +8,11 @@ use \Exception;
 
 
 
+/**
+ * Predpokladem je PHP verze 5.1.2 a vyssi. Pro volání WS je pouzit modul soap.
+ *
+ * Obsahuje funkcionality pro vytvoreni platby a kontrolu stavu platby prostrednictvim WS.
+ */
 class GopaySoap
 {
 
@@ -16,20 +21,22 @@ class GopaySoap
 	 *
 	 * @param long $targetGoId - identifikator prijemce - GoId
 	 * @param string $productName - popis objednavky zobrazujici se na platebni brane
-	 * @param int     $totalPriceInCents - celkova cena objednavky v halerich
+	 * @param int 	 $totalPriceInCents - celkova cena objednavky v halerich
 	 * @param string $currency - mena, ve ktere platba probiha
 	 * @param string $orderNumber - identifikator objednavky
 	 * @param string $successURL - URL stranky, kam je zakaznik presmerovan po uspesnem zaplaceni
 	 * @param string $failedURL - URL stranky, kam je zakaznik presmerovan po zruseni platby / neuspesnem zaplaceni
 	 * @param string $recurrenceDateTo - datum, do nehoz budou provadeny opakovane platby. Jedna se textovy retezec ve formatu yyyy-MM-dd.
 	 * @param string $recurrenceCycle - zakladni casovou jednotku opakovani. Nabyva hodnot [DAY, WEEK, MONTH], pro opakování od CS a.s. lze pouzit pouze hodnotu DAY.
-	 * @param int     $recurrencePeriod - definuje periodu opakovane platby. Napr. při konfiguraci DAY,5 bude platba provadena kazdy 5. den
+	 * @param int 	 $recurrencePeriod - definuje periodu opakovane platby. Napr. při konfiguraci DAY,5 bude platba provadena kazdy 5. den
 	 * @param string $paymentChannels - pole platebnich kanalu, ktere se zobrazi na platebni brane
 	 * @param string $defaultPaymentChannel - platebni kanal, ktery se zobrazi (predvybere) na platebni brane po presmerovani
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci
+	 *
 	 * Informace o zakaznikovi
 	 * @param string $firstName   - Jmeno zakaznika
 	 * @param string $lastName    - Prijmeni
+	 *
 	 * Adresa
 	 * @param string $city        - Mesto
 	 * @param string $street      - Ulice
@@ -37,9 +44,11 @@ class GopaySoap
 	 * @param string $countryCode - Kod zeme. Validni kody jsou uvedeny ve tride CountryCode
 	 * @param string $email       - Email zakaznika
 	 * @param string $phoneNumber - Tel. cislo
+	 *
 	 * @param string $p1 - $p4 - volitelne parametry (max. 128 znaku).
 	 * @param string $lang - jazyk plat. brany
 	 * Parametry jsou vraceny v nezmenene podobe jako soucast volani dotazu na stav platby $paymentStatus (viz metoda isPaymentDone)
+	 *
 	 * @return paymentSessionId
 	 */
 	public static function createRecurrentPayment(
@@ -106,9 +115,9 @@ class GopaySoap
 	/**
 	 * Vytvoreni predautorizovane platby
 	 *
-	 * @param long     $targetGoId - identifikator prijemce - GoId
+	 * @param long 	 $targetGoId - identifikator prijemce - GoId
 	 * @param string $productName - popis objednavky zobrazujici se na platebni brane
-	 * @param int     $totalPriceInCents - celkova cena objednavky v halerich
+	 * @param int 	 $totalPriceInCents - celkova cena objednavky v halerich
 	 * @param string $currency - mena, ve ktere platba probiha
 	 * @param string $orderNumber - identifikator objednavky
 	 * @param string $successURL - URL stranky, kam je zakaznik presmerovan po uspesnem zaplaceni
@@ -116,9 +125,11 @@ class GopaySoap
 	 * @param string $paymentChannels - pole platebnich kanalu, ktere se zobrazi na platebni brane
 	 * @param string $defaultPaymentChannel - platebni kanal, ktery se zobrazi (predvybere) na platebni brane po presmerovani
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci
+	 *
 	 * Informace o zakaznikovi
 	 * @param string $firstName   - Jmeno zakaznika
 	 * @param string $lastName    - Prijmeni
+	 *
 	 * Adresa
 	 * @param string $city        - Mesto
 	 * @param string $street      - Ulice
@@ -126,9 +137,11 @@ class GopaySoap
 	 * @param string $countryCode - Kod zeme. Validni kody jsou uvedeny ve tride CountryCode
 	 * @param string $email       - Email zakaznika
 	 * @param string $phoneNumber - Tel. cislo
+	 *
 	 * @param string $p1 - $p4 - volitelne parametry (max. 128 znaku).
 	 * @param string $lang - jazyk plat. brany
 	 * Parametry jsou vraceny v nezmenene podobe jako soucast volani dotazu na stav platby $paymentStatus (viz metoda isPaymentDone)
+	 *
 	 * @return paymentSessionId
 	 */
 	public static function createPreAutorizedPayment(
@@ -192,9 +205,9 @@ class GopaySoap
 	/**
 	 * Vytvoreni standardni platby
 	 *
-	 * @param long     $targetGoId - identifikator prijemce - GoId
+	 * @param long 	 $targetGoId - identifikator prijemce - GoId
 	 * @param string $productName - popis objednavky zobrazujici se na platebni brane
-	 * @param int     $totalPriceInCents - celkova cena objednavky v halerich
+	 * @param int 	 $totalPriceInCents - celkova cena objednavky v halerich
 	 * @param string $currency - mena, ve ktere platba probiha
 	 * @param string $orderNumber - identifikator objednavky
 	 * @param string $successURL - URL stranky, kam je zakaznik presmerovan po uspesnem zaplaceni
@@ -202,9 +215,11 @@ class GopaySoap
 	 * @param string $paymentChannels - pole platebnich kanalu, ktere se zobrazi na platebni brane
 	 * @param string $defaultPaymentChannel - platebni kanal, ktery se zobrazi (predvybere) na platebni brane po presmerovani
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci
+	 *
 	 * Informace o zakaznikovi
 	 * @param string $firstName   - Jmeno zakaznika
 	 * @param string $lastName    - Prijmeni
+	 *
 	 * Adresa
 	 * @param string $city        - Mesto
 	 * @param string $street      - Ulice
@@ -212,9 +227,11 @@ class GopaySoap
 	 * @param string $countryCode - Kod zeme. Validni kody jsou uvedeny ve tride CountryCode
 	 * @param string $email       - Email zakaznika
 	 * @param string $phoneNumber - Tel. cislo
+	 *
 	 * @param string $p1 - $p4 - volitelne parametry (max. 128 znaku).
 	 * @param string $lang - jazyk plat. brany
 	 * Parametry jsou vraceny v nezmenene podobe jako soucast volani dotazu na stav platby $paymentStatus (viz metoda isPaymentDone)
+	 *
 	 * @return paymentSessionId
 	 */
 	public static function createPayment(
@@ -289,13 +306,15 @@ class GopaySoap
 	 * @param boolean $recurrentPayment - jedna-li se o opakovanou platbu
 	 * @param string $recurrenceDateTo - datum, do nehoz budou provadeny opakovane platby. Jedna se textovy retezec ve formatu yyyy-MM-dd.
 	 * @param string $recurrenceCycle - zakladni casovou jednotku opakovani. Nabyva hodnot [DAY, WEEK, MONTH], pro opakování od CS a.s. lze pouzit pouze hodnotu DAY.
-	 * @param int     $recurrencePeriod - definuje periodu opakovane platby. Napr. při konfiguraci DAY,5 bude platba provadena kazdy 5. den
+	 * @param int 	 $recurrencePeriod - definuje periodu opakovane platby. Napr. při konfiguraci DAY,5 bude platba provadena kazdy 5. den
 	 * @param string $paymentChannels - pole platebnich kanalu, ktere se zobrazi na platebni brane
 	 * @param string $defaultPaymentChannel - platebni kanal, ktery se zobrazi (predvybere) na platebni brane po presmerovani
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci
+	 *
 	 * Informace o zakaznikovi
 	 * @param string $firstName   - Jmeno zakaznika
 	 * @param string $lastName    - Prijmeni
+	 *
 	 * Adresa
 	 * @param string $city        - Mesto
 	 * @param string $street      - Ulice
@@ -303,9 +322,11 @@ class GopaySoap
 	 * @param string $countryCode - Kod zeme. Validni kody jsou uvedeny ve tride CountryCode
 	 * @param string $email       - Email zakaznika
 	 * @param string $phoneNumber - Tel. cislo
+	 *
 	 * @param string $p1 - $p4 - volitelne parametry (max. 128 znaku).
 	 * @param string $lang - jazyk plat. brany
 	 * Parametry jsou vraceny v nezmenene podobe jako soucast volani dotazu na stav platby $paymentStatus (viz metoda isPaymentDone)
+	 *
 	 * @return paymentSessionId
 	 */
 	public static function createBasePayment(
@@ -445,8 +466,9 @@ class GopaySoap
 	 * @param string $currency - mena, ve ktere platba probiha
 	 * @param string $productName - popis objednavky zobrazujici se na platebni brane
 	 * @param string $secureKey - kryptovaci klic pridelene GoPay
+	 *
 	 * @return $result
-	 *  result["sessionState"]      - stav platby
+	 *  result["sessionState"] 	  - stav platby
 	 *  result["sessionSubState"] - detailnejsi popis stavu platby
 	 */
 	public static function isPaymentDone(
@@ -511,6 +533,7 @@ class GopaySoap
 				&& $result["sessionState"] != GopayHelper::CANCELED
 				&& $result["sessionState"] != GopayHelper::TIMEOUTED
 				&& $result["sessionState"] != GopayHelper::REFUNDED
+				&& $result["sessionState"] != GopayHelper::PARTIALLY_REFUNDED
 			) {
 
 				throw new Exception("Bad Payment Session State: " . $result["sessionState"]);
@@ -571,11 +594,8 @@ class GopaySoap
 	 * @param float $targetGoId - identifikator prijemnce - GoId
 	 * @param string $secureKey - kryptovaci klic prideleny GoPay
 	 */
-	public function voidAuthorization(
-		$paymentSessionId,
-		$targetGoId,
-		$secureKey
-	) {
+	public function voidAuthorization($paymentSessionId, $targetGoId, $secureKey) {
+
 		try {
 
 			//inicializace WS
@@ -602,7 +622,12 @@ class GopaySoap
 			$paymentResult = $go_client->__call('voidAuthorization', array('sessionInfo' => $paymentSession));
 
 			if ($paymentResult->result == GopayHelper::CALL_RESULT_FAILED) {
-				throw new Exception("autorization not voided [" . $paymentResult->resultDescription . "]");
+				throw new Exception("voided autorization failed [" . $paymentResult->resultDescription . "]");
+
+			} else if ($paymentResult->result == GopayHelper::CALL_RESULT_ACCEPTED) {
+				//zruseni predautorizace platby bylo zarazeno ke zpracovani
+
+				throw new Exception(GopayHelper::CALL_RESULT_ACCEPTED);
 			}
 
 			//Overeni podpisu
@@ -666,17 +691,13 @@ class GopaySoap
 			}
 
 			if ($paymentResult->result == GopayHelper::CALL_RESULT_FAILED) {
-				throw new Exception("result failed [" . $paymentResult->resultDescription . "]");
+				throw new Exception("void recurrency failed [" . $paymentResult->resultDescription . "]");
 
 			} else if ($paymentResult->result == GopayHelper::CALL_RESULT_ACCEPTED) {
 				//zruseni opakovani platby bylo zarazeno ke zpracovani
-				//po urcite dobe je nutne dotazat zruseni se shodnymi parametry zda je jiz $paymentResult->result == GopayHelper::CALL_RESULT_FINISHED
 
-			} else {
-				if ($paymentResult->result == GopayHelper::CALL_RESULT_FINISHED) {
-					//opakovani platby bylo zruseno
-					//oznacte platbu
-				}
+				throw new Exception(GopayHelper::CALL_RESULT_ACCEPTED);
+
 			}
 
 		} catch (SoapFault $f) {
@@ -692,7 +713,7 @@ class GopaySoap
 	 * Založení opakovane platby
 	 *
 	 * @param float  $parentPaymentSessionId - identifikator rodicovske platby
-	 * @param int  $recurrentPaymentOrderNumber - identifikator objednavky
+	 * @param int	 $recurrentPaymentOrderNumber - identifikator objednavky
 	 * @param int    $recurrentPaymentTotalPriceInCents - castka
 	 * @param string $recurrentPaymentCurrency - mena (CZK)
 	 * @param string $recurrentPaymentProductName - popis objednavky
@@ -773,11 +794,7 @@ class GopaySoap
 	 * @param float $targetGoId - identifikator prijemnce - GoId
 	 * @param string $secureKey - kryptovaci klic prideleny GoPay
 	 */
-	public function capturePayment(
-		$paymentSessionId,
-		$targetGoId,
-		$secureKey)
-	{
+	public function capturePayment($paymentSessionId, $targetGoId, $secureKey) {
 		try {
 
 			//inicializace WS
@@ -807,6 +824,11 @@ class GopaySoap
 			if ($paymentResult->result == GopayHelper::CALL_RESULT_FAILED) {
 				throw new Exception("payment not captured [" . $paymentResult->resultDescription . "]");
 
+			} else if ($paymentResult->result == GopayHelper::CALL_RESULT_ACCEPTED) {
+				// dokonceni platby bylo zarazeno ke zpracovani
+
+				throw new Exception(GopayHelper::CALL_RESULT_ACCEPTED);
+
 			}
 
 			return $paymentResult->paymentSessionId;
@@ -819,4 +841,118 @@ class GopaySoap
 		}
 	}
 
+	/**
+	 * Vraceni platby
+	 *
+	 * @param float $paymentSessionId - identifikator platby
+	 * @param float $targetGoId - identifikator prijemnce - GoId
+	 * @param string $secureKey - kryptovaci klic prideleny GoPay
+	 */
+	public function refundPayment($paymentSessionId,
+						  		$targetGoId,
+								$secureKey) {
+		try {
+
+			//inicializace WS
+			ini_set("soap.wsdl_cache_enabled","0");
+	  		$go_client = new SoapClient(GopayConfig::ws(), array());
+
+			$sessionEncryptedSignature = GopayHelper::encrypt(
+											GopayHelper::hash(
+												GopayHelper::concatPaymentSession((float) $targetGoId,
+																				(float) $paymentSessionId,
+																				$secureKey)),
+																			$secureKey);
+
+			$paymentSession =  array(
+		               "targetGoId" => (float) $targetGoId,
+		               "paymentSessionId" => (float) $paymentSessionId,
+		               "encryptedSignature" => $sessionEncryptedSignature);
+
+		 	$paymentResult = $go_client->__call('refundPayment', array('sessionInfo'=>$paymentSession));
+
+			if ($paymentResult->result == GopayHelper::CALL_RESULT_FAILED) {
+
+				throw new Exception("payment not refunded [" . $paymentResult->resultDescription . "]");
+
+			} else if ($paymentResult->result == GopayHelper::CALL_RESULT_ACCEPTED) {
+				//vraceni platby bylo zarazeno ke zpracovani
+
+				throw new Exception(GopayHelper::CALL_RESULT_ACCEPTED);
+
+			}
+
+	 		return $paymentResult->paymentSessionId;
+
+		} catch (SoapFault $f) {
+			/*
+			 * Chyba v komunikaci s GoPay serverem
+			 */
+			throw new Exception("SOAP error");
+		}
+	}
+
+	/**
+	* Castecne vraceni platby
+	*
+	* @param float $paymentSessionId - identifikator platby
+	* @param float $amount - castka na vraceni
+	* @param String $currency - mena
+	* @param String $description - popis vraceni platby
+	* @param float $targetGoId - identifikator prijemnce - GoId
+	* @param string $secureKey - kryptovaci klic prideleny GoPay
+	*/
+	public function refundPaymentPartially($paymentSessionId,
+											$amount,
+											$currency,
+											$description,
+				  							$targetGoId,
+											$secureKey) {
+		try {
+
+			//inicializace WS
+			ini_set("soap.wsdl_cache_enabled","0");
+	  		$go_client = new SoapClient(GopayConfig::ws(), array());
+
+			$sessionEncryptedSignature = GopayHelper::encrypt(
+											GopayHelper::hash(
+												GopayHelper::concatRefundRequest((float) $targetGoId,
+																				(float) $paymentSessionId,
+																				$amount,
+																				$currency,
+																				$description,
+																				$secureKey)),
+																			$secureKey);
+
+			$refundRequest =  array(
+		               "targetGoId" => (float) $targetGoId,
+		               "paymentSessionId" => (float) $paymentSessionId,
+		               "amount" => $amount,
+		               "currency" => $currency,
+		               "description" => $description,
+		               "encryptedSignature" => $sessionEncryptedSignature);
+
+		 	$paymentResult = $go_client->__call("partiallyRefundPayment", array("refundRequest"=>$refundRequest));
+
+			if ($paymentResult->result == GopayHelper::CALL_RESULT_FAILED) {
+				throw new Exception("payment not refunded [" . $paymentResult->resultDescription . "]");
+
+			} else if ($paymentResult->result == GopayHelper::CALL_RESULT_ACCEPTED) {
+				//vraceni platby bylo zarazeno ke zpracovani
+
+				throw new Exception(GopayHelper::CALL_RESULT_ACCEPTED);
+
+			}
+
+	 		return $paymentResult->paymentSessionId;
+
+		} catch (SoapFault $f) {
+			/*
+			 * Chyba v komunikaci s GoPay serverem
+			 */
+			throw new Exception("SOAP error");
+		}
+	}
+
 }
+?>

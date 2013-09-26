@@ -4,6 +4,9 @@ namespace Markette\Gopay\Api;
 
 use Exception;
 
+use Exception;
+
+
 /**
  * Předpokladem je PHP verze 5.1.2 a vyšší s modulem mcrypt.
  * Pomocna trida pro platbu v systemu GoPay
@@ -24,6 +27,7 @@ class GopayHelper
 	const CANCELED = "CANCELED";
 	const TIMEOUTED = "TIMEOUTED";
 	const REFUNDED = "REFUNDED";
+	const PARTIALLY_REFUNDED = "PARTIALLY_REFUNDED";
 	const FAILED = "FAILED";
 	const CALL_COMPLETED = "CALL_COMPLETED";
 	const CALL_FAILED = "CALL_FAILED";
@@ -80,42 +84,31 @@ class GopayHelper
 		if ($sessionState == GopayHelper::PAID) {
 			$result = GopayHelper::PAID_MESSAGE;
 
-		} else {
-			if ($sessionState == GopayHelper::CANCELED
-				|| $sessionState == GopayHelper::TIMEOUTED
-				|| $sessionState == GopayHelper::CREATED
-			) {
-				$result = GopayHelper::CANCELED_MESSAGE;
+		} else if ($sessionState == GopayHelper::CANCELED
+			|| $sessionState == GopayHelper::TIMEOUTED
+			|| $sessionState == GopayHelper::CREATED) {
+			$result = GopayHelper::CANCELED_MESSAGE;
+
+		} else if ($sessionState == GopayHelper::AUTHORIZED) {
+			$result = GopayHelper::AUTHORIZED_MESSAGE;
+
+		} else if ($sessionState == GopayHelper::REFUNDED) {
+			$result = GopayHelper::REFUNDED_MESSAGE;
+
+		} else if ($sessionState == GopayHelper::PAYMENT_METHOD_CHOSEN) {
+			if (! empty($sessionSubState) && $sessionSubState == 101) {
+				$result = GopayHelper::PAYMENT_METHOD_CHOSEN_ONLINE_MESSAGE;
+
+			} else if (! empty($sessionSubState) && $sessionSubState == 102) {
+				$result = GopayHelper::PAYMENT_METHOD_CHOSEN_OFFLINE_MESSAGE;
 
 			} else {
-				if ($sessionState == GopayHelper::AUTHORIZED) {
-					$result = GopayHelper::AUTHORIZED_MESSAGE;
+				$result = GopayHelper::PAYMENT_METHOD_CHOSEN_MESSAGE;
 
-				} else {
-					if ($sessionState == GopayHelper::REFUNDED) {
-						$result = GopayHelper::REFUNDED_MESSAGE;
-
-					} else {
-						if ($sessionState == GopayHelper::PAYMENT_METHOD_CHOSEN) {
-							if (!empty($sessionSubState) && $sessionSubState == 101) {
-								$result = GopayHelper::PAYMENT_METHOD_CHOSEN_ONLINE_MESSAGE;
-
-							} else {
-								if (!empty($sessionSubState) && $sessionSubState == 102) {
-									$result = GopayHelper::PAYMENT_METHOD_CHOSEN_OFFLINE_MESSAGE;
-
-								} else {
-									$result = GopayHelper::PAYMENT_METHOD_CHOSEN_MESSAGE;
-
-								}
-							}
-
-						} else {
-							$result = GopayHelper::FAILED_MESSAGE;
-						}
-					}
-				}
 			}
+
+		} else {
+			$result = GopayHelper::FAILED_MESSAGE;
 		}
 
 		return $result;
@@ -134,11 +127,11 @@ class GopayHelper
 	 * @param int $preAuthorization - jedna-li se o predautorizovanou platbu true => 1, false => 0, null=>""
 	 * @param int $recurrentPayment - jedna-li se o opakovanou platbu true => 1, false => 0, null=>""
 	 * @param date $recurrenceDateTo - do kdy se ma opakovana platba provadet
-	 * @param string $recurrenceCycle - frekvence opakovresultane platby - mesic/tyden/den
-	 * @param int $recurrencePeriod - pocet plateb v cyklu $recurrenceCycle - kolikrat v mesici/... se opakovana platba provede
+	 * @param string $recurrenceCycle - frekvence opakovane platby - mesic/tyden/den
+	 * @param int $recurrencePeriod - pocet jednotek opakovani ($recurrencePeriod=3 ~ opakování jednou za tři jednotky (mesic/tyden/den))
 	 * @param string $paymentChannels - platebni kanaly
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci, urceny k podepisovani komunikace
-	 * @return retezec pro podpis - platebni kanaly, ktere se zobrazi na plat. brane
+	 * @return retezec pro podpis
 	 */
 	public static function concatPaymentCommand(
 		$goId,
@@ -160,17 +153,11 @@ class GopayHelper
 		$preAuthorization = GopayHelper::castBooleanForWS($preAuthorization);
 		$recurrentPayment = GopayHelper::castBooleanForWS($recurrentPayment);
 
-		return $goId . "|" . trim($productName) . "|" . $totalPriceInCents . "|" . trim($currency) . "|" . trim(
-			$orderNumber
-		) . "|" . trim($failedURL) . "|" . trim(
-			$successURL
-		) . "|" . $preAuthorization . "|" . $recurrentPayment . "|" . trim($recurrenceDateTo) . "|" . trim(
-			$recurrenceCycle
-		) . "|" . trim($recurrencePeriod) . "|" . trim($paymentChannels) . "|" . $secureKey;
+		return $goId . "|" . trim($productName) . "|" . $totalPriceInCents . "|" . trim($currency) . "|" . trim($orderNumber) . "|" . trim($failedURL) . "|" . trim($successURL) . "|" . $preAuthorization . "|" . $recurrentPayment . "|" . trim($recurrenceDateTo)."|".trim($recurrenceCycle) . "|" . trim($recurrencePeriod) . "|" . trim($paymentChannels) . "|" . $secureKey;
 	}
 
 	/**
-	 * Sestaveni retezce pro podpis vysledku stav platby.
+	 * Sestaveni retezce pro podpis vysledku stavu platby.
 	 *
 	 * @param float $goId - identifikator prijemce prideleny GoPay
 	 * @param string $productName - popis objednavky zobrazujici se na platebni brane
@@ -206,9 +193,7 @@ class GopayHelper
 		$preAuthorization = GopayHelper::castBooleanForWS($preAuthorization);
 		$recurrentPayment = GopayHelper::castBooleanForWS($recurrentPayment);
 
-		return $goId . "|" . trim($productName) . "|" . $totalPriceInCents . "|" . $currency . "|" . trim(
-			$orderNumber
-		) . "|" . $recurrentPayment . "|" . $parentPaymentSessionId . "|" . $preAuthorization . "|" . $result . "|" . $sessionState . "|" . $sessionSubState . "|" . $paymentChannel . "|" . $secureKey;
+		return $goId . "|" . trim($productName) . "|" . $totalPriceInCents . "|" . $currency . "|" . trim($orderNumber) . "|" . $recurrentPayment . "|" . $parentPaymentSessionId . "|" . $preAuthorization . "|" . $result . "|" . $sessionState . "|" . $sessionSubState . "|" . $paymentChannel . "|" . $secureKey;
 	}
 
 
@@ -221,11 +206,7 @@ class GopayHelper
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci, urceny k podepisovani komunikace
 	 * @return retezec pro podpis
 	 */
-	public static function concatPaymentSession(
-		$goId,
-		$paymentSessionId,
-		$secureKey)
-	{
+	public static function concatPaymentSession($goId, $paymentSessionId, $secureKey) {
 
 		return $goId . "|" . $paymentSessionId . "|" . $secureKey;
 	}
@@ -252,9 +233,7 @@ class GopayHelper
 			$parentPaymentSessionId = "";
 		}
 
-		return $goId . "|" . $paymentSessionId . "|" . $parentPaymentSessionId . "|" . trim(
-			$orderNumber
-		) . "|" . $secureKey;
+		return $goId . "|" . $paymentSessionId . "|" . $parentPaymentSessionId . "|" . trim($orderNumber) . "|" . $secureKey;
 	}
 
 	/**
@@ -265,11 +244,7 @@ class GopayHelper
 	 * @param string $secureKey - kryptovaci klic prideleny uzivateli, urceny k podepisovani komunikace
 	 * @return retezec pro podpis
 	 */
-	public static function concatPaymentResult(
-		$paymentSessionId,
-		$result,
-		$secureKey)
-	{
+	public static function concatPaymentResult($paymentSessionId, $result, $secureKey) {
 
 		return $paymentSessionId . "|" . trim($result) . "|" . $secureKey;
 	}
@@ -281,6 +256,7 @@ class GopayHelper
 	 * @param date $dateFrom - datum (vcetne), od ktereho se generuje vypis
 	 * @param date $dateTo - datum (vcetne), do ktereho se generuje vypis
 	 * @param float $targetGoId - identifikator uzivatele prideleny GoPay
+	 * @param string $currency - mena uctu, ze ktereho se vypis pohybu ziskava
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci, urceny k podepisovani komunikace
 	 * @return retezec pro podpis
 	 */
@@ -288,10 +264,11 @@ class GopayHelper
 		$dateFrom,
 		$dateTo,
 		$targetGoId,
+		$currency,
 		$secureKey)
 	{
 
-		return $dateFrom . "|" . $dateTo . "|" . $targetGoId . "|" . $secureKey;
+		return $dateFrom . "|" . $dateTo . "|" . $targetGoId . "|" . $currency . "|" . $secureKey;
 	}
 
 	/**
@@ -311,13 +288,30 @@ class GopayHelper
 		$targetGoId,
 		$secureKey)
 	{
-		$concat = $parentPaymentSessionId . "|";
-		$concat .= $targetGoId . "|";
-		$concat .= $orderNumber . "|";
-		$concat .= $totalPriceInCents . "|";
-		$concat .= $secureKey;
+		return $parentPaymentSessionId . "|" . $targetGoId . "|" . $orderNumber . "|" . $totalPriceInCents . "|" . $secureKey;
+	}
 
-		return $concat;
+	/**
+	 * Sestaveni retezce pro podpis sessionInfo.
+	 *
+	 * @param float $targetGoId - identifikator prijemce prideleny GoPay
+	 * @param float $paymentSessionId - identifikator platby na GoPay
+	 * @param string $amount - castka na vraceni
+	 * @param string $currency - identifikator meny platby
+	 * @param string $description - popis refundace
+	 * @param string $secureKey - kryptovaci klic prideleny prijemci, urceny k podepisovani komunikace
+	 * @return retezec pro podpis
+	 */
+	public static function concatRefundRequest(
+		$targetGoId,
+		$paymentSessionId,
+		$amount,
+		$currency,
+		$description,
+		$secureKey)
+	{
+
+		return $targetGoId . "|" . $paymentSessionId . "|" . $amount . "|" . $currency . "|" . $description . "|" . $secureKey;
 	}
 
 	/**
@@ -357,7 +351,6 @@ class GopayHelper
 		mcrypt_module_close($td);
 
 		return Trim($decrypted_data);
-
 	}
 
 	/**
@@ -387,12 +380,14 @@ class GopayHelper
 	public static function convert($hexString)
 	{
 
-		$hexLenght = strlen($hexString);
-		// only hex numbers is allowed
-		if ($hexLenght % 2 != 0 || preg_match("/[^\da-fA-F]/", $hexString)) return FALSE;
+		$hexLength = strlen($hexString);
+
+		// vstup musi byt HEX
+		if ($hexLength % 2 != 0 || preg_match("/[^0-9a-fA-F]/", $hexString)) return FALSE;
+
 		$binString = "";
-		for ($x = 1; $x <= $hexLenght / 2; $x++) {
-			$binString .= chr(hexdec(substr($hexString, 2 * $x - 2, 2)));
+		for ($x = 0; $x < $hexLength/2; $x++) {
+			$binString .= chr(hexdec(substr($hexString, 2 * $x, 2)));
 
 		}
 
@@ -410,6 +405,7 @@ class GopayHelper
 	 * @param string $currency - identifikator meny platby
 	 * @param string $productName - nazev objednavky / zbozi
 	 * @param string $secureKey - kryptovaci klic prideleny prijemci, urceny k podepisovani komunikace
+	 *
 	 * @throw Exception
 	 */
 	public static function checkPaymentStatus(
@@ -489,6 +485,7 @@ class GopayHelper
 	 *
 	 * @param float $returnedGoId - goId vracene v redirectu
 	 * @param float $returnedPaymentSessionId - paymentSessionId vracene v redirectu
+	 * @param float $returnedParentPaymentSessionId - id puvodni platby pri opakovane platbe
 	 * @param string $returnedOrderNumber - identifikace objednavky vracena v redirectu - identifikator platby na eshopu
 	 * @param string $returnedEncryptedSignature - kontrolni podpis vraceny v redirectu
 	 * @param float $targetGoId - identifikace prijemce - GoId pridelene GoPay
@@ -531,6 +528,17 @@ class GopayHelper
 		}
 	}
 
+	/**
+	 * Kontrola parametru predavanych ve zpetnem volani po potvrzeni/zruseni platby - verifikace podpisu.
+	 *
+	 * @param float $returnedPaymentSessionId - paymentSessionId vracene v redirectu
+	 * @param string $returnedEncryptedSignature - kontrolni podpis vraceny v redirectu
+	 * @param float $paymentResult - vysledek volani
+	 * @param float $paymentSessionId - identifikator platby na GoPay
+	 * @param string $secureKey - kryptovaci klic prideleny eshopu / uzivateli, urceny k podepisovani komunikace
+	 *
+	 * @throw Exception
+	 */
 	public static function checkPaymentResult(
 		$returnedPaymentSessionId,
 		$returnedEncryptedSignature,
@@ -574,9 +582,11 @@ class GopayHelper
 	 * @param date $recurrenceDateTo - do kdy se ma opakovana platba provadet
 	 * @param string $recurrenceCycle - frekvence opakovresultane platby - mesic/tyden/den
 	 * @param int $recurrencePeriod - pocet plateb v cyklu $recurrenceCycle - kolikrat v mesici/... se opakovana platba provede
+	 *
 	 * Informace o zakaznikovi
 	 * @param string $firstName   - Jmeno zakaznika
 	 * @param string $lastName    - Prijmeni
+	 *
 	 * Adresa
 	 * @param string $city        - Mesto
 	 * @param string $street      - Ulice
@@ -585,6 +595,7 @@ class GopayHelper
 	 * @param string $email       - Email zakaznika
 	 * @param string $phoneNumber - Tel. cislo
 	 * @param string $p1 - $p4 - volitelne parametry, ketre budou po navratu z platebni brany predany e-shopu
+	 * @param string $lang - jazyk platebni brany
 	 * @return HTML kod platebniho formulare
 	 */
 	public static function createPaymentForm(
@@ -614,8 +625,9 @@ class GopayHelper
 		$p1,
 		$p2,
 		$p3,
-		$p4
-	) {
+		$p4,
+		$lang)
+	{
 
 		$paymentChannelsString = (!empty($paymentChannels)) ? join($paymentChannels, ",") : "";
 
@@ -648,21 +660,13 @@ class GopayHelper
 		$ouput .= '<input type="hidden" name="paymentCommand.totalPrice" value="' . $totalPrice . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.currency" value="' . trim($currency) . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.orderNumber" value="' . trim($orderNumber) . '"/>' . "\n";
-		$ouput .= '<input type="hidden" name="paymentCommand.successURL" value="' . trim($successURL) . '" />' . "\n";
-		$ouput .= '<input type="hidden" name="paymentCommand.failedURL" value="' . trim($failedURL) . '" />' . "\n";
-		$ouput .= '<input type="hidden" name="paymentCommand.paymentChannels" value="' . trim(
-			$paymentChannelsString
-		) . '" />' . "\n";
-		$ouput .= '<input type="hidden" name="paymentCommand.defaultPaymentChannel" value="' . trim(
-			$defaultPaymentChannel
-		) . '" />' . "\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.successURL" value="' . trim($successURL) . '" />' ."\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.failedURL" value="' . trim($failedURL) . '" />' ."\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.paymentChannels" value="' . trim($paymentChannelsString) . '" />' ."\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.defaultPaymentChannel" value="' . trim($defaultPaymentChannel) . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.encryptedSignature" value="' . $encryptedSignature . '" />' . "\n";
-		$ouput .= '<input type="hidden" name="paymentCommand.preAuthorization" value="' . GopayHelper::castBoolean2String(
-			$preAuthorization
-		) . '" />' . "\n";
-		$ouput .= '<input type="hidden" name="paymentCommand.recurrentPayment" value="' . GopayHelper::castBoolean2String(
-			$recurrentPayment
-		) . '" />' . "\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.preAuthorization" value="' . GopayHelper::castBoolean2String($preAuthorization) . '" />' . "\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.recurrentPayment" value="' . GopayHelper::castBoolean2String($recurrentPayment) . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.recurrenceDateTo" value="' . $recurrenceDateTo . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.recurrenceCycle" value="' . $recurrenceCycle . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.recurrencePeriod" value="' . $recurrencePeriod . '" />' . "\n";
@@ -678,6 +682,7 @@ class GopayHelper
 		$ouput .= '<input type="hidden" name="paymentCommand.p2" value="' . $p2 . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.p3" value="' . $p3 . '" />' . "\n";
 		$ouput .= '<input type="hidden" name="paymentCommand.p4" value="' . $p4 . '" />' . "\n";
+		$ouput .= '<input type="hidden" name="paymentCommand.lang" value="' . $lang . '" />' . "\n";
 		$ouput .= '<input type="submit" name="buy" value="Zaplatit" class="button">' . "\n";
 		$ouput .= "</form>\n";
 
@@ -713,6 +718,7 @@ class GopayHelper
 	 * @param string $email       - Email zakaznika
 	 * @param string $phoneNumber - Tel. cislo
 	 * @param string $p1 - $p4 - volitelne parametry, ketre budou po navratu z platebni brany predany e-shopu
+	 * @param string $lang - jazyk platebni brany
 	 * @return HTML kod platebniho tlacitka
 	 */
 	public static function createPaymentHref(
@@ -742,8 +748,9 @@ class GopayHelper
 		$p1,
 		$p2,
 		$p3,
-		$p4
-	) {
+		$p4,
+		$lang)
+	{
 
 		$paymentChannelsString = (!empty($paymentChannels)) ? join($paymentChannels, ",") : "";
 
@@ -797,6 +804,7 @@ class GopayHelper
 		$params .= "&paymentCommand.p2=" . urlencode($p2);
 		$params .= "&paymentCommand.p3=" . urlencode($p3);
 		$params .= "&paymentCommand.p4=" . urlencode($p4);
+		$params .= "&paymentCommand.lang=" . $lang;
 
 		$ouput = "";
 		$ouput .= "<a target='_blank' href='" . GopayConfig::baseIntegrationURL() . "?" . $params . "'>";
@@ -823,13 +831,11 @@ class GopayHelper
 		if ($boolean === FALSE) {
 			return 0;
 
-		} else {
-			if ($boolean === TRUE) {
-				return 1;
+		} else 	if ($boolean === TRUE) {
+			return 1;
 
-			} else {
-				return "";
-			}
+		} else {
+			return "";
 		}
 	}
 
@@ -837,6 +843,7 @@ class GopayHelper
 	 * Pretypovani datoveho typu String na boolean
 	 *
 	 * @param String $input
+	 *
 	 * @return boolean (TRUE|FALSE) v pripade spravne nastaveneho $input, jinak puvodni $input
 	 */
 	public static function castString2Boolean($input)
@@ -846,11 +853,9 @@ class GopayHelper
 			if (strtolower($input) == "true") {
 				return TRUE;
 
-			} else {
-				if (strtolower($input) == "false") {
-					return FALSE;
+			} else if (strtolower($input) == "false") {
+				return FALSE;
 
-				}
 			}
 		}
 

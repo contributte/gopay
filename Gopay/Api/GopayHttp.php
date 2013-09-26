@@ -1,32 +1,39 @@
-﻿<?php
+<?php
 
 namespace Markette\Gopay\Api;
 
 
+/**
+ * Predpokladem je PHP verze 5.1.2 a vyssi.
+ *
+ * Obsahuje funkcionality pro stazeni vypisu pohybu na uctu.
+ */
 class GopayHTTP
 {
 
 	/**
 	 * Stazeni vypisu pohybu na uctu
 	 *
+	 * Ve vypisu jsou pohyby vytvorene mezi datem dateFrom do data dateTo, vcetne techto datumu
 	 * @param String $dateFrom - datum, od ktereho se vypis generuje
 	 * @param String $dateTo - datum, do ktereho se vypis generuje
-	 * Ve vypisu jsou pohyby vytvorene mezi datem dateFrom do data dateTo, vcetne techto dat
 	 * @param float $targetGoId - identifikator prijemnce - GoId
+	 * @param String $currency - mena uctu, ze ktereho se vypis pohybu ziskava
+	 * @param string $contentType - format vypisu - podporovane typt - TYPE_CSV, TYPE_XLS, TYPE_ABO, implicitni je hodnota TYPE_CSV
 	 * @param string $secureKey - kryptovaci klic prideleny GoPay
 	 */
 	public function getAccountStatement(
 		$dateFrom,
 		$dateTo,
 		$targetGoId,
-		$secureKey
-	) {
-
-		$contents = "";
+		$currency,
+		$secureKey,
+		$contentType)
+	{
 
 		$encryptedSignature = GopayHelper::encrypt(
 			GopayHelper::hash(
-				GopayHelper::concatStatementRequest($dateFrom, $dateTo, $targetGoId, $secureKey)
+				GopayHelper::concatStatementRequest($dateFrom, $dateTo, $targetGoId, $currency, $secureKey)
 			),
 			$secureKey
 		);
@@ -35,10 +42,13 @@ class GopayHTTP
 		$filename .= "?statementRequest.dateFrom=" . $dateFrom;
 		$filename .= "&statementRequest.dateTo=" . $dateTo;
 		$filename .= "&statementRequest.targetGoId=" . $targetGoId;
+		$filename .= "&statementRequest.currency=" . $currency;
+		$filename .= "&statementRequest.contentType=" . $contentType;
 		$filename .= "&statementRequest.encryptedSignature=" . $encryptedSignature;
 
 		$handle = fopen($filename, "r");
 
+		$contents = "";
 		if (!empty($handle)) {
 			while (!feof($handle)) {
 				$contents .= fread($handle, 8192);

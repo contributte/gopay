@@ -48,7 +48,7 @@ class Extension extends CompilerExtension
 					$channel = $constants->getConstant($constChannel);
 				}
 				if (is_bool($value)) {
-					$service->addSetup($value ? 'allowChannel' : 'denyChannel', $channel);
+					$service->addSetup($value ? 'allowChannel' : 'denyChannel', [$channel]);
 				} elseif (is_array($value)) {
 					$title = $value['title'];
 					unset($value['title']);

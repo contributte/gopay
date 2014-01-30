@@ -1,6 +1,6 @@
 # Markette :: Gopay
 
-- pro Nette Framework 2.1 (master)
+- pro Nette Framework 2.1
 - a Gopay API 2.4
 
 ## Instalace
@@ -13,12 +13,11 @@ $ composer require Markette/Gopay
 Pokud nepoužijete Composer, zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte
 RobotLoader, není nic víc potřeba.
 
-Samotnou knihovnu lze nejsnáze zaregistrovat pomocí rozšíření v `bootstrap.php`:
+Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
 
-```php
-$configurator->onCompile[] = function ($configurator, $compiler) {
-	$compiler->addExtension('gopay', new Markette\Gopay\Extension);
-};
+```neon
+extensions:
+	gopay: Markette\Gopay\Extension
 ```
 
 Poté můžeme v konfiguračním souboru nastavit parametry:
@@ -51,9 +50,7 @@ Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře m
 tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
 
 ```php
-$gopay->bindPaymentButtons($form, array(
-	callback($this, 'submittedForm'),
-));
+$gopay->bindPaymentButtons($form, array($this->submittedForm));
 ```
 
 Předaný `callback` bude zavolán po úspěšném odeslání formuláře jedním
@@ -91,7 +88,7 @@ Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:
 
 ```php
 $gopay->addChannel('name', 'My channel', array(
-	'image' => '/my-channel.png', // absolutní cestka o brázku
+	'image' => '/my-channel.png', // absolutní cesta k obrázku
 ));
 ```
 

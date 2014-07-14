@@ -456,19 +456,41 @@ class Service extends Nette\Object
 	public function bindPaymentButtons(Nette\Forms\Container $form, $callbacks)
 	{
 		foreach ($this->allowedChannels as $name => $channel) {
-			if (!isset($channel->image)) {
-				$button = $form['gopayChannel' . $name] = new PaymentButton($name, $channel->title);
-			} else {
-				$button = $form['gopayChannel' . $name] = new ImagePaymentButton($name, $channel->image, $channel->title);
-			}
-
-			if (!is_array($callbacks)) $callbacks = array($callbacks);
-			foreach ($callbacks as $callback) {
-				$button->onClick[] = $callback;
-			}
-
-			$this->allowedChannels[$name]->control = 'gopayChannel' . $name;
+			$this->bindPaymentButton($channel, $form, $callbacks);
 		}
+	}
+
+
+
+	/**
+	 * Binds form to Gopay
+	 * - adds one payment button for given channel
+	 *
+	 * @param  string|stdClass
+	 * @param  Form
+	 * @param  array|callable
+	 */
+	public function bindPaymentButton($channel, Nette\Forms\Container $form, $callbacks = array())
+	{
+		if (!$channel instanceof \stdClass) {
+			if (!isset($this->allowedChannels[$channel])) {
+				throw new \InvalidArgumentException("Channel '$channel' is not allowed.");
+			}
+			$channel = $this->allowedChannels[$channel];
+		}
+
+		if (!isset($channel->image)) {
+			$button = $form['gopayChannel' . $name] = new PaymentButton($name, $channel->title);
+		} else {
+			$button = $form['gopayChannel' . $name] = new ImagePaymentButton($name, $channel->image, $channel->title);
+		}
+
+		if (!is_array($callbacks)) $callbacks = array($callbacks);
+		foreach ($callbacks as $callback) {
+			$button->onClick[] = $callback;
+		}
+
+		return $button;
 	}
 
 
@@ -514,6 +536,23 @@ class Service extends Nette\Object
 			),
 			$this->gopaySecretKey
 		);
+	}
+
+
+
+	/**
+	 * Registers 'addPaymentButtons' & 'addPaymentButton' methods to form
+	 *
+	 * @param  Service
+	 */
+	public static function registerAddPaymentButtons(Service $service)
+	{
+		Nette\Forms\Container::registerMethod('addPaymentButtons', function ($container, $callbacks) use ($service) {
+			$service->bindPaymentButtons($container, $callbacks);
+		});
+		Nette\Forms\Container::registerMethod('addPaymentButton', function ($container, $channel) use ($service) {
+			return $service->bindPaymentButton($channel, $container);
+		});
 	}
 
 }

@@ -64,7 +64,7 @@ class Extension extends CompilerExtension
 
 
 
-	public function afterCompile(ClassType $class)
+	public function afterCompile(\Nette\PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
 		$initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtons($this->getService(?));', array(

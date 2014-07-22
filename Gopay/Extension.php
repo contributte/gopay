@@ -11,6 +11,7 @@
 namespace Markette\Gopay;
 
 use Nette\DI\CompilerExtension;
+use Nette\PhpGenerator;
 use Nette\Reflection\ClassType;
 
 
@@ -64,7 +65,7 @@ class Extension extends CompilerExtension
 
 
 
-	public function afterCompile(ClassType $class)
+	public function afterCompile(PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
 		$initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtons($this->getService(?));', array(

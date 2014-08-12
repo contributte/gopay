@@ -16,8 +16,6 @@ use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Api\PaymentMethodElement;
 use Nette;
 use Nette\Application\Responses\RedirectResponse;
-use Nette\DI\Container;
-
 
 
 /**
@@ -437,11 +435,7 @@ class Service extends Nette\Object
 			. "&sessionInfo.paymentSessionId=" . $paymentSessionId
 			. "&sessionInfo.encryptedSignature=" . $this->createSignature($paymentSessionId);
 
-		$callback = new Nette\Callback($callback);
-		if ($callback->isCallable()) {
-			$callback->invokeArgs(array($paymentSessionId));
-		}
-
+		Nette\Utils\Callback::invokeArgs($callback, array($paymentSessionId));
 		return new RedirectResponse($url);
 	}
 

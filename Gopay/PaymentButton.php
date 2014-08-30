@@ -21,7 +21,7 @@ use Nette\Forms\Controls\SubmitButton;
  *
  * @property-read $channel
  */
-class PaymentButton extends SubmitButton
+class PaymentButton extends SubmitButton implements IPaymentButton
 {
 
 	/** @var string */

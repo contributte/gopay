@@ -315,6 +315,7 @@ class Service extends Nette\Object
 		}
 
 		$this->{$allowChannel ? 'allowedChannels' : 'deniedChannels'}[$channel] = (object) array_merge($params, array(
+			'name' => $channel,
 			'title' => $title,
 		));
 
@@ -449,7 +450,7 @@ class Service extends Nette\Object
 	 */
 	public function bindPaymentButtons(Nette\Forms\Container $form, $callbacks)
 	{
-		foreach ($this->allowedChannels as $name => $channel) {
+		foreach ($this->allowedChannels as $channel) {
 			$this->bindPaymentButton($channel, $form, $callbacks);
 		}
 	}
@@ -474,9 +475,9 @@ class Service extends Nette\Object
 		}
 
 		if (!isset($channel->image)) {
-			$button = $form['gopayChannel' . $name] = new PaymentButton($name, $channel->title);
+			$button = $form['gopayChannel' . $channel->name] = new PaymentButton($channel->name, $channel->title);
 		} else {
-			$button = $form['gopayChannel' . $name] = new ImagePaymentButton($name, $channel->image, $channel->title);
+			$button = $form['gopayChannel' . $channel->name] = new ImagePaymentButton($channel->name, $channel->image, $channel->title);
 		}
 
 		if (!is_array($callbacks)) $callbacks = array($callbacks);

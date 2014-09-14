@@ -450,7 +450,7 @@ class Service extends Nette\Object
 	public function bindPaymentButtons(Nette\Forms\Container $form, $callbacks)
 	{
 		foreach ($this->allowedChannels as $name => $channel) {
-			$this->bindPaymentButton($channel, $form, $callbacks);
+			$this->bindPaymentButton($channel, $name, $form, $callbacks);
 		}
 	}
 
@@ -461,10 +461,11 @@ class Service extends Nette\Object
 	 * - adds one payment button for given channel
 	 *
 	 * @param  string|stdClass
+	 * @param  string
 	 * @param  Form
 	 * @param  array|callable
 	 */
-	public function bindPaymentButton($channel, Nette\Forms\Container $form, $callbacks = array())
+	public function bindPaymentButton($channel, $name, Nette\Forms\Container $form, $callbacks = array())
 	{
 		if (!$channel instanceof \stdClass) {
 			if (!isset($this->allowedChannels[$channel])) {

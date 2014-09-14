@@ -21,7 +21,7 @@ use Nette\Forms\Controls\ImageButton;
  *
  * @property-read $channel
  */
-class ImagePaymentButton extends ImageButton
+class ImagePaymentButton extends ImageButton implements IPaymentButton
 {
 
 	/** @var string */

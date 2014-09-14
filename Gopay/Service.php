@@ -16,6 +16,7 @@ use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Api\PaymentMethodElement;
 use Nette;
 use Nette\Application\Responses\RedirectResponse;
+use Nette\DI;
 
 
 /**
@@ -531,6 +532,24 @@ class Service extends Nette\Object
 			),
 			$this->gopaySecretKey
 		);
+	}
+
+
+
+	/**
+	 * Registers 'addPaymentButtons' & 'addPaymentButton' methods to form using DI container
+	 *
+	 * @param  DI\Container
+	 * @param  string
+	 */
+	public static function registerAddPaymentButtonsUsingDependencyContainer(DI\Container $dic, $serviceName)
+	{
+		Nette\Forms\Container::extensionMethod('addPaymentButtons', function ($container, $callbacks) use ($dic, $serviceName) {
+			$dic->getService($serviceName)->bindPaymentButtons($container, $callbacks);
+		});
+		Nette\Forms\Container::extensionMethod('addPaymentButton', function ($container, $channel) use ($dic, $serviceName) {
+			$dic->getService($serviceName)->bindPaymentButton($channel, $container);
+		});
 	}
 
 

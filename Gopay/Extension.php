@@ -68,7 +68,7 @@ class Extension extends CompilerExtension
 	public function afterCompile(PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
-		$initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtons($this->getService(?));', array(
+		$initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtonsUsingDependencyContainer($this, ?);', array(
 			$this->prefix('service'),
 		));
 	}

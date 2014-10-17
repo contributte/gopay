@@ -21,12 +21,11 @@ use Nette\Forms\Controls\ImageButton;
  *
  * @property-read $channel
  */
-class ImagePaymentButton extends ImageButton
+class ImagePaymentButton extends ImageButton implements IPaymentButton
 {
 
 	/** @var string */
 	private $channel;
-
 
 
 	/**
@@ -42,12 +41,6 @@ class ImagePaymentButton extends ImageButton
 	}
 
 
-
-	/**
-	 * Returns name of payment channel
-	 *
-	 * @return string
-	 */
 	public function getChannel()
 	{
 		return $this->channel;

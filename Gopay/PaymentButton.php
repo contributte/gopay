@@ -21,12 +21,11 @@ use Nette\Forms\Controls\SubmitButton;
  *
  * @property-read $channel
  */
-class PaymentButton extends SubmitButton
+class PaymentButton extends SubmitButton implements IPaymentButton
 {
 
 	/** @var string */
 	private $channel;
-
 
 
 	/**
@@ -40,12 +39,6 @@ class PaymentButton extends SubmitButton
 	}
 
 
-
-	/**
-	 * Returns name of payment channel
-	 *
-	 * @return string
-	 */
 	public function getChannel()
 	{
 		return $this->channel;

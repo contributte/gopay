@@ -481,6 +481,8 @@ class Service extends Nette\Object
 			$button = $form['gopayChannel' . $channel->name] = new ImagePaymentButton($channel->name, $channel->image, $channel->title);
 		}
 
+		$channel->control = 'gopayChannel' . $channel->name;
+
 		if (!is_array($callbacks)) $callbacks = array($callbacks);
 		foreach ($callbacks as $callback) {
 			$button->onClick[] = $callback;

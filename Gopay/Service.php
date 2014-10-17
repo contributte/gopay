@@ -258,7 +258,6 @@ class Service extends Nette\Object
 	 */
 	public function allowChannel($channel)
 	{
-		$this->loadGopayChannels();
 		if (isset($this->allowedChannels[$channel])) {
 			return $this;
 		}
@@ -283,7 +282,6 @@ class Service extends Nette\Object
 	 */
 	public function denyChannel($channel)
 	{
-		$this->loadGopayChannels();
 		if (isset($this->deniedChannels[$channel])) {
 			return $this;
 		}
@@ -490,30 +488,6 @@ class Service extends Nette\Object
 
 		return $button;
 	}
-
-
-
-	/**
-	 * Loads all gopay channels
-	 *
-	 * @throws GopayException on failed communication with WS
-	 */
-	private function loadGopayChannels()
-	{
-		if ($this->fetchedChannels) {
-			return;
-		}
-
-		$this->fetchedChannels = TRUE;
-		$methodList = GopaySoap::paymentMethodList();
-		if ($methodList === NULL) {
-			throw new GopayFatalException('Loading of native Gopay payment channels failed due to communication with WS.');
-		}
-		foreach ($methodList as $method) {
-			$this->addRawChannel($method, FALSE);
-		}
-	}
-
 
 
 	/**

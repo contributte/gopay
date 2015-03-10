@@ -282,7 +282,7 @@ class GopayHelper {
 	}
 
 	/**
-	* Sestaveni retezce pro podpis sessionInfo.
+	* Sestaveni retezce pro podpis pozadavku refundace platby.
 	*
 	* @param float $targetGoId - identifikator prijemce prideleny GoPay
 	* @param float $paymentSessionId - identifikator platby na GoPay

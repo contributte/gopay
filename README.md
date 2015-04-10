@@ -29,16 +29,13 @@ gopay:
 	testMode       : false
 ```
 
-A přístup v presenteru pak bude díky autowiringu vypadat:
+A přístup v presenteru pak bude díky autowiringu a `@inject` anotaci vypadat:
 
 ```php
-/** @var Markette\Gopay\Service */
-private $gopay;
+use Markette\Gopay;
 
-public function injectGopay(Markette\Gopay\Service $gopay)
-{
-	$this->gopay = $gopay;
-}
+/** @var Gopay\Service @inject */
+public $gopay;
 ```
 
 ## Použití

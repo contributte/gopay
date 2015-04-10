@@ -120,6 +120,29 @@ class ReturnedPayment extends Payment
 	}
 
 
+	/**
+	 * Returns TRUE if payment is refunded
+	 * 
+	 * @return bool
+	 */
+	public function isRefunded()
+	{
+		$this->getStatus();
+		return $this->result['sessionState'] === GopayHelper::REFUNDED;
+	}
+
+
+	/**
+	 * Returns TRUE if payment is authorized
+	 * 
+	 * @return bool
+	 */
+	public function isAuthorized()
+	{
+		$this->getStatus();
+		return $this->result['sessionState'] === GopayHelper::AUTHORIZED;
+	}
+
 
 	/**
 	 * Returns TRUE if payment time limit already expired
@@ -131,7 +154,6 @@ class ReturnedPayment extends Payment
 		$this->getStatus();
 		return $this->result['sessionState'] === GopayHelper::TIMEOUTED;
 	}
-
 
 
 	/**

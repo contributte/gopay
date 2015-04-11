@@ -1,0 +1,12 @@
+gopay:
+	gopayId: 1234567890
+	gopaySecretKey: fruC9a9e8ajuwrace4r3chaxu
+	testMode: TRUE
+	channels:
+		eu_gp_u: yes
+		eu_bank: yes
+		SUPERCASH: yes
+		cz_kb: no
+		custom:
+			title: Custom channel
+			image: custom-channel.png

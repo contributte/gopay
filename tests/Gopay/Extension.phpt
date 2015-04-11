@@ -1,33 +1,14 @@
 <?php
 
-use Nette\DI\Compiler;
-use Nette\DI\Container;
-use Nette\DI\ContainerLoader;
 use Tester\Assert ;
-use Tester\TestCase ;
-use Markette\Gopay\Extension ;
 
 require __DIR__ . '/../bootstrap.php' ;
 
 
-class ExtensionTest extends TestCase {
+class ExtensionTest extends BaseTest {
 	
-	/** @return Container */
-	protected function createContainer()
-	{
-		$loader = new ContainerLoader(TEMP_DIR);
-		$key = 'key';
-		$className = $loader->load($key, function (Compiler $compiler) {
-			$compiler->addExtension('gopay', new Extension());
-			$compiler->loadConfig(__DIR__ . '/files/config.neon');
-		});
-
-		return new $className;
-	}
-	
-	public function testServiceCreation()
-	{
-		$container = $this->createContainer();
+	public function testServiceCreation() {
+		$container = $this->createContainer('config.neon');
 		$service = $container->getService('gopay.service') ;
 
 		Assert::type( 'Markette\Gopay\Service', $service );

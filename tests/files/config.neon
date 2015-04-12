@@ -5,7 +5,7 @@ gopay:
 	channels:
 		eu_gp_u: yes
 		eu_bank: yes
-		SUPERCASH: yes
+		SUPERCASh: yes
 		cz_kb: no
 		custom:
 			title: Custom channel

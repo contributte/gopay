@@ -1,0 +1,28 @@
+language: php
+php:
+    - 5.3.3
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+    - hhvm-nightly
+
+matrix:
+    allow_failures:
+        - php: 7.0
+        - php: hhvm
+        - php: hhvm-nightly
+
+before_script:
+    - composer install --no-interaction --prefer-source
+
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini >> ./tests/php-unix.ini; fi
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then NTESTER_FLAGS="--coverage ./coverage.xml --coverage-src ./src"; else TESTER_FLAGS=""; fi
+
+script:
+    - vendor/bin/tester tests -s -p php -c tests/php-unix.ini $NTESTER_FLAGS
+
+after_script:
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then composer require satooshi/php-coveralls; fi
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then php vendor/bin/coveralls -c tests/.coveralls.yml -v; fi 

@@ -1,6 +1,6 @@
 # Markette :: Gopay
 
-- Nette >= 2.2 ([nette.org](http://www.nette.org))
+- Nette >=2.0 ([nette.org](http://www.nette.org))
 - GoPay API 2.5 ([gopay.com](http://www.gopay.com/cs))
 
 ## Instalace

@@ -62,6 +62,9 @@ class Service extends Nette\Object
 	/** @const Gopay - Elektronická peněženka. */
 	const METHOD_GOPAY = 'eu_gp_w';
 
+	/** @const Platbu vybere uživatel. */
+	const METHOD_USER_SELECT = NULL;
+
 
 	/** @const Czech koruna */
 	const CURRENCY_CZK = 'CZK';
@@ -385,7 +388,7 @@ class Service extends Nette\Object
 	 * Executes payment via redirecting to GoPay payment gate
 	 *
 	 * @param  Payment
-	 * @param  string
+	 * @param  string|null
 	 * @param  callback
 	 * @return RedirectResponse
 	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
@@ -398,7 +401,7 @@ class Service extends Nette\Object
 			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
 		}
 
-		if (!isset($this->allowedChannels[$channel])) {
+		if (!isset($this->allowedChannels[$channel]) && $channel !== self::METHOD_USER_SELECT) {
 			throw new \InvalidArgumentException("Payment channel '$channel' is not supported");
 		}
 

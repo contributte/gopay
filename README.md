@@ -1,11 +1,12 @@
 # Markette :: Gopay
 
-- pro Nette Framework 2.1
-- a Gopay API 2.4
+- Nette >= 2.2 ([nette.org](http://www.nette.org))
+- GoPay API 2.5 ([gopay.com](http://www.gopay.com/cs))
 
 ## Instalace
 
 Nejjednodušeji stáhněte Gopay přes Composer:
+
 ```sh
 $ composer require Markette/Gopay
 ```

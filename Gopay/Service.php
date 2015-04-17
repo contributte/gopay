@@ -406,9 +406,8 @@ class Service extends Nette\Object
 		}
 
 		try {
-			$soap = $this->soap ;
 			$customer = $payment->getCustomer();
-			$paymentSessionId = $soap::createPayment(
+			$paymentSessionId = $this->soap->createPayment(
 				$this->gopayId,
 				$payment->getProductName(),
 				$payment->getSumInCents(),

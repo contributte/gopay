@@ -19,12 +19,10 @@ class ServiceBindTest extends BaseTest {
 		Assert::type( 'Markette\Gopay\PaymentButton', $form->getComponent('gopayChanneleu_gp_u'));
 		Assert::type( 'Markette\Gopay\PaymentButton', $form->getComponent('gopayChanneleu_bank'));
 		Assert::type( 'Markette\Gopay\PaymentButton', $form->getComponent('gopayChannelSUPERCASH'));
-		Assert::type( 'Markette\Gopay\ImagePaymentButton', $form->getComponent('gopayChannelcustom'));
 		
 		Assert::same( array( $callback ), $form->getComponent('gopayChanneleu_gp_u')->onClick );
 		Assert::same( array( $callback ), $form->getComponent('gopayChanneleu_bank')->onClick );
 		Assert::same( array( $callback ), $form->getComponent('gopayChannelSUPERCASH')->onClick );
-		Assert::same( array( $callback ), $form->getComponent('gopayChannelcustom')->onClick );
 	}
 }
 

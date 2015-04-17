@@ -3,10 +3,7 @@ gopay:
 	gopaySecretKey: fruC9a9e8ajuwrace4r3chaxu
 	testMode: TRUE
 	channels:
-		eu_gp_u: yes
-		eu_bank: yes
-		SUPERCASh: yes
-		cz_kb: no
-		custom:
-			title: Custom channel
-			image: custom-channel.png
+		eu_gp_u: Platba kartou - Česká spořitelna
+		eu_bank: Běžný bankovní převod
+		SUPERCASh: Terminál České pošty
+		cz_kb: Platba KB - Mojeplatba

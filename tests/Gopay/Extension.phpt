@@ -16,22 +16,34 @@ class ExtensionTest extends BaseTest {
 		
 		Assert::equal( array(
 			'eu_gp_u' => (object) array(
-				'name' => 'eu_gp_u',
-				'title' => 'METHOD_CARD_UNICREDITB',
+				'code' => 'eu_gp_u',
+				'name' => 'Platba kartou - Česká spořitelna',
+				'logo' => NULL,
+				'offline' => NULL,
+				'description' => NULL,
 			),
 			'eu_bank' => (object) array(
-				'name' => 'eu_bank',
-				'title' => 'METHOD_TRANSFER',
+				'code' => 'eu_bank',
+				'name' => 'Běžný bankovní převod',
+				'logo' => NULL,
+				'offline' => NULL,
+				'description' => NULL,
 			),
 			'SUPERCASH' => (object) array(
-				'name' => 'SUPERCASH',
-				'title' => 'METHOD_SUPERCASH',
+				'code' => 'SUPERCASH',
+				'name' => 'Terminál České pošty',
+				'logo' => NULL,
+				'offline' => NULL,
+				'description' => NULL,
 			),
-			'custom' => (object) array(
-				'image' => 'custom-channel.png',
-				'name' => 'custom',
-				'title' => 'Custom channel',
-			)),
+			'cz_kb' => (object) array(
+				'code' => 'cz_kb',
+				'name' => 'Platba KB - Mojeplatba',
+				'logo' => NULL,
+				'offline' => NULL,
+				'description' => NULL,
+			),
+		),
 			$service->getChannels()
 		);
 	}

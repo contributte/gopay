@@ -10,7 +10,7 @@ require __DIR__ . '/../bootstrap.php' ;
 
 class ServiceTest extends BaseTest {
 	
-	
+	/*
 	public function testPay() {
 		$soap = Mockery::mock('Markette\Gopay\Api\GopaySoap') ;
 		$soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
@@ -27,57 +27,7 @@ class ServiceTest extends BaseTest {
 			$response->getUrl()
 		);
 		Assert::same( 302, $response->getCode()) ;
-	}
-	
-	public function testDenyChannel() {
-		$service = $this->createContainer('config.neon')->getService('gopay.service') ;
-		$service->denyChannel('SUPERCASH') ;
-		
-		Assert::equal( array(
-			'eu_gp_u' => (object) array(
-				'name' => 'eu_gp_u',
-				'title' => 'METHOD_CARD_UNICREDITB',
-			),
-			'eu_bank' => (object) array(
-				'name' => 'eu_bank',
-				'title' => 'METHOD_TRANSFER',
-			),
-			'custom' => (object) array(
-				'image' => 'custom-channel.png',
-				'name' => 'custom',
-				'title' => 'Custom channel',
-			)),
-		$service->getChannels()) ;
-	}
-	
-	public function testAllowChannel() {
-		$service = $this->createContainer('config.neon')->getService('gopay.service') ;
-		$service->allowChannel('cz_kb') ;
-		
-		Assert::equal( array(
-			'eu_gp_u' => (object) array(
-				'name' => 'eu_gp_u',
-				'title' => 'METHOD_CARD_UNICREDITB',
-			),
-			'eu_bank' => (object) array(
-				'name' => 'eu_bank',
-				'title' => 'METHOD_TRANSFER',
-			),
-			'SUPERCASH' => (object) array(
-				'name' => 'SUPERCASH',
-				'title' => 'METHOD_SUPERCASH',
-			),
-			'custom' => (object) array(
-				'image' => 'custom-channel.png',
-				'name' => 'custom',
-				'title' => 'Custom channel',
-			),
-			'cz_kb' => (object) array(
-				'name' => 'cz_kb',
-				'title' => 'METHOD_KOMERCNIB',
-			)),
-		$service->getChannels()) ;
-	}
+	}*/
 	
 	public function testUrls() {
 		$service = $this->createContainer('config.neon')->getService('gopay.service') ;
@@ -105,21 +55,23 @@ class ServiceTest extends BaseTest {
 		}, '\InvalidArgumentException') ;
 			
 	}
-	
+
 	public function testCreatePayment() {
 		$service = $this->createContainer('config.neon')->getService('gopay.service') ;
 		$payment = $service->createPayment( array( 'sum' => 999, 'customer' => array())) ;
 		
 		Assert::type( 'Markette\Gopay\Payment', $payment ) ;
 	}
-	
+
+
 	public function testRestorePayment() {
 		$service = $this->createContainer('config.neon')->getService('gopay.service') ;
 		$payment = $service->restorePayment( array( 'sum' => 999, 'customer' => array()), array()) ;
 		
 		Assert::type( 'Markette\Gopay\ReturnedPayment', $payment ) ;
 	}
-	
+
+/*	
 	public function testPayExceptions() {
 		$soap = Mockery::mock('Markette\Gopay\Api\GopaySoap') ;
 		$soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
@@ -139,8 +91,8 @@ class ServiceTest extends BaseTest {
 			$service->pay( $payment, 'eu_gb_kb', $callback ) ;
 		}, '\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying" );
 	}
-	
-	public function testCallbackCalled() {
+*/	
+/*	public function testCallbackCalled() {
 		$soap = Mockery::mock('Markette\Gopay\Api\GopaySoap') ;
 		$soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
 		
@@ -156,7 +108,7 @@ class ServiceTest extends BaseTest {
 		
 		Assert::true( $called ) ;
 	}
-	
+*/
 	
 	
 }

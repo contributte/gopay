@@ -10,7 +10,7 @@ require __DIR__ . '/../bootstrap.php' ;
 
 class ServiceTest extends BaseTest {
 	
-	/*
+	
 	public function testPay() {
 		$soap = Mockery::mock('Markette\Gopay\Api\GopaySoap') ;
 		$soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
@@ -27,7 +27,7 @@ class ServiceTest extends BaseTest {
 			$response->getUrl()
 		);
 		Assert::same( 302, $response->getCode()) ;
-	}*/
+	}
 	
 	public function testUrls() {
 		$service = $this->createContainer('config.neon')->getService('gopay.service') ;
@@ -71,7 +71,7 @@ class ServiceTest extends BaseTest {
 		Assert::type( 'Markette\Gopay\ReturnedPayment', $payment ) ;
 	}
 
-/*	
+	
 	public function testPayExceptions() {
 		$soap = Mockery::mock('Markette\Gopay\Api\GopaySoap') ;
 		$soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
@@ -91,8 +91,8 @@ class ServiceTest extends BaseTest {
 			$service->pay( $payment, 'eu_gb_kb', $callback ) ;
 		}, '\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying" );
 	}
-*/	
-/*	public function testCallbackCalled() {
+
+	public function testCallbackCalled() {
 		$soap = Mockery::mock('Markette\Gopay\Api\GopaySoap') ;
 		$soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
 		
@@ -108,7 +108,7 @@ class ServiceTest extends BaseTest {
 		
 		Assert::true( $called ) ;
 	}
-*/
+
 	
 	
 }

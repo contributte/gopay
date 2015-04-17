@@ -1,23 +1,17 @@
 <?php
 
 use Markette\Gopay;
+use Nette\Application\UI\Presenter;
 
-final class PaymentPresenter extends Nette\Application\UI\Presenter
+final class GopayPresenter extends Presenter
 {
 
-	/** @var Gopay\Service */
-	private $gopay;
+	/** @var Gopay\Service @inject */
+	public $gopay;
 
 
-
-	/**
-	 * @param  Gopay\Service
-	 */
-	public function injectGopay(Gopay\Service $gopay)
-	{
-		$this->gopay = $gopay;
-	}
-
+	/** @var App\ShopModel @inject */
+	public $model;
 
 
 	/**
@@ -31,12 +25,11 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		$gopay = $this->gopay;
 
 		// setup success and failure callbacks
-		$gopay->successUrl = $this->link('//success', $id);
-		$gopay->failureUrl = $this->link('//failure', $id);
+		$gopay->successUrl = $this->link('//success', array('orderId' => $id));
+		$gopay->failureUrl = $this->link('//failure', array('orderId' => $id));
 
 		// your custom communication with model
-		$shop = $this->context->shopModel;
-		$order = $shop->findOrderById($id);
+		$order = $this->model->findOrderById($id);
 
 		// prepare data about customer)
 		$customer = array(
@@ -67,23 +60,25 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 		$this->sendResponse($toPayResponse);
 	}
 
+
 /* === Called from Gopay Payment Gate ======================================= */
+
 
 	/**
 	 * Handles response from Gopay Payment Gate
 	 *
+	 * @param  int
 	 * @param  string
 	 * @param  string
 	 * @param  int
 	 * @param  string
 	 */
-	public function actionSuccess($paymentSessionId, $targetGoId, $orderNumber, $encryptedSignature)
+	public function actionSuccess($orderId, $paymentSessionId, $targetGoId, $orderNumber, $encryptedSignature)
 	{
 		$gopay = $this->gopay;
 
 		// your custom communication with model
-		$shop = $this->context->shopModel;
-		$order = $shop->findOrderByPaymentId($paymentSessionId);
+		$order = $this->model->findOrderByPaymentId($paymentSessionId);
 
 		// restores Payment object (as instance of ReturnedPayment)
 		$payment = $gopay->restorePayment(array(
@@ -115,13 +110,40 @@ final class PaymentPresenter extends Nette\Application\UI\Presenter
 	}
 
 
+
 	/**
-	 * View for failure
+	 * Handles fail response from Gopay Payment Gate
+	 *
+	 * @param  int
+	 * @param  string
+	 * @param  string
+	 * @param  int
+	 * @param  string
 	 */
-	public function actionFailure()
+	public function actionFailure($orderId, $paymentSessionId, $targetGoId, $orderNumber, $encryptedSignature)
 	{
-		echo 'Not paid!';
+		echo 'Payment failed';
 	}
+
+
+
+	/**
+	 * Handles automatic response from Gopay Payment Gate
+	 *
+	 * @param  int
+	 * @param  string
+	 * @param  string
+	 * @param  int
+	 * @param  string
+	 */
+	public function actionNotify($orderId, $paymentSessionId, $targetGoId, $orderNumber, $encryptedSignature)
+	{
+		echo 'Received notify from GoPay';
+	}
+
+
+
+/* === Views ================================================================ */
 
 
 	/**

@@ -25,10 +25,18 @@ use Nette\Reflection\ClassType;
 class Extension extends CompilerExtension
 {
 
+	/** @var array */
+	private $defaults = array(
+		'gopayId' => NULL,
+		'gopaySecretKey' => NULL,
+		'testMode' => TRUE,
+		'channels' => array(),
+	);
+
 	public function loadConfiguration()
 	{
 		$container = $this->getContainerBuilder();
-		$config = $this->getConfig();
+		$config = $this->getConfig($this->defaults);
 
 		$driver = $container->addDefinition($this->prefix('driver'))
 			->setClass('Markette\Gopay\Api\GopaySoap');
@@ -43,21 +51,16 @@ class Extension extends CompilerExtension
 
 		if (isset($config['channels'])) {
 			$constants = ClassType::from('Markette\Gopay\Service');
-			foreach ($config['channels'] as $channel => $value) {
-				$constChannel = 'METHOD_' . strtoupper($channel);
+			foreach ($config['channels'] as $code => $channel) {
+				$constChannel = 'METHOD_' . strtoupper($code);
 				if ($constants->hasConstant($constChannel)) {
-					$channel = $constants->getConstant($constChannel);
+					$code = $constants->getConstant($constChannel);
 				}
-				if (is_bool($value)) {
-					$service->addSetup($value ? 'allowChannel' : 'denyChannel', array($channel));
-				} elseif (is_array($value)) {
-					$title = $value['title'];
-					unset($value['title']);
-					$service->addSetup('addChannel', array(
-						$channel,
-						$title,
-						$value
-					));
+				if (is_array($channel)) {
+					$channel['code'] = $code;
+					$service->addSetup('addChannel', $channel);
+				} else if (is_scalar($channel)) {
+					$service->addSetup('addChannel', array($code, $channel));
 				}
 			}
 		}

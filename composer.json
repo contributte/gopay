@@ -22,7 +22,12 @@
         "nette/forms": "~2.2",
         "nette/application": "~2.2"
     },
+	"require-dev": {
+		"nette/tester": "~1.4",
+		"mockery/mockery": "~0.9.4",
+		"nette/di": "~2.2"
+	},
     "autoload": {
-        "classmap": ["/"]
+        "classmap": ["Gopay/"]
     }
 }

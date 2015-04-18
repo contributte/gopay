@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+sh ../vendor/bin/tester Gopay -s -j 40 -log gopay.log $@
+rm "./tmp" -f -R

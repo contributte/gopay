@@ -100,13 +100,7 @@ class Service extends Nette\Object
 	private $failureUrl;
 
 	/** @var array */
-	private $allowedChannels = array();
-
-	/** @var array */
-	private $deniedChannels = array();
-
-	/** @var bool */
-	private $fetchedChannels = FALSE;
+	private $channels = array();
 
 	/** @var array */
 	private $allowedLang = array(
@@ -253,72 +247,29 @@ class Service extends Nette\Object
 
 
 	/**
-	 * Allows payment channel
-	 *
-	 * @param  string
-	 * @return static provides a fluent interface
-	 * @throws \InvalidArgumentException on undefined or already allowed channel
-	 */
-	public function allowChannel($channel)
-	{
-		if (isset($this->allowedChannels[$channel])) {
-			return $this;
-		}
-		if (!isset($this->deniedChannels[$channel])) {
-			throw new \InvalidArgumentException("Channel with name '$channel' isn't defined.");
-		}
-
-		$this->allowedChannels[$channel] = $this->deniedChannels[$channel];
-		unset($this->deniedChannels[$channel]);
-
-		return $this;
-	}
-
-
-
-	/**
-	 * Denies payment channel
-	 *
-	 * @param  string
-	 * @return static provides a fluent interface
-	 * @throws \InvalidArgumentException on undefined or already denied channel
-	 */
-	public function denyChannel($channel)
-	{
-		if (isset($this->deniedChannels[$channel])) {
-			return $this;
-		}
-		if (!isset($this->allowedChannels[$channel])) {
-			throw new \InvalidArgumentException("Channel with name '$channel' isn't defined.");
-		}
-
-		$this->deniedChannels[$channel] = $this->allowedChannels[$channel];
-		unset($this->allowedChannels[$channel]);
-
-		return $this;
-	}
-
-
-
-	/**
 	 * Adds custom payment channel
 	 *
 	 * @param  string
 	 * @param  string
 	 * @param  string|NULL
-	 * @param  bool
+	 * @param  string|NULL
+	 * @param  string|NULL
+	 * @param  array
 	 * @return static provides a fluent interface
 	 * @throws \InvalidArgumentException on channel name conflict
 	 */
-	public function addChannel($channel, $title, array $params = array(), $allowChannel = TRUE)
+	public function addChannel($code, $name, $logo = NULL, $offline = NULL, $description = NULL, array $params = array())
 	{
-		if (isset($this->allowedChannels[$channel]) || isset($this->deniedChannels[$channel])) {
-			throw new \InvalidArgumentException("Channel with name '$channel' is already defined.");
+		if (isset($this->channels[$code])) {
+			throw new \InvalidArgumentException("Channel with name '$code' is already defined.");
 		}
 
-		$this->{$allowChannel ? 'allowedChannels' : 'deniedChannels'}[$channel] = (object) array_merge($params, array(
-			'name' => $channel,
-			'title' => $title,
+		$this->channels[$code] = (object) array_merge($params, array(
+			'code' => $code,
+			'name' => $name,
+			'logo' => $logo,
+			'offline' => $offline,
+			'description' => $description,
 		));
 
 		return $this;
@@ -326,33 +277,14 @@ class Service extends Nette\Object
 
 
 
-	/**
-	 * Adds payment channel received from Gopay WS
-	 *
-	 * @param  PaymentMethodElement
-	 * @param  bool
-	 * @return static provides a fluent interface
-	 * @throws \InvalidArgumentException on channel name conflict
-	 */
-	public function addRawChannel(PaymentMethodElement $element, $allowChannel = TRUE)
-	{
-		return $this->addChannel($element->code, $element->paymentMethodName, array(
-			'image' => $element->logo,
-			'offline' => $element->offline,
-			'description' => $element->description,
-		), $allowChannel);
-	}
-
-
-
 	/*
-	 * Returns list of allowed payment channels
+	 * Returns list of payment channels
 	 *
 	 * @return array
 	 */
 	public function getChannels()
 	{
-		return $this->allowedChannels;
+		return $this->channels;
 	}
 
 
@@ -401,7 +333,7 @@ class Service extends Nette\Object
 			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
 		}
 
-		if (!isset($this->allowedChannels[$channel]) && $channel !== self::METHOD_USER_SELECT) {
+		if (!isset($this->channels[$channel]) && $channel !== self::METHOD_USER_SELECT) {
 			throw new \InvalidArgumentException("Payment channel '$channel' is not supported");
 		}
 
@@ -415,7 +347,7 @@ class Service extends Nette\Object
 				$payment->getVariable(),
 				$this->successUrl,
 				$this->failureUrl,
-				array_keys($this->allowedChannels),
+				array_keys($this->channels),
 				$channel,
 				$this->gopaySecretKey,
 				$customer->firstName,
@@ -452,7 +384,7 @@ class Service extends Nette\Object
 	 */
 	public function bindPaymentButtons(Nette\Forms\Container $form, $callbacks)
 	{
-		foreach ($this->allowedChannels as $channel) {
+		foreach ($this->channels as $channel) {
 			$this->bindPaymentButton($channel, $form, $callbacks);
 		}
 	}
@@ -470,19 +402,19 @@ class Service extends Nette\Object
 	public function bindPaymentButton($channel, Nette\Forms\Container $form, $callbacks = array())
 	{
 		if (!$channel instanceof \stdClass) {
-			if (!isset($this->allowedChannels[$channel])) {
+			if (!isset($this->channels[$channel])) {
 				throw new \InvalidArgumentException("Channel '$channel' is not allowed.");
 			}
-			$channel = $this->allowedChannels[$channel];
+			$channel = $this->channels[$channel];
 		}
 
 		if (!isset($channel->image)) {
-			$button = $form['gopayChannel' . $channel->name] = new PaymentButton($channel->name, $channel->title);
+			$button = $form['gopayChannel' . $channel->code] = new PaymentButton($channel->code, $channel->name);
 		} else {
-			$button = $form['gopayChannel' . $channel->name] = new ImagePaymentButton($channel->name, $channel->image, $channel->title);
+			$button = $form['gopayChannel' . $channel->code] = new ImagePaymentButton($channel->code, $channel->image, $channel->name);
 		}
 
-		$channel->control = 'gopayChannel' . $channel->name;
+		$channel->control = 'gopayChannel' . $channel->code;
 
 		if (!is_array($callbacks)) $callbacks = array($callbacks);
 		foreach ($callbacks as $callback) {

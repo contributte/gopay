@@ -61,7 +61,7 @@ class Service extends Nette\Object
 	const METHOD_TRANSFER = 'eu_bank';
 	/** @const Gopay - Elektronická peněženka. */
 	const METHOD_GOPAY = 'eu_gp_w';
-	
+
 	/** @const Platební tlačítko - Platba UniCredit Bank - uniplatba - Internetové bankovnictví UniCredit Bank a.s. */
 	const METHOD_SK_UNICREDITB = 'sk_uni';
 	/** @const Platební tlačítko - Platba SLSP - sporopay - Internetové bankovnictví Slovenská sporiteľňa, a. s. */

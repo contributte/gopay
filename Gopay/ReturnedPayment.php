@@ -122,7 +122,7 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is refunded
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function isRefunded()
@@ -134,7 +134,7 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is authorized
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function isAuthorized()

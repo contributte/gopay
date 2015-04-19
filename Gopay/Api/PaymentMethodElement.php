@@ -10,7 +10,7 @@ class PaymentMethodElement
 	var $description = null;
 	var $logo = null;
 	var $offline = null;
-	
+
 	public function __construct($code, $paymentMethodName, $description, $logo, $offline)
 	{
 		$this->code = $code;
@@ -19,5 +19,5 @@ class PaymentMethodElement
 		$this->logo = $logo;
 		$this->offline = $offline;
 	}
-	
+
 }

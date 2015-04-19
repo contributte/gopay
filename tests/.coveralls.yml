@@ -1,0 +1,5 @@
+# for php-coveralls
+service_name: travis-ci
+src_dir: Gopay
+coverage_clover: coverage.xml
+json_path: coverage.json

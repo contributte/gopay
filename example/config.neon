@@ -2,3 +2,6 @@ gopay:
 	gopayId: ***
 	gopaySecretKey: ******
 	testMode: yes
+	channels:
+		gopay: 'Gopay - Elektronická peněženka'
+		card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'

@@ -1,9 +1,10 @@
 # Markette :: Gopay
 
-[![Build Status](https://travis-ci.org/Markette/Gopay.svg?branch=master)](https://travis-ci.org/Markette/Gopay)
-[![Downloads this Month](https://img.shields.io/packagist/dm/Markette/Gopay.svg?style=flat)](https://packagist.org/packages/Markette/Gopay)
-[![Latest stable](https://img.shields.io/packagist/v/Markette/Gopay.svg?style=flat)](https://packagist.org/packages/Markette/Gopay)
-[![HHVM Status](https://img.shields.io/hhvm/Markette/Gopay.svg?style=flat)](http://hhvm.h4cc.de/package/Markette/Gopay)
+[![Build Status](https://travis-ci.org/Markette/Gopay.svg?branch=master&style=flat-square)](https://travis-ci.org/Markette/Gopay)
+[![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
+[![Downloads this Month](https://img.shields.io/packagist/dm/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
+[![Latest stable](https://img.shields.io/packagist/v/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
+[![HHVM Status](https://img.shields.io/hhvm/Markette/Gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/Markette/Gopay)
 
 - Nette >=2.0 ([nette.org](http://www.nette.org))
 - GoPay API 2.5 ([gopay.com](http://www.gopay.com/cs))

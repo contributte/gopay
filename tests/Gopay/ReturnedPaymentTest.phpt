@@ -35,7 +35,7 @@ class ReturnedPaymentTest extends BaseTestCase
         $result = array('sessionState' => GopayHelper::CANCELED);
         $mock = Mockery::mock('Markette\Gopay\Api\GopayHelper');
         $mock->shouldReceive('checkPaymentIdentity')->once()->andThrow('Exception');
-        $holder = GopayHolder::getInstance()->setHelper($mock);
+        GopayHolder::getInstance()->setHelper($mock);
 
         $toBeVerified = array(
             'targetGoId' => 1234567890,
@@ -52,7 +52,7 @@ class ReturnedPaymentTest extends BaseTestCase
         $result = array('sessionState' => GopayHelper::CANCELED);
         $mock = Mockery::mock('Markette\Gopay\Api\GopaySoap');
         $mock->shouldReceive('isPaymentDone')->once()->andReturn($result);
-        $holder = GopayHolder::getInstance()->setSoap($mock);
+        GopayHolder::getInstance()->setSoap($mock);
 
         $returnedPayment = new ReturnedPayment(array(), NULL, NULL, array('paymentSessionId' => 1));
 
@@ -66,7 +66,7 @@ class ReturnedPaymentTest extends BaseTestCase
         $result = array('sessionState' => GopayHelper::CANCELED);
         $mock = Mockery::mock('Markette\Gopay\Api\GopaySoap');
         $mock->shouldReceive('isPaymentDone')->once()->andReturn($result);
-        $holder = GopayHolder::getInstance()->setSoap($mock);
+        GopayHolder::getInstance()->setSoap($mock);
 
         $returnedPayment = new ReturnedPayment(array(), NULL, NULL, array('paymentSessionId' => 1));
 

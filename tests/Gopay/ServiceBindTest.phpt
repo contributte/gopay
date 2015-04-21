@@ -6,6 +6,7 @@
  * @testCase
  */
 
+use Nette\Application\UI\Form;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -15,7 +16,7 @@ class ServiceBindTest extends BaseTestCase
 
     public function testBindForm()
     {
-        $form = new \Nette\Application\UI\Form();
+        $form = new Form();
         $gopay = $this->createContainer('config.neon')->getService('gopay.service');
         $callback = function () {
         };

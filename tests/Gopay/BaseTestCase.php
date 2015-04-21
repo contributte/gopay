@@ -10,16 +10,16 @@ abstract class BaseTestCase extends TestCase
 {
 
     /**
-     * @param string $file
+     * @param string $config
      * @return Container
      */
-    protected function createContainer($file)
+    protected function createContainer($config)
     {
         $loader = new ContainerLoader(TEMP_DIR);
         $key = 'key';
-        $className = $loader->load($key, function (Compiler $compiler) use ($file) {
+        $className = $loader->load($key, function (Compiler $compiler) use ($config) {
             $compiler->addExtension('gopay', new Extension());
-            $compiler->loadConfig(__DIR__ . '/config/' . $file);
+            $compiler->loadConfig(__DIR__ . '/config/' . $config);
         });
 
         return new $className;

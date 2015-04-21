@@ -33,6 +33,11 @@ class ReturnedPayment extends Payment
 	/** @var array */
 	private $valuesToBeVerified = array();
 
+	/** @var array */
+	private $result;
+
+	/** @var GopayHolder */
+	private $holder;
 
 
 	/**
@@ -47,6 +52,7 @@ class ReturnedPayment extends Payment
 		$this->gopayId = (float) $gopayId;
 		$this->gopaySecretKey = (string) $gopaySecretKey;
 		$this->valuesToBeVerified = $valuesToBeVerified;
+		$this->holder = GopayHolder::getInstance();
 	}
 
 
@@ -59,7 +65,7 @@ class ReturnedPayment extends Payment
 	public function isFraud()
 	{
 		try {
-			GopayHelper::checkPaymentIdentity(
+			$this->holder->getHelper()->checkPaymentIdentity(
 				(float) $this->valuesToBeVerified['targetGoId'],
 				(float) $this->valuesToBeVerified['paymentSessionId'],
 				null,
@@ -74,11 +80,6 @@ class ReturnedPayment extends Payment
 			return TRUE;
 		}
 	}
-
-
-
-	/** @var array */
-	private $result;
 
 
 
@@ -167,7 +168,7 @@ class ReturnedPayment extends Payment
 			return $this->result;
 		}
 
-		return $this->result = GopaySoap::isPaymentDone(
+		return $this->result = $this->holder->getSoap()->isPaymentDone(
 			(float) $this->valuesToBeVerified['paymentSessionId'],
 			(float) $this->gopayId,
 			$this->getVariable(),

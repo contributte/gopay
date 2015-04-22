@@ -6,8 +6,14 @@
 [![Latest stable](https://img.shields.io/packagist/v/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
 [![HHVM Status](https://img.shields.io/hhvm/Markette/Gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/Markette/Gopay)
 
-- Nette >=2.0 ([nette.org](http://www.nette.org))
-- GoPay API 2.5 ([gopay.com](http://www.gopay.com/cs))
+## Development
+
+|   Branch  														| Status 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
+|:---------:														|:------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
+| [master](https://github.com/Markette/Gopay/tree/master)  			|   dev  	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| gopay-2.5 														|   wip  	|  2.5  							|                                   -                                   	| >=5.3.2 	|
+| [gopay-2.3](https://github.com/Markette/Gopay/tree/gopay-2.3) 	| stable 	|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
+| [gopay-1.9](https://github.com/Markette/Gopay/tree/gopay-1.9) 	| stable 	|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
 
 ## Instalace
 

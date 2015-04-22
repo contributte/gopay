@@ -1,6 +1,6 @@
 # Markette :: Gopay
 
-[![Build Status](https://travis-ci.org/Markette/Gopay.svg?branch=master&style=flat-square)](https://travis-ci.org/Markette/Gopay)
+[![Build Status](https://img.shields.io/travis/Markette/Gopay.svg?style=flat-square)](https://travis-ci.org/Markette/Gopay)
 [![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
 [![Downloads this Month](https://img.shields.io/packagist/dm/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
 [![Latest stable](https://img.shields.io/packagist/v/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
@@ -8,19 +8,19 @@
 
 ## Development
 
-|   Branch  														| Status 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
-|:---------:														|:------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
-| [master](https://github.com/Markette/Gopay/tree/master)  			|   dev  	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
-| gopay-2.5 														|   wip  	|  2.5  							|                                   -                                   	| >=5.3.2 	|
-| [gopay-2.3](https://github.com/Markette/Gopay/tree/gopay-2.3) 	| stable 	|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
-| [gopay-1.9](https://github.com/Markette/Gopay/tree/gopay-1.9) 	| stable 	|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
+|   Branch  														| Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
+|:---------:														|:------:	|:--------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
+| [master](https://github.com/Markette/Gopay/tree/master)  			|   dev  	|dev-master	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| gopay-2.5 														|   wip  	|wip		|  2.5  							|                                   -                                   	| >=5.3.2 	|
+| [gopay-2.3](https://github.com/Markette/Gopay/tree/gopay-2.3) 	| stable 	|~2.0.0		|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
+| [gopay-1.9](https://github.com/Markette/Gopay/tree/gopay-1.9) 	| stable 	|~1.1.0		|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
 
 ## Instalace
 
 Nejjednodušeji stáhněte Gopay přes Composer:
 
 ```sh
-$ composer require Markette/Gopay
+$ composer require markette/gopay
 ```
 
 Pokud nepoužijete Composer, zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte

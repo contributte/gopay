@@ -5,7 +5,7 @@
  *
  * @license New BSD
  * @package Markette
- * @author  Vojtìch Dobeš
+ * @author  VojtÄ›ch DobeÅ¡
  */
 
 namespace Markette\Gopay;
@@ -17,7 +17,7 @@ use Markette\Gopay\Api\GopaySoap;
 /**
  * GopayHolder - singleton - hold helper and soap instances.
  *
- * @author Vojtìch Dobeš
+ * @author VojtÄ›ch DobeÅ¡
  * @author Jan Skrasek
  */
 class GopayHolder

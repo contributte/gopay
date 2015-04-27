@@ -50,6 +50,13 @@ class ExtensionTest extends BaseTestCase
                 'offline' => NULL,
                 'description' => NULL,
             ),
+            'sk_otpbank' => (object)array(
+                'code' => 'sk_otpbank',
+                'name' => 'Platba OTP banka Slovensko, a.s.',
+                'logo' => 'opt-logo.png',
+                'offline' => NULL,
+                'description' => NULL,
+            ),
         ),
             $service->getChannels()
         );

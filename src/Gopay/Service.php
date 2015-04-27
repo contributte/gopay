@@ -425,10 +425,10 @@ class Service extends Nette\Object
 			$channel = $this->channels[$channel];
 		}
 
-		if (!isset($channel->image)) {
+		if (!isset($channel->logo)) {
 			$button = $form['gopayChannel' . $channel->code] = new PaymentButton($channel->code, $channel->name);
 		} else {
-			$button = $form['gopayChannel' . $channel->code] = new ImagePaymentButton($channel->code, $channel->image, $channel->name);
+			$button = $form['gopayChannel' . $channel->code] = new ImagePaymentButton($channel->code, $channel->logo, $channel->name);
 		}
 
 		$channel->control = 'gopayChannel' . $channel->code;

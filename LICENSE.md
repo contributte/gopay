@@ -1,6 +1,7 @@
 ## Licence: Original BSD
 
 Copyright (c) 2011, Vojtěch Dobeš. Všechna práva vyhrazena.
+Copyright (c) 2015, Markette. Všechna práva vyhrazena.
 
 Redistribuce a použití zdrojových i binárních forem díla, v původním i upravovaném tvaru, jsou povoleny za následujících podmínek:
 

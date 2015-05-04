@@ -1,10 +1,10 @@
 # Markette :: Gopay
 
-[![Build Status](https://img.shields.io/travis/Markette/Gopay.svg?style=flat-square)](https://travis-ci.org/Markette/Gopay)
-[![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
-[![Downloads this Month](https://img.shields.io/packagist/dm/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
-[![Latest stable](https://img.shields.io/packagist/v/Markette/Gopay.svg?style=flat-square)](https://packagist.org/packages/Markette/Gopay)
-[![HHVM Status](https://img.shields.io/hhvm/Markette/Gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/Markette/Gopay)
+[![Build Status](https://img.shields.io/travis/markette/gopay.svg?style=flat-square)](https://travis-ci.org/markette/gopay)
+[![Code coverage](https://img.shields.io/coveralls/markette/gopay.svg?style=flat-square)](https://coveralls.io/r/markette/gopay)
+[![Downloads this Month](https://img.shields.io/packagist/dm/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+[![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+[![HHVM Status](https://img.shields.io/hhvm/markette/gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/markette/gopay)
 
 ## Development
 

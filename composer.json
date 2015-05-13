@@ -20,8 +20,7 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "ext-soap": "*",
-        "ext-mcrypt": "*",
+        "markette/gopay-api": "~2.5.0",
         "nette/utils": "~2.2",
         "nette/forms": "~2.2",
         "nette/application": "~2.2"

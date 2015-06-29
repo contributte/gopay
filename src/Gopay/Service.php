@@ -81,14 +81,20 @@ class Service extends Nette\Object
 
 	/** @const Platbu vybere uživatel */
 	const METHOD_USER_SELECT = NULL;
-
-
+	
+	/** @const denní perioda plateb */
+	const PERIOD_DAY = 'DAY';
+	/** @const týdenní perioda plateb */
+	const PERIOD_WEEK = 'WEEK';
+	/** @const měsíční perioda plateb */
+	const PERIOD_MOTNTH = 'MONTH';
+	
 	/** @const Czech koruna */
 	const CURRENCY_CZK = 'CZK';
 	/** @const Euro */
 	const CURRENCY_EUR = 'EUR';
 
-
+	
 	/** @const Czech */
 	const LANG_CS = 'CS';
 	/** @const English */
@@ -125,7 +131,21 @@ class Service extends Nette\Object
 		self::LANG_EN,
 	);
 
-
+	/** @var string */
+	private $recurrenceDateTo = null;
+	
+	/** @var string */
+	private $recurrenceCycle = self::PERIOD_DAY;
+	
+	/** @var array */
+	private $allowedCycle = array(
+		self::PERIOD_DAY,
+		self::PERIOD_WEEK,
+		self::PERIOD_MOTNTH,
+	);
+	
+	/** @var int */
+	private $recurrencePeriod = 30;
 
 	/**
 	 * @param GopaySoap
@@ -391,7 +411,101 @@ class Service extends Nette\Object
 		return new RedirectResponse($url);
 	}
 
+	/**
+	 * Executes payment via redirecting to GoPay payment gate
+	 *
+	 * @param  Payment
+	 * @param  string|null
+	 * @param  callback
+	 * @return RedirectResponse
+	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
+	 * @throws GopayFatalException on maldefined parameters
+	 * @throws GopayException on failed communication with WS
+	 */
+	public function recurrentPay(Payment $payment, $channel, $callback)
+	{
+		if ($payment instanceof ReturnedPayment) {
+			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
+		}
 
+		if (!isset($this->channels[$channel]) && $channel !== self::METHOD_USER_SELECT) {
+			throw new \InvalidArgumentException("Payment channel '$channel' is not supported");
+		}
+
+		try {
+			$customer = $payment->getCustomer();
+			$paymentSessionId = $this->soap->createRecurrentPayment(
+				$this->gopayId,
+				$payment->getProductName(),
+				$payment->getSumInCents(),
+				$payment->getCurrency(),
+				$payment->getVariable(),
+				$this->successUrl,
+				$this->failureUrl,
+				$this->recurrenceDateTo,
+				$this->recurrenceCycle,
+				$this->recurrencePeriod,
+				array_keys($this->channels),
+				$channel,
+				$this->gopaySecretKey,
+				$customer->firstName,
+				$customer->lastName,
+				$customer->city,
+				$customer->street,
+				$customer->postalCode,
+				$customer->countryCode,
+				$customer->email,
+				$customer->phoneNumber,
+				NULL, NULL, NULL, NULL,
+				$this->lang
+			);
+		} catch(\Exception $e) {
+			throw new GopayException($e->getMessage(), 0, $e);
+		}
+
+		$url = GopayConfig::fullIntegrationURL()
+			. "?sessionInfo.targetGoId=" . $this->gopayId
+			. "&sessionInfo.paymentSessionId=" . $paymentSessionId
+			. "&sessionInfo.encryptedSignature=" . $this->createSignature($paymentSessionId);
+
+		Nette\Utils\Callback::invokeArgs($callback, array($paymentSessionId));
+		return new RedirectResponse($url);
+	}
+	
+	/**
+	 * set cycle
+	 * @param string $cycle DAY, MONTH, WEEK
+	 * @return \App\Model\PaymentService
+	 */
+	public function setRecurrenceCycle($cycle) {
+		if (!in_array($cycle, $this->allowedCycle)) {
+			throw new \InvalidArgumentException('Not supported cycle "' . $cycle . '".');
+		}
+		
+		$this->recurrenceCycle = $cycle;
+		
+		return $this;
+	}
+	
+	/**
+	 * set expiration date
+	 * @param string $date YYYY-MM-DD
+	 * @return \App\Model\PaymentService
+	 */
+	public function setRecurrenceDateTo($date) {
+		$this->recurrenceDateTo = $date;
+		return $this;
+	}
+	
+	/**
+	 * set number of period
+	 * @param int $period
+	 * @return \App\Model\PaymentService
+	 */
+	public function setRecurrencePeriod($period) {
+		$this->recurrencePeriod = $period;
+		return $this;
+	}
 
 	/**
 	 * Binds payment buttons fo form

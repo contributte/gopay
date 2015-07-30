@@ -1,16 +1,31 @@
 # Markette :: Gopay
 
-- pro Nette Framework 2.1
-- a Gopay API 2.4
+[![Join the chat at https://gitter.im/Markette/Gopay](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Markette/Gopay?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+[![Build Status](https://img.shields.io/travis/Markette/Gopay.svg?style=flat-square)](https://travis-ci.org/Markette/Gopay)
+[![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
+[![Downloads this Month](https://img.shields.io/packagist/dm/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+[![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+[![HHVM Status](https://img.shields.io/hhvm/markette/gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/markette/gopay)
+
+## Development
+
+|   Branch  														| Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
+|:---------:														|:------:	|:--------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
+| [master](https://github.com/Markette/Gopay/tree/master)  			|   dev  	|dev-master	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| [gopay-2.5](https://github.com/Markette/Gopay/tree/gopay-2.5)		| testing  	|~2.1.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| [gopay-2.3](https://github.com/Markette/Gopay/tree/gopay-2.3) 	| stable 	|~2.0.0		|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
+| [gopay-1.9](https://github.com/Markette/Gopay/tree/gopay-1.9) 	| stable 	|~1.1.0		|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
 
 ## Instalace
 
 Nejjednodušeji stáhněte Gopay přes Composer:
+
 ```sh
-$ composer require Markette/Gopay
+$ composer require markette/gopay:~2.1.0
 ```
 
-Pokud nepoužijete Composer, zkopírujte `/Gopay` adresář mezi vaše knihovny - pokud používáte
+Pokud nepoužijete Composer, zkopírujte `/src/Gopay` adresář mezi vaše knihovny - pokud používáte
 RobotLoader, není nic víc potřeba.
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
@@ -29,16 +44,13 @@ gopay:
 	testMode       : false
 ```
 
-A přístup v presenteru pak bude díky autowiringu vypadat:
+A přístup v presenteru pak bude díky autowiringu a `@inject` anotaci vypadat:
 
 ```php
-/** @var Markette\Gopay\Service */
-private $gopay;
+use Markette\Gopay;
 
-public function injectGopay(Markette\Gopay\Service $gopay)
-{
-	$this->gopay = $gopay;
-}
+/** @var Gopay\Service @inject */
+public $gopay;
 ```
 
 ## Použití
@@ -58,7 +70,9 @@ z platebních tlačítek (tedy jako po zavolání `->onClick[]` na daném tlač�
 Zvolený kanál lze získat z tlačítka:
 
 ```php
-public function submittedForm(Markette\Gopay\PaymentButton $button)
+use Markette\Gopay;
+
+public function submittedForm(Gopay\PaymentButton $button)
 {
 	$channel = $button->getChannel();
 }

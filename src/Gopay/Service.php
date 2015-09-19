@@ -367,7 +367,7 @@ class Service extends Nette\Object
 		if ($this->changeChannel === TRUE) {
 			$channels = array_keys($this->channels);
 		} else {
-			$channels = [$channel];
+			$channels = array($channel);
 		}
 
 		try {

@@ -6,6 +6,10 @@
 [![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
 [![HHVM Status](https://img.shields.io/hhvm/markette/gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/markette/gopay)
 
+## Discussion
+
+[![Join the chat at https://gitter.im/Markette/Gopay](https://badges.gitter.im/Join%20Chat.svg?style=flat-square)](https://gitter.im/Markette/Gopay?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Development
 
 |   Branch  														| Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|

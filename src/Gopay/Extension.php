@@ -30,6 +30,7 @@ class Extension extends CompilerExtension
 		'gopayId' => NULL,
 		'gopaySecretKey' => NULL,
 		'testMode' => TRUE,
+		'changeChannel' => TRUE, 
 		'channels' => array(),
 	);
 
@@ -46,8 +47,10 @@ class Extension extends CompilerExtension
 				$driver,
 				$config['gopayId'],
 				$config['gopaySecretKey'],
-				isset($config['testMode']) ? $config['testMode'] : FALSE
+				isset($config['testMode']) ? $config['testMode'] : FALSE,
 			));
+			
+		$service->addSetup('setChangeChannel', array($config['changeChannel']));
 
 		if (isset($config['channels'])) {
 			$constants = ClassType::from('Markette\Gopay\Service');

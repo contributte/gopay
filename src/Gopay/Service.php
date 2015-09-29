@@ -136,12 +136,13 @@ class Service extends Nette\Object
 	 * @param string
 	 * @param bool
 	 */
-	public function __construct(GopaySoap $soap, $gopayId, $gopaySecretKey, $testMode)
+	public function __construct(GopaySoap $soap, $gopayId, $gopaySecretKey, $testMode, $changeChannel)
 	{
 		$this->soap = $soap;
 		$this->setGopayId($gopayId);
 		$this->setGopaySecretKey($gopaySecretKey);
 		$this->setTestMode($testMode);
+		$this->setChangeChannel($changeChannel);
 	}
 
 

@@ -349,17 +349,16 @@ class Service extends Nette\Object
 
 
 	/**
-	 * Executes payment via redirecting to GoPay payment gate
+	 * Check and create payment
 	 *
 	 * @param  Payment
 	 * @param  string|null
-	 * @param  callback
-	 * @return RedirectResponse
+	 * @return int
 	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function pay(Payment $payment, $channel, $callback)
+	protected function createPaymentInternal(Payment $payment, $channel)
 	{
 		if ($payment instanceof ReturnedPayment) {
 			throw new \InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
@@ -399,9 +398,30 @@ class Service extends Nette\Object
 				NULL, NULL, NULL, NULL,
 				$this->lang
 			);
+
+			return $paymentSessionId;
 		} catch(\Exception $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
 		}
+
+	}
+
+
+
+	/**
+	 * Executes payment via redirecting to GoPay payment gate
+	 *
+	 * @param  Payment
+	 * @param  string|null
+	 * @param  callback
+	 * @return RedirectResponse
+	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
+	 * @throws GopayFatalException on maldefined parameters
+	 * @throws GopayException on failed communication with WS
+	 */
+	public function pay(Payment $payment, $channel, $callback)
+	{
+		$paymentSessionId = $this->createPaymentInternal($payment, $channel);
 
 		$url = GopayConfig::fullIntegrationURL()
 			. "?sessionInfo.targetGoId=" . $this->gopayId
@@ -409,7 +429,35 @@ class Service extends Nette\Object
 			. "&sessionInfo.encryptedSignature=" . $this->createSignature($paymentSessionId);
 
 		Nette\Utils\Callback::invokeArgs($callback, array($paymentSessionId));
+
 		return new RedirectResponse($url);
+	}
+
+
+
+	/**
+	 * Executes payment via INLINE GoPay payment gate
+	 *
+	 * @param  Payment
+	 * @param  string|null
+	 * @param  callback
+	 * @return RedirectResponse
+	 * @throws \InvalidArgumentException on undefined channel or provided ReturnedPayment
+	 * @throws GopayFatalException on maldefined parameters
+	 * @throws GopayException on failed communication with WS
+	 */
+	public function payInline(Payment $payment, $channel, $callback)
+	{
+		$paymentSessionId = $this->createPaymentInternal($payment, $channel);
+
+		$response = array(
+			"url" => GopayConfig::fullNewIntegrationURL() . '/' . $paymentSessionId,
+			"signature" => $this->createSignature($paymentSessionId)
+		);
+
+		Nette\Utils\Callback::invokeArgs($callback, array($paymentSessionId));
+
+		return $response;
 	}
 
 

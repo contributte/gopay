@@ -169,22 +169,48 @@ $storeIdCallback = function ($paymentId) use ($order) {
 	$order->setPaymentId($paymentId);
 };
 ```
+Samotné placení lze provést dvěma způsoby.
 
-A nakonec s platbou zaplatíte :) (takto, druhý parametr je platební kanál,
-kterým má být platba uskutečněna):
+### REDIRECT
 
 ```php
-$response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
+$response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback, $gopay::PAYMENT_REDIRECT);
 ```
 
-Akce `pay()` vrátí `Response` objekt, který aplikaci přesměruje na platební
-bránu Gopay.
+Akce `pay()` vrátí `Response` objekt.
 
 ```php
 $this->sendResponse($response);
 ```
 
-V okamžiku zavolání `pay()` se mohou pokazit dvě věci:
+### INLINE brána
+
+```php
+$response = $gopay->payInline($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
+```
+
+Akce `payInline()` vám vrátí pole s klíči **url** a **signature**
+
+```php
+[ 
+    "url" => "https://gate.gopay.cz/gw/v3/3100000099",
+    "signature" => "25ee53a1ec­cc253a8310f5267d2de6b483f58a­f9676d883e26600ce3316ai"
+];
+```
+
+Platební bránu je možné vytvořit pomocí formuláře, který najdete v [dokumentaci](https://help.gopay.com/cs/tema/integrace-platebni-brany/integrace-nova-platebni-brany/integrace-nove-platebni-brany-pro-stavajici-zakazniky)
+
+```html
+<form action="https://gate.gopay.cz/gw/v3/3100000099" method="post" id="gopay-payment-button">
+  <input type="hidden" name="signature" value="25ee53a1ec­cc253a8310f5267d2de6b483f58a­f9676d883e26600ce3316ai"/>
+  <button name="pay" type="submit">Zaplatit</button>
+  <script type="text/javascript" src="https://gate.gopay.cz/gp-gw/js/embed.js"></script>
+</form>
+```
+
+#### Chyby s platbou
+
+V okamžiku zavolání `pay()` nebo `payInline()` se mohou pokazit dvě věci:
 
 1. Někde jsou poskytnuty špatné parametry
 2. Je pokažená oficiální platební brána Gopay
@@ -196,7 +222,9 @@ straně.
 
 ```php
 try {
-	$gopay->pay($payment, $gopay::TRANSFER);
+	$gopay->pay($payment, $gopay::TRANSFER, $storeIdCallback);
+	// nebo
+	$gopay->payInline($payment, $gopay::TRANSFER, $storeIdCallback);
 } catch (GopayException $e) {
 	echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
 	prosím za chvíli.';

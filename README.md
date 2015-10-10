@@ -118,7 +118,7 @@ $gopay->allowChannel($gopay::METHOD_GOPAY);
 
 Tato nastavení můžeme provést i v konfiguračním souboru:
 
-```neon
+```yaml
 gopay:
 	channels:
 		transfer: no # deny
@@ -126,6 +126,13 @@ gopay:
 		name: # add new one
 			title: My channel
 			image: /my-channel.png
+```
+
+Pokud chceme umožnit změnit **channel** na straně GoPay:
+
+```yaml
+gopay:
+    changeChannel: yes
 ```
 
 ### Provedení platby

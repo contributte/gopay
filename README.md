@@ -12,16 +12,24 @@
 
 ## Development
 
-|   Branch  														| Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
-|:---------:														|:------:	|:--------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
-| [master](https://github.com/Markette/Gopay/tree/master)  			|   dev  	|dev-master	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
-| [gopay-2.5](https://github.com/Markette/Gopay/tree/gopay-2.5)		| testing  	|~2.1.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
-| [gopay-2.3](https://github.com/Markette/Gopay/tree/gopay-2.3) 	| stable 	|~2.0.0		|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
-| [gopay-1.9](https://github.com/Markette/Gopay/tree/gopay-1.9) 	| stable 	|~1.1.0		|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
+| Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
+|:------:	|:--------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
+|   dev  	|dev-master	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| testing  	|~2.2.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| stable  	|~2.1.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+| stable 	|~2.0.0		|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
+| stable 	|~1.1.0		|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
 
 ## Instalace
 
 Nejjednodušeji stáhněte Gopay přes Composer:
+
+### Testing
+```sh
+$ composer require markette/gopay:~2.2.0
+```
+
+### Stable
 
 ```sh
 $ composer require markette/gopay:~2.1.0

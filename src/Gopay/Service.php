@@ -107,6 +107,9 @@ class Service extends Nette\Object
 	/** @var bool */
 	private $testMode = FALSE;
 
+	/** @var bool */
+	private $changeChannel;
+	
 	/** @var string */
 	private $lang = self::LANG_CS;
 
@@ -181,6 +184,18 @@ class Service extends Nette\Object
 	{
 		$this->testMode = (bool) $testMode;
 		GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;
+		return $this;
+	}
+
+
+
+	/**
+	 * @param bool $changeChannel
+	 * @return $this
+	 */
+	public function setChangeChannel($changeChannel = TRUE)
+	{
+		$this->changeChannel = (bool) $changeChannel;
 		return $this;
 	}
 
@@ -353,6 +368,12 @@ class Service extends Nette\Object
 		if (!isset($this->channels[$channel]) && $channel !== self::METHOD_USER_SELECT) {
 			throw new \InvalidArgumentException("Payment channel '$channel' is not supported");
 		}
+		
+		if ($this->changeChannel === TRUE) {
+			$channels = array_keys($this->channels);
+		} else {
+			$channels = array($channel);
+		}
 
 		try {
 			$customer = $payment->getCustomer();
@@ -364,7 +385,7 @@ class Service extends Nette\Object
 				$payment->getVariable(),
 				$this->successUrl,
 				$this->failureUrl,
-				array_keys($this->channels),
+				$channels,
 				$channel,
 				$this->gopaySecretKey,
 				$customer->firstName,

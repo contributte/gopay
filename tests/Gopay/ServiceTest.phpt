@@ -40,6 +40,34 @@ class ServiceTest extends BaseTestCase
         Assert::same(302, $response->getCode());
     }
 
+    public function testPayInline()
+    {
+        $soap = Mockery::mock('Markette\Gopay\Api\GopaySoap');
+        $soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
+
+        $payment = new Payment(array('sum' => 999, 'customer' => array()));
+        $callback = function ($id) {
+        };
+
+        $lang = Service::LANG_CS;
+
+        $service = new Service($soap, 1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
+        $service->addChannel(Service::METHOD_CARD_GPKB, 'KB');
+        $service->setLang($lang);
+
+        $response = $service->payInline($payment, Service::METHOD_CARD_GPKB, $callback);
+
+        Assert::type('array', $response);
+        Assert::count(2, $response);
+        Assert::same('https://testgw.gopay.cz/gw/v3/3000000001',
+            $response['url']
+        );
+
+        Assert::same('999c4a90f42af5bdd9b5b7eaff43f27eb671b03a1efd4662b729dd21b9be41c22d5b25fe5955ff8d',
+            $response['signature']
+        );
+    }
+
     public function testUrls()
     {
         $service = $this->createContainer('config.neon')->getService('gopay.service');
@@ -112,9 +140,17 @@ class ServiceTest extends BaseTestCase
             $service->pay($payment, 'nonexisting', $callback);
         }, '\InvalidArgumentException', "Payment channel 'nonexisting' is not supported");
 
-        $payment = new ReturnedPayment(array('sum' => 999, 'customer' => array()), 1234567890, 'fruC9a9e8ajuwrace4r3chaxu');
+        $paymentRet = new ReturnedPayment(array('sum' => 999, 'customer' => array()), 1234567890, 'fruC9a9e8ajuwrace4r3chaxu');
+        Assert::exception(function () use ($paymentRet, $callback, $service) {
+            $service->pay($paymentRet, Service::METHOD_CARD_GPKB, $callback);
+        }, '\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
+
         Assert::exception(function () use ($payment, $callback, $service) {
-            $service->pay($payment, Service::METHOD_CARD_GPKB, $callback);
+            $service->payInline($payment, 'nonexisting', $callback);
+        }, '\InvalidArgumentException', "Payment channel 'nonexisting' is not supported");
+
+        Assert::exception(function () use ($paymentRet, $callback, $service) {
+            $service->payInline($paymentRet, Service::METHOD_CARD_GPKB, $callback);
         }, '\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
     }
 
@@ -146,8 +182,14 @@ class ServiceTest extends BaseTestCase
         $service = new Service($soap, 1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
         $service->addChannel(Service::METHOD_CARD_GPKB, 'KB');
 
-        Assert::throws(function() use ($service, $payment) {
-            $response = $service->pay($payment, Service::METHOD_CARD_GPKB, function(){});
+        Assert::throws(function () use ($service, $payment) {
+            $response = $service->pay($payment, Service::METHOD_CARD_GPKB, function () {
+            });
+        }, 'Markette\Gopay\GopayException', $exmsg);
+
+        Assert::throws(function () use ($service, $payment) {
+            $response = $service->payInline($payment, Service::METHOD_CARD_GPKB, function () {
+            });
         }, 'Markette\Gopay\GopayException', $exmsg);
     }
 

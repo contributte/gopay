@@ -14,7 +14,7 @@
 
 | Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
 |:------:	|:--------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
-|   dev  	|dev-master	|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+|   dev  	|dev-master	|  2.5  							| nette/utils: ~2.3 <br> nette/forms: ~2.3 <br> nette/application: ~2.3 	| >=5.4 	|
 | testing  	|~2.2.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
 | stable  	|~2.1.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
 | stable 	|~2.0.0		|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
@@ -72,7 +72,13 @@ Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře m
 tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
 
 ```php
-$gopay->bindPaymentButtons($form, array($this->submittedForm));
+$gopay->bindPaymentButtons($form, [$this, 'submitForm']);
+// nebo vice callbacku
+$gopay->bindPaymentButtons($form, [
+    [$this, 'preProcessForm'],
+    [$this, 'processForm'],
+    [$this, 'postProcessForm'],
+]);
 ```
 
 Předaný `callback` bude zavolán po úspěšném odeslání formuláře jedním
@@ -111,9 +117,9 @@ seznamu.
 Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:
 
 ```php
-$gopay->addChannel('name', 'My channel', array(
+$gopay->addChannel('name', 'My channel', [
 	'image' => '/my-channel.png', // absolutní cesta k obrázku
-));
+]);
 ```
 
 Také můžete zakázat či povolit kterýkoliv předdefinovaný (nebo i váš vlastní)
@@ -149,12 +155,12 @@ Platbu lze uskutečnit v následující krocích. Nejprve je třeba si vytvořit
 novou instanci platby:
 
 ```php
-$payment = $gopay->createPayment(array(
+$payment = $gopay->createPayment([
 	'sum'         => $sum,      // placená částka
 	'variable'    => $variable, // variabilní symbol
 	'specific'    => $specific, // specifický symbol
 	'productName' => $product,  // název produktu (popis účelu platby)
-	'customer' => array(
+	'customer' => [
 		'firstName'   => $name,
 		'lastName'    => NULL,    // všechna parametry jsou volitelné
 		'street'      => NULL,    // pokud některý neuvedete,
@@ -163,8 +169,8 @@ $payment = $gopay->createPayment(array(
 		'countryCode' => 'CZE',
 		'email'       => $email,
 		'phoneNumber' => NULL,
-	),
-));
+	],
+]);
 ```
 
 Zadruhé nastavit adresy, na které Gopay platební brána přesměruje při úspěchu či
@@ -267,17 +273,17 @@ objektu platby:
 ```php
 $order = $database->getOrderByPaymentId($paymentSessionId);
 
-$payment = $gopay->restorePayment(array(
+$payment = $gopay->restorePayment([
 	'sum'          => $order->price,
 	'variable'    => $order->varSymbol,
 	'specific'    => $order->specSymbol,
 	'productName' => $order->product,
-), array(
+], [
 	'paymentSessionId'   => $paymentSessionId,
 	'targetGoId'         => $targetGoId,
 	'orderNumber'        => $orderNumber,
 	'encryptedSignature' => $encryptedSignature,
-));
+]);
 ```
 
 Na objektu platby lze zavolat dvě kontrolní metody: `isFraud()` a `isPaid()`.

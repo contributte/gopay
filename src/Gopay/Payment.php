@@ -42,17 +42,17 @@ class Payment extends Nette\Object
     private $customer;
 
     /** @var array */
-    private $allowedCurrency = array(
+    private $allowedCurrency = [
         Service::CURRENCY_CZK,
         Service::CURRENCY_EUR,
-    );
+    ];
 
     /**
      * @param array $values
      */
     public function __construct(array $values)
     {
-        foreach (array('sum', 'currency', 'variable', 'specific', 'productName', 'customer') as $param) {
+        foreach (['sum', 'currency', 'variable', 'specific', 'productName', 'customer'] as $param) {
             if (isset($values[$param])) {
                 $this->{'set' . ucfirst($param)}($values[$param]);
             }
@@ -201,7 +201,7 @@ class Payment extends Nette\Object
      */
     public function setCustomer($customer)
     {
-        $allowedKeys = array(
+        $allowedKeys = [
             'firstName',
             'lastName',
             'street',
@@ -210,7 +210,7 @@ class Payment extends Nette\Object
             'countryCode',
             'email',
             'phoneNumber',
-        );
+        ];
 
         $this->customer = (object)array_intersect_key(
             (array)$customer,

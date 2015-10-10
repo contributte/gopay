@@ -16,13 +16,13 @@ class Extension extends CompilerExtension
 {
 
     /** @var array */
-    private $defaults = array(
+    private $defaults = [
         'gopayId' => NULL,
         'gopaySecretKey' => NULL,
         'testMode' => TRUE,
         'changeChannel' => NULL,
-        'channels' => array(),
-    );
+        'channels' => [],
+    ];
 
     public function loadConfiguration()
     {
@@ -33,15 +33,15 @@ class Extension extends CompilerExtension
             ->setClass('Markette\Gopay\Api\GopaySoap');
 
         $service = $container->addDefinition($this->prefix('service'))
-            ->setClass('Markette\Gopay\Service', array(
+            ->setClass('Markette\Gopay\Service', [
                 $driver,
                 $config['gopayId'],
                 $config['gopaySecretKey'],
                 isset($config['testMode']) ? $config['testMode'] : FALSE,
-            ));
+            ]);
 
         if (is_bool($config['changeChannel'])) {
-            $service->addSetup('setChangeChannel', array($config['changeChannel']));
+            $service->addSetup('setChangeChannel', [$config['changeChannel']]);
         }
 
         if (isset($config['channels'])) {
@@ -55,7 +55,7 @@ class Extension extends CompilerExtension
                     $channel['code'] = $code;
                     $service->addSetup('addChannel', $channel);
                 } else if (is_scalar($channel)) {
-                    $service->addSetup('addChannel', array($code, $channel));
+                    $service->addSetup('addChannel', [$code, $channel]);
                 }
             }
         }
@@ -64,9 +64,9 @@ class Extension extends CompilerExtension
     public function afterCompile(PhpGenerator\ClassType $class)
     {
         $initialize = $class->methods['initialize'];
-        $initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtonsUsingDependencyContainer($this, ?);', array(
+        $initialize->addBody('Markette\Gopay\Service::registerAddPaymentButtonsUsingDependencyContainer($this, ?);', [
             $this->prefix('service'),
-        ));
+        ]);
     }
 
 }

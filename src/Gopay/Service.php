@@ -140,13 +140,13 @@ class Service extends Nette\Object
     private $failureUrl;
 
     /** @var array */
-    private $channels = array();
+    private $channels = [];
 
     /** @var array */
-    private $allowedLang = array(
+    private $allowedLang = [
         self::LANG_CS,
         self::LANG_EN,
-    );
+    ];
 
     /**
      * Service constructor.
@@ -291,19 +291,19 @@ class Service extends Nette\Object
      * @throws InvalidArgumentException on channel name conflict
      * @return self
      */
-    public function addChannel($code, $name, $logo = NULL, $offline = NULL, $description = NULL, array $params = array())
+    public function addChannel($code, $name, $logo = NULL, $offline = NULL, $description = NULL, array $params = [])
     {
         if (isset($this->channels[$code])) {
             throw new InvalidArgumentException("Channel with name '$code' is already defined.");
         }
 
-        $this->channels[$code] = (object)array_merge($params, array(
+        $this->channels[$code] = (object)array_merge($params, [
             'code' => $code,
             'name' => $name,
             'logo' => $logo,
             'offline' => $offline,
             'description' => $description,
-        ));
+        ]);
 
         return $this;
     }
@@ -324,7 +324,7 @@ class Service extends Nette\Object
      * @param array $values
      * @return Payment
      */
-    public function createPayment(array $values = array())
+    public function createPayment(array $values = [])
     {
         return new Payment($values);
     }
@@ -364,7 +364,7 @@ class Service extends Nette\Object
         if ($this->changeChannel === TRUE) {
             $channels = array_keys($this->channels);
         } else {
-            $channels = array($channel);
+            $channels = [$channel];
         }
 
         try {
@@ -418,7 +418,7 @@ class Service extends Nette\Object
             . "&sessionInfo.paymentSessionId=" . $paymentSessionId
             . "&sessionInfo.encryptedSignature=" . $this->createSignature($paymentSessionId);
 
-        Callback::invokeArgs($callback, array($paymentSessionId));
+        Callback::invokeArgs($callback, [$paymentSessionId]);
 
         return new RedirectResponse($url);
     }
@@ -438,12 +438,12 @@ class Service extends Nette\Object
     {
         $paymentSessionId = $this->createPaymentInternal($payment, $channel);
 
-        $response = array(
+        $response = [
             "url" => GopayConfig::fullNewIntegrationURL() . '/' . $paymentSessionId,
             "signature" => $this->createSignature($paymentSessionId)
-        );
+        ];
 
-        Nette\Utils\Callback::invokeArgs($callback, array($paymentSessionId));
+        Nette\Utils\Callback::invokeArgs($callback, [$paymentSessionId]);
 
         return $response;
     }
@@ -472,7 +472,7 @@ class Service extends Nette\Object
      * @throws InvalidArgumentException
      * @return IPaymentButton
      */
-    public function bindPaymentButton($channel, Forms\Container $container, $callbacks = array())
+    public function bindPaymentButton($channel, Forms\Container $container, $callbacks = [])
     {
         if (!$channel instanceof stdClass) {
             if (!isset($this->channels[$channel])) {
@@ -489,7 +489,7 @@ class Service extends Nette\Object
 
         $channel->control = 'gopayChannel' . $channel->code;
 
-        if (!is_array($callbacks)) $callbacks = array($callbacks);
+        if (!is_array($callbacks)) $callbacks = [$callbacks];
         foreach ($callbacks as $callback) {
             $button->onClick[] = $callback;
         }

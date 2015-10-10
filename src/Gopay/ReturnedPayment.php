@@ -20,7 +20,7 @@ class ReturnedPayment extends Payment
     private $gopaySecretKey;
 
     /** @var array */
-    private $valuesToBeVerified = array();
+    private $valuesToBeVerified = [];
 
     /** @var array */
     private $result;
@@ -34,7 +34,7 @@ class ReturnedPayment extends Payment
      * @param string $gopaySecretKey
      * @param array $valuesToBeVerified
      */
-    public function __construct(array $values, $gopayId, $gopaySecretKey, array $valuesToBeVerified = array())
+    public function __construct(array $values, $gopayId, $gopaySecretKey, array $valuesToBeVerified = [])
     {
         parent::__construct($values);
         $this->gopayId = (float)$gopayId;

@@ -23,26 +23,26 @@ final class GopayPresenter extends Presenter
         $gopay = $this->gopay;
 
         // setup success and failure callbacks
-        $gopay->successUrl = $this->link('//success', array('orderId' => $id));
-        $gopay->failureUrl = $this->link('//failure', array('orderId' => $id));
+        $gopay->successUrl = $this->link('//success', ['orderId' => $id]);
+        $gopay->failureUrl = $this->link('//failure', ['orderId' => $id]);
 
         // your custom communication with model
         $order = $this->model->findOrderById($id);
 
         // prepare data about customer)
-        $customer = array(
+        $customer = [
             'firstName' => $order->name,
             'email' => $order->email,
-        );
+        ];
 
         // creation of payment
-        $payment = $gopay->createPayment(array(
+        $payment = $gopay->createPayment([
             'sum' => $order->getPrice(),
             'variable' => $order->varSymbol,
             'specific' => $order->specSymbol,
             'productName' => $order->product,
             'customer' => $customer,
-        ));
+        ]);
 
         // to be able to connect our internal Order with Gopay Payment,
         // we have to store its generated ID (which will be created during
@@ -77,17 +77,17 @@ final class GopayPresenter extends Presenter
         $order = $this->model->findOrderByPaymentId($paymentSessionId);
 
         // restores Payment object (as instance of ReturnedPayment)
-        $payment = $gopay->restorePayment(array(
+        $payment = $gopay->restorePayment([
             'sum' => $order->price,
             'variable' => $order->varSymbol,
             'specific' => $order->specSymbol,
             'productName' => $order->product,
-        ), array(
+        ], [
             'paymentSessionId' => $paymentSessionId,
             'targetGoId' => $targetGoId,
             'orderNumber' => $orderNumber,
             'encryptedSignature' => $encryptedSignature,
-        ));
+        ]);
 
         // firstly we check if request is not falsified
         if ($payment->isFraud()) {

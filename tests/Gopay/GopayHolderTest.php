@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: GopayHolder
+ * Test: Markette\Gopay\GopayHolder
  *
  * @testCase
  */
 
-use Tester\Assert;
 use Markette\Gopay\GopayHolder;
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -33,6 +33,7 @@ class GopayHolderTest extends BaseTestCase
 
         Assert::same($holder->getHelper()->test(), $return);
     }
+
     public function testSoap()
     {
         $return = FALSE;

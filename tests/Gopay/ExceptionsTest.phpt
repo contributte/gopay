@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Exceptions
+ * Test: Markette\Gopay\Exceptions
  *
  * @testCase
  */

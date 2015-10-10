@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: ReturnPayment
+ * Test: Markette\Gopay\ReturnPayment
  *
  * @testCase
  */
@@ -47,6 +47,7 @@ class ReturnedPaymentTest extends BaseTestCase
 
         Assert::true($returnedPayment->isFraud());
     }
+
     public function testGetStatus()
     {
         $result = array('sessionState' => GopayHelper::CANCELED);

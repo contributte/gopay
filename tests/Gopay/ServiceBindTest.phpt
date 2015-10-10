@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Service - buttons binding
+ * Test: Markette\Gopay\Service - buttons binding
  *
  * @testCase
  */

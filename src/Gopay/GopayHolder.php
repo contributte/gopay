@@ -1,18 +1,9 @@
 <?php
 
-/**
- * Markette - payment methods integration for Nette Framework
- *
- * @license New BSD
- * @package Markette
- * @author  Vojtěch Dobeš
- */
-
 namespace Markette\Gopay;
 
 use Markette\Gopay\Api\GopayHelper;
 use Markette\Gopay\Api\GopaySoap;
-
 
 /**
  * GopayHolder - singleton - hold helper and soap instances.
@@ -54,14 +45,16 @@ class GopayHolder
     /**
      * @return GopayHelper
      */
-    public function getHelper() {
+    public function getHelper()
+    {
         return self::$helper;
     }
 
     /**
      * @param mixed $helper
      */
-    public function setHelper($helper) {
+    public function setHelper($helper)
+    {
         self::$helper = $helper;
     }
 

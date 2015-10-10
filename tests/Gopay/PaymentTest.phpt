@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Payment
+ * Test: Markette\Gopay\Payment
  *
  * @testcase
  */

@@ -36,5 +36,10 @@
 	},
     "autoload": {
         "classmap": ["src/"]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.3-dev"
+        }
     }
 }

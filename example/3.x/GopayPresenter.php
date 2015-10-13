@@ -1,30 +1,37 @@
 <?php
 
-use Markette\Gopay;
+use App\Model\ShopModel;
+use Markette\Gopay\Service\PaymentService;
+use Markette\Gopay\Service\PreAuthorizedPaymentService;
+use Markette\Gopay\Service\RecurrentPaymentService;
 use Nette\Application\UI\Presenter;
 
 final class GopayPresenter extends Presenter
 {
 
-    /** @var Gopay\Service @inject */
-    public $gopay;
+    /** @var PaymentService @inject */
+    public $paymentService;
 
-    /** @var App\ShopModel @inject */
+    /** @var RecurrentPaymentService @inject */
+    public $recurrentPaymentService;
+
+    /** @var PreAuthorizedPaymentService @inject */
+    public $preAuthorizedPaymentService;
+
+    /** @var ShopModel @inject */
     public $model;
 
     /**
-     * Creates and send payment request to GoPay
+     * Creates and redirect payment request to GoPay
      *
      * @param int $id
      * @param string $channel
      */
     public function actionPay($id, $channel)
     {
-        $gopay = $this->gopay;
-
         // setup success and failure callbacks
-        $gopay->successUrl = $this->link('//success', ['orderId' => $id]);
-        $gopay->failureUrl = $this->link('//failure', ['orderId' => $id]);
+        $this->paymentService->setSuccessUrl($this->link('//success', ['orderId' => $id]));
+        $this->paymentService->setFailureUrl($this->link('//failure', ['orderId' => $id]));
 
         // your custom communication with model
         $order = $this->model->findOrderById($id);
@@ -36,7 +43,7 @@ final class GopayPresenter extends Presenter
         ];
 
         // creation of payment
-        $payment = $gopay->createPayment([
+        $payment = $this->paymentService->createPayment([
             'sum' => $order->getPrice(),
             'variable' => $order->varSymbol,
             'specific' => $order->specSymbol,
@@ -52,10 +59,27 @@ final class GopayPresenter extends Presenter
         };
 
         // here we communicate with Gopay Web Service (via soap)
-        $toPayResponse = $gopay->pay($payment, $channel, $storePaymentId);
+        $toPayResponse = $this->paymentService->pay($payment, $channel, $storePaymentId);
 
         // redirect to Gopay Payment Gate
         $this->sendResponse($toPayResponse);
+    }
+
+    /**
+     * Creates and send payment request to GoPay
+     *
+     * @param int $id
+     * @param string $channel
+     */
+    public function actionPayInline($id, $channel)
+    {
+        // same as above
+
+        // here we communicate with Gopay Web Service (via soap)
+        $response = $this->paymentService->payInline($payment, $channel, $storePaymentId);
+
+        // redirect to Gopay Payment Gate
+        $this->sendJson(['url' => $response['url'], 'signature' => $response['signature']]);
     }
 
     /* === Called from Gopay Payment Gate ======================================= */
@@ -71,13 +95,11 @@ final class GopayPresenter extends Presenter
      */
     public function actionSuccess($orderId, $paymentSessionId, $targetGoId, $orderNumber, $encryptedSignature)
     {
-        $gopay = $this->gopay;
-
         // your custom communication with model
         $order = $this->model->findOrderByPaymentId($paymentSessionId);
 
         // restores Payment object (as instance of ReturnedPayment)
-        $payment = $gopay->restorePayment([
+        $payment = $this->paymentService->restorePayment([
             'sum' => $order->price,
             'variable' => $order->varSymbol,
             'specific' => $order->specSymbol,

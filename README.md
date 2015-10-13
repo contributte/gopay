@@ -199,7 +199,7 @@ Samotné placení lze provést dvěma způsoby.
 $response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
 ```
 
-Akce `pay()` vrátí `Response` objekt.
+Akce `pay()` vrátí `Response` objekt. Resp. `RedirectResponse`, který vás přesměruje na Gopay bránu.
 
 ```php
 $this->sendResponse($response);
@@ -264,6 +264,8 @@ nebo `failureUrl` adresu. Obě dvě dostanou od Gopay následující sadu parame
 - orderNumber // variabilní číslo
 - encryptedSignature
 
+*Plus parametry, které uvedete v successUrl, resp. failureUrl.*
+
 První parametr je totožný s tím, který jsme si v předchozí kapitole uložili do
 naší interní modelové reprezentace objednávky. Můžeme jej tedy použít k jejímu
 opětovnému načtení.
@@ -288,15 +290,15 @@ $payment = $service->restorePayment([
 ```
 
 Na objektu platby lze zavolat dvě kontrolní metody: `isFraud()` a `isPaid()`.
-První nás informuje, jestli je platba pravá, respektive jestli se nejedná
+První nás informuje, jestli je platba pravá, respektive nejedná-li se
 o podvrh (interně se zde kontroluje ona čtveřice parametrů předaných z platební
-brány.
+brány).
 
 Druhá `isPaid()` pak vrátí `TRUE`, pokud je platba skutečně zaplacena. Pokud
 ano, proces je u konce, můžeme si poznačit, že objednávka je zaplacena a poslat
 třeba zákazníkovi email.
 
-V případě neúspěšně platby jsou opět předány všechny čtyři parametry, je tedy
+V případě neúspěšné platby jsou opět předány všechny čtyři parametry, je tedy
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 

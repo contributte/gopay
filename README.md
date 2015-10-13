@@ -29,7 +29,7 @@ Dokumentace k této verzi [**se nachází zde**](https://github.com/Markette/Gop
 ## Instalace
 
 ```sh
-$ composer require markette/gopay:
+$ composer require markette/gopay
 ```
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:

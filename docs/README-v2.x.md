@@ -1,83 +1,61 @@
 # Markette :: Gopay
 
-[![Build Status](https://img.shields.io/travis/Markette/Gopay.svg?style=flat-square)](https://travis-ci.org/Markette/Gopay)
-[![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
-[![Downloads this Month](https://img.shields.io/packagist/dm/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
-[![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
-[![HHVM Status](https://img.shields.io/hhvm/markette/gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/markette/gopay)
-
-## Diskuze
-
-[![Join the chat at https://gitter.im/Markette/Gopay](https://badges.gitter.im/Join%20Chat.svg?style=flat-square)](https://gitter.im/Markette/Gopay?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-## Vývoj
-
-| Status 	| Composer 	| [GoPay](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
-|:------:	|:--------:	|:-------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
-| dev  	    |dev-master |  2.5  							| nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
-| testing   |3.0.0-alpha|  2.5  							| nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
-| testing  	|~2.3.0		|  2.5  							| nette/utils: ~2.3 <br> nette/forms: ~2.3 <br> nette/application: ~2.3 	| >=5.4 	|
-| testing  	|~2.2.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
-| stable  	|~2.1.0		|  2.5  							| nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
-| stable 	|~2.0.0		|  2.3  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
-| stable 	|~1.1.0		|  1.9  							|                        nette/nette: dev-master                        	| >=5.3.2 	|
-
-## Verze 2.x
-
-Dokumentace k této verzi [**se nachází zde**](https://github.com/Markette/Gopay/blob/master/docs/README-v2.x.md).
+## v2.1.0 - v2.2.0
 
 ## Instalace
 
+Nejjednodušeji stáhněte Gopay přes Composer:
+
+### v2.2.0
 ```sh
-$ composer require markette/gopay:
+$ composer require markette/gopay:~2.2.0
 ```
+
+### v2.1.0
+
+```sh
+$ composer require markette/gopay:~2.1.0
+```
+
+Pokud nepoužijete Composer, zkopírujte `/src/Gopay` adresář mezi vaše knihovny - pokud používáte
+RobotLoader, není nic víc potřeba.
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
 
 ```neon
 extensions:
-	gopay: Markette\Gopay\DI\Extension
+    gopay: Markette\Gopay\Extension
 ```
 
 Poté můžeme v konfiguračním souboru nastavit parametry:
 
 ```neon
 gopay:
-	gopayId        : ***
-	gopaySecretKey : ***
-	testMode       : false
+    gopayId        : ***
+    gopaySecretKey : ***
+    testMode       : false
+```
+
+A přístup v presenteru pak bude díky autowiringu a `@inject` anotaci vypadat:
+
+```php
+use Markette\Gopay;
+
+/** @var Gopay\Service @inject */
+public $gopay;
 ```
 
 ## Použití
-
-### Služby
-
-V aktuální implementaci máte na výber 3 služby.
-
-* **PaymentService** (klasické platby)
-* **RecurrentPaymentService** (opakované platby)
-* **PreAuthorizedPaymentService** (před-autorizované platby)
-
-Ty si můžete pomocí `autowiringu` vstříknout do `Presenteru`.
-
-```php
-use Markette\Gopay\Service\PaymentService;
-
-/** @var PaymentService @autowire */
-public $paymentService;
-```
 
 ### Před platbou
 
 Před platbou je třeba vytvořit formulář s odpovídajícími platebními tlačítky.
 Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře můžete
-tlačítka jednoduše přidat přes **Binder** metodou `bindPaymentButtons()`:
+tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
 
 ```php
-$binder->bindPaymentButtons($service, $form, [$this, 'submitForm']);
-
+$gopay->bindPaymentButtons($form, [$this, 'submitForm']);
 // nebo vice callbacku
-
 $gopay->bindPaymentButtons($form, [
     [$this, 'preProcessForm'],
     [$this, 'processForm'],
@@ -90,11 +68,11 @@ z platebních tlačítek (tedy jako po zavolání `->onClick[]` na daném tlač�
 Zvolený kanál lze získat z tlačítka:
 
 ```php
-use Markette\Gopay\Form;
+use Markette\Gopay;
 
-public function submittedForm(Form\PaymentButton $button)
+public function submittedForm(Gopay\PaymentButton $button)
 {
-	$channel = $button->getChannel();
+    $channel = $button->getChannel();
 }
 ```
 
@@ -103,12 +81,12 @@ maker), je nejlepší si do šablony předat seznam použitých kanálů a itero
 nad ním:
 
 ```php
-$this->template->channels = $service->getChannels();
+$this->template->channels = $gopay->getChannels();
 ```
 
 ```html
 {foreach $channels as $channel}
-	{input $channel->control}
+    {input $channel->control}
 {/foreach}
 ```
 
@@ -136,18 +114,16 @@ Tato nastavení můžeme provést i v konfiguračním souboru:
 
 ```yaml
 gopay:
-	payments:
-	    channels:
-            gopay: 'Gopay - Elektronická peněženka'
-            card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'
+    channels:
+		gopay: 'Gopay - Elektronická peněženka'
+		card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'
 ```
 
 Pokud chceme umožnit změnit **channel** na straně GoPay:
 
 ```yaml
 gopay:
-    payments:
-        changeChannel: yes
+    changeChannel: yes
 ```
 
 ### Provedení platby
@@ -156,21 +132,21 @@ Platbu lze uskutečnit v následující krocích. Nejprve je třeba si vytvořit
 novou instanci platby:
 
 ```php
-$payment = $service->createPayment([
-	'sum'         => $sum,      // placená částka
-	'variable'    => $variable, // variabilní symbol
-	'specific'    => $specific, // specifický symbol
-	'productName' => $product,  // název produktu (popis účelu platby)
-	'customer' => [
-		'firstName'   => $name,
-		'lastName'    => NULL,    // všechna parametry jsou volitelné
-		'street'      => NULL,    // pokud některý neuvedete,
-		'city'        => NULL,    // použije se prázdný řetězec
-		'postalCode'  => $postal,
-		'countryCode' => 'CZE',
-		'email'       => $email,
-		'phoneNumber' => NULL,
-	],
+$payment = $gopay->createPayment([
+    'sum'         => $sum,      // placená částka
+    'variable'    => $variable, // variabilní symbol
+    'specific'    => $specific, // specifický symbol
+    'productName' => $product,  // název produktu (popis účelu platby)
+    'customer' => [
+        'firstName'   => $name,
+        'lastName'    => NULL,    // všechna parametry jsou volitelné
+        'street'      => NULL,    // pokud některý neuvedete,
+        'city'        => NULL,    // použije se prázdný řetězec
+        'postalCode'  => $postal,
+        'countryCode' => 'CZE',
+        'email'       => $email,
+        'phoneNumber' => NULL,
+    ],
 ]);
 ```
 
@@ -178,8 +154,8 @@ Zadruhé nastavit adresy, na které Gopay platební brána přesměruje při ús
 naopak selhání platby.
 
 ```php
-$service->setSuccessUrl($this->link('//success', ['orderId' => $orderId]));
-$service->setFailureUrl($this->link('//failure', ['orderId' => $orderId]));
+$gopay->successUrl = $this->link('//success');
+$gopay->failureUrl = $this->link('//failure');
 ```
 
 Je užitečné si poznačit ID platby (například pokud se má platba vázat
@@ -188,7 +164,7 @@ parametru metodě `pay()`.
 
 ```php
 $storeIdCallback = function ($paymentId) use ($order) {
-	$order->setPaymentId($paymentId);
+    $order->setPaymentId($paymentId);
 };
 ```
 Samotné placení lze provést dvěma způsoby.
@@ -244,12 +220,12 @@ straně.
 
 ```php
 try {
-	$gopay->pay($payment, $gopay::TRANSFER, $storeIdCallback);
-	// nebo
-	$gopay->payInline($payment, $gopay::TRANSFER, $storeIdCallback);
+    $gopay->pay($payment, $gopay::TRANSFER, $storeIdCallback);
+    // nebo
+    $gopay->payInline($payment, $gopay::TRANSFER, $storeIdCallback);
 } catch (GopayException $e) {
-	echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
-	prosím za chvíli.';
+    echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
+    prosím za chvíli.';
 }
 ```
 
@@ -272,18 +248,18 @@ Všechny tyto údaje + údaje z načtené objednávky pak použijeme ke znovuses
 objektu platby:
 
 ```php
-$order = $model->getOrderByPaymentId($paymentSessionId);
+$order = $database->getOrderByPaymentId($paymentSessionId);
 
-$payment = $service->restorePayment([
-	'sum'          => $order->price,
-	'variable'    => $order->varSymbol,
-	'specific'    => $order->specSymbol,
-	'productName' => $order->product,
+$payment = $gopay->restorePayment([
+    'sum'          => $order->price,
+    'variable'    => $order->varSymbol,
+    'specific'    => $order->specSymbol,
+    'productName' => $order->product,
 ], [
-	'paymentSessionId'   => $paymentSessionId,
-	'targetGoId'         => $targetGoId,
-	'orderNumber'        => $orderNumber,
-	'encryptedSignature' => $encryptedSignature,
+    'paymentSessionId'   => $paymentSessionId,
+    'targetGoId'         => $targetGoId,
+    'orderNumber'        => $orderNumber,
+    'encryptedSignature' => $encryptedSignature,
 ]);
 ```
 
@@ -300,4 +276,11 @@ V případě neúspěšně platby jsou opět předány všechny čtyři parametr
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 
-Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/example/3.x/GopayPresenter.php).
+Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/example/2.x/GopayPresenter.php).
+
+## Co tahle věc neumí a co s tím
+
+Tahle mini-knihovnička, spíše snippet kódu nepokrývá velkou část Gopay API.
+Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište,
+klidně i pošlete jako pull-request. Stejně tak můžete v issues informovat
+o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).

@@ -1,0 +1,8 @@
+gopay:
+    payments:
+        channels:
+            eu_gp_u: Platba kartou - Česká spořitelna
+            eu_bank: Běžný bankovní převod
+            SUPERCASh: Terminál České pošty
+            cz_kb: Platba KB - Mojeplatba
+            sk_optb: [name: 'Platba OTP banka Slovensko, a.s.', logo: 'opt-logo.png']

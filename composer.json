@@ -25,7 +25,6 @@
     "require": {
         "php": ">=5.4",
         "markette/gopay-api": "~2.5.1",
-        "nette/utils": "~2.3",
         "nette/forms": "~2.3",
         "nette/application": "~2.3"
     },

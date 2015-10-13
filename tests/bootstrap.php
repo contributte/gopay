@@ -11,7 +11,7 @@ if (@!include __DIR__ . '/../vendor/autoload.php') {
 }
 
 // Includes
-include __DIR__ . '/Gopay/BaseTestCase.php';
+include __DIR__ . '/cases/BaseTestCase.php';
 
 // Configure environment
 Tester\Environment::setup();

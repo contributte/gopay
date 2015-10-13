@@ -23,22 +23,22 @@
         }
     ],
     "require": {
-        "php": ">=5.4",
+        "php": ">=5.5",
         "markette/gopay-api": "~2.5.1",
-        "nette/forms": "~2.3",
-        "nette/application": "~2.3"
+        "nette/forms": "~2.3.0",
+        "nette/application": "~2.3.0",
+		"nette/di": "~2.3.0"
     },
 	"require-dev": {
 		"nette/tester": "~1.5",
-		"mockery/mockery": "~0.9.0",
-		"nette/di": "~2.3"
+		"mockery/mockery": "~0.9.0"
 	},
     "autoload": {
         "classmap": ["src/"]
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.3-dev"
+            "dev-master": "3.0-dev"
         }
     }
 }

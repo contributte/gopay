@@ -30,6 +30,7 @@ class Extension extends CompilerExtension
     {
         $this->setupGopay();
         $this->setupServices();
+        $this->setupForms();
     }
 
     private function setupGopay()
@@ -50,13 +51,12 @@ class Extension extends CompilerExtension
                 isset($config['testMode']) ? $config['testMode'] : FALSE,
             ]);
 
-        $gopay = $builder->addDefinition($this->prefix('gopay'))
+        $builder->addDefinition($this->prefix('gopay'))
             ->setClass('Markette\Gopay\Gopay', [
                 $gconfig,
                 $driver,
                 $helper,
             ]);
-
     }
 
     private function setupServices()
@@ -66,19 +66,17 @@ class Extension extends CompilerExtension
         $gopay = $builder->getDefinition($this->prefix('gopay'));
 
         $services = [
-            PaymentService::class,
-            RecurrentPaymentService::class,
-            PreAuthorizedPaymentService::class,
+            'payment' => PaymentService::class,
+            'recurrentPayment' => RecurrentPaymentService::class,
+            'preAuthorizedPayment' => PreAuthorizedPaymentService::class,
         ];
 
-        foreach ($services as $serviceClass) {
-            $def = $builder->addDefinition($this->prefix('service.payment'))
-                ->setClass($serviceClass, [
-                    $gopay,
-                ]);
+        foreach ($services as $serviceName => $serviceClass) {
+            $def = $builder->addDefinition($this->prefix("service.$serviceName"))
+                ->setClass($serviceClass, [$gopay]);
 
             if (is_bool($config['payments']['changeChannel'])) {
-                $def->addSetup('setChangeChannel', [$config['payments']['changeChannel']]);
+                $def->addSetup('allowChangeChannel', [$config['payments']['changeChannel']]);
             }
 
             if (isset($config['payments']['channels'])) {
@@ -97,6 +95,14 @@ class Extension extends CompilerExtension
                 }
             }
         }
+    }
+
+    private function setupForms()
+    {
+        $builder = $this->getContainerBuilder();
+
+        $builder->addDefinition($this->prefix('form.binder'))
+            ->setClass('Markette\Gopay\Form\Binder');
     }
 
     /**

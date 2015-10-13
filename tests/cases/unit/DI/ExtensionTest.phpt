@@ -22,11 +22,9 @@ class ExtensionTest extends BaseTestCase
         Assert::type('Markette\Gopay\Api\GopaySoap', $container->getService('gopay.driver'));
         Assert::type('Markette\Gopay\Api\GopayHelper', $container->getService('gopay.helper'));
 
-        $paymentService = $container->getService('gopay.service.payment');
-        Assert::type('Markette\Gopay\Service\PaymentService', $paymentService);
-
-        $recurrentPaymentService = $container->getService('gopay.service.recurrentPayment');
-        Assert::type('Markette\Gopay\Service\RecurrentPaymentService', $recurrentPaymentService);
+        Assert::type('Markette\Gopay\Service\PaymentService', $container->getService('gopay.service.payment'));
+        Assert::type('Markette\Gopay\Service\RecurrentPaymentService', $container->getService('gopay.service.recurrentPayment'));
+        Assert::type('Markette\Gopay\Service\PreAuthorizedPaymentService', $container->getService('gopay.service.preAuthorizedPayment'));
     }
 
     public function testChannels()

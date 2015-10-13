@@ -7,8 +7,8 @@ use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Entity\PreAuthorizedPayment;
 use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Exception\GopayFatalException;
+use Markette\Gopay\Exception\InvalidArgumentException;
 use Nette\Application\Responses\RedirectResponse;
-use Nette\InvalidArgumentException;
 
 /**
  * PreAuthorizedPayment Service

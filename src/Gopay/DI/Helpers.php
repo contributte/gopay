@@ -2,6 +2,7 @@
 
 namespace Markette\Gopay\DI;
 
+use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Form\Binder;
 use Markette\Gopay\Service\AbstractPaymentService;
 use Nette\DI\Container;
@@ -25,7 +26,7 @@ class Helpers
         $services = $container->findByType(AbstractPaymentService::class);
 
         foreach ($services as $service) {
-            self::registerAddPaymentButtons($binder, $service);
+            self::registerAddPaymentButtons($binder, $container->getService($service));
         }
     }
 
@@ -43,7 +44,9 @@ class Helpers
             $binder->bindPaymentButtons($service, $container, $callbacks);
         });
         FormContainer::extensionMethod('add' . $method . 'Button', function ($container, $channel, $callback = NULL) use ($binder, $service) {
-            return $binder->bindPaymentButton($channel, $container, $callback);
+            $channels = $service->getChannels();
+            if (!isset($channels[$channel])) throw new InvalidArgumentException("Channel '$channel' is not allowed.");
+            return $binder->bindPaymentButton($channels[$channel], $container, $callback = []);
         });
     }
 

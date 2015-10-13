@@ -5,6 +5,7 @@ namespace Markette\Gopay\Entity;
 use Exception;
 use Markette\Gopay\Api\GopayHelper;
 use Markette\Gopay\Exception\GopayException;
+use Markette\Gopay\Exception\GopayFatalException;
 use Markette\Gopay\Gopay;
 
 /**
@@ -44,10 +45,10 @@ class ReturnedPayment extends Payment
      * @return Gopay
      * @throws GopayException
      */
-    private function getGopay()
+    protected function getGopay()
     {
         if (!$this->gopay) {
-            throw new GopayException('No Gopay set');
+            throw new GopayException('No gopay set');
         }
 
         return $this->gopay;
@@ -61,7 +62,7 @@ class ReturnedPayment extends Payment
     public function isFraud()
     {
         try {
-            $this->getGopay()->helper->checkPaymentIdentity(
+            $this->getGopay()->getHelper()->checkPaymentIdentity(
                 (float)$this->valuesToBeVerified['targetGoId'],
                 (float)$this->valuesToBeVerified['paymentSessionId'],
                 NULL,
@@ -72,6 +73,8 @@ class ReturnedPayment extends Payment
                 $this->getGopay()->config->getGopaySecretKey()
             );
             return FALSE;
+        } catch (GopayFatalException $e) {
+            throw $e;
         } catch (Exception $e) {
             return TRUE;
         }
@@ -154,7 +157,7 @@ class ReturnedPayment extends Payment
             return $this->result;
         }
 
-        return $this->result = $this->getGopay()->soap->isPaymentDone(
+        return $this->result = $this->getGopay()->getSoap()->isPaymentDone(
             (float)$this->valuesToBeVerified['paymentSessionId'],
             (float)$this->getGopay()->config->getGopayId(),
             $this->getVariable(),

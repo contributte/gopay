@@ -12,6 +12,7 @@ if (@!include __DIR__ . '/../vendor/autoload.php') {
 
 // Includes
 include __DIR__ . '/cases/BaseTestCase.php';
+include __DIR__ . '/cases/BasePaymentTestCase.php';
 
 // Configure environment
 Tester\Environment::setup();

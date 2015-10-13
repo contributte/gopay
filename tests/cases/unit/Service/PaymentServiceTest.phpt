@@ -6,8 +6,6 @@
  * @testCase
  */
 
-use Markette\Gopay\Config;
-use Markette\Gopay\Entity\Payment;
 use Markette\Gopay\Entity\ReturnedPayment;
 use Markette\Gopay\Gopay;
 use Markette\Gopay\Service\PaymentService;
@@ -15,66 +13,37 @@ use Tester\Assert;
 
 require __DIR__ . '/../../../bootstrap.php';
 
-class PaymentServiceTest extends BaseTestCase
+class PaymentServiceTest extends BasePaymentTestCase
 {
 
     public function testPay()
     {
-        $soap = Mockery::namedMock('GopaySoap1', 'Markette\Gopay\Api\GopaySoap');
-        $soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
-
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
-        $callback = function ($id) {
-        };
-
-        $gopay = new Gopay(
-            new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE),
-            $soap,
-            $helper
-        );
-
-        $lang = $gopay::LANG_CS;
+        $gopay = $this->createPaymentGopay();
 
         $service = new PaymentService($gopay);
         $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
-        $service->setLang($lang);
+        $service->setLang(Gopay::LANG_EN);
 
-        $response = $service->pay($payment, $gopay::METHOD_CARD_GPKB, $callback);
+        $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
+
+        $response = $service->pay($payment, $gopay::METHOD_CARD_GPKB, $this->createNullCallback());
 
         Assert::type('Nette\Application\Responses\RedirectResponse', $response);
         Assert::same('https://testgw.gopay.cz/gw/pay-full-v2?sessionInfo.targetGoId=1234567890&sessionInfo.paymentSessionId=3000000001&sessionInfo.encryptedSignature=999c4a90f42af5bdd9b5b7eaff43f27eb671b03a1efd4662b729dd21b9be41c22d5b25fe5955ff8d',
             $response->getUrl()
         );
         Assert::same(302, $response->getCode());
-        $soap->mockery_verify();
     }
 
     public function testPayInline()
     {
-        $soap = Mockery::namedMock('GopaySoap2', 'Markette\Gopay\Api\GopaySoap');
-        $soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
-
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
-        $callback = function ($id) {
-        };
-
-        $gopay = new Gopay(
-            new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE),
-            $soap,
-            $helper
-        );
-
-        $lang = $gopay::LANG_CS;
+        $gopay = $this->createPaymentGopay();
 
         $service = new PaymentService($gopay);
         $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
-        $service->setLang($lang);
+        $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
-        $response = $service->payInline($payment, $gopay::METHOD_CARD_GPKB, $callback);
+        $response = $service->payInline($payment, $gopay::METHOD_CARD_GPKB, $this->createNullCallback());
 
         Assert::type('array', $response);
         Assert::count(2, $response);
@@ -85,8 +54,6 @@ class PaymentServiceTest extends BaseTestCase
         Assert::same('999c4a90f42af5bdd9b5b7eaff43f27eb671b03a1efd4662b729dd21b9be41c22d5b25fe5955ff8d',
             $response['signature']
         );
-
-        $soap->mockery_verify();
     }
 
     public function testUrls()
@@ -125,12 +92,13 @@ class PaymentServiceTest extends BaseTestCase
         Assert::exception(function () use ($service) {
             $service->addChannel('test', 'test-name');
         }, 'Markette\Gopay\Exception\InvalidArgumentException');
-
     }
 
     public function testCreatePayment()
     {
-        $service = $this->createContainer(__DIR__ . '/../../files/config/default.neon')->getService('gopay.service.payment');
+        $gopay = Mockery::mock(Gopay::class);
+
+        $service = new PaymentService($gopay);
         $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
         Assert::type('Markette\Gopay\Entity\Payment', $payment);
@@ -138,7 +106,9 @@ class PaymentServiceTest extends BaseTestCase
 
     public function testRestorePayment()
     {
-        $service = $this->createContainer(__DIR__ . '/../../files/config/default.neon')->getService('gopay.service.payment');
+        $gopay = Mockery::mock(Gopay::class);
+
+        $service = new PaymentService($gopay);
         $payment = $service->restorePayment(['sum' => 999, 'customer' => []], []);
 
         Assert::type('Markette\Gopay\Entity\ReturnedPayment', $payment);
@@ -146,25 +116,13 @@ class PaymentServiceTest extends BaseTestCase
 
     public function testPayExceptions()
     {
-        $soap = Mockery::namedMock('GopaySoap3', 'Markette\Gopay\Api\GopaySoap');
-        $soap->shouldReceive('createPayment')->never();
+        $gopay = Mockery::mock(Gopay::class);
 
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
-        $callback = function ($id) {
-        };
-
-        $gopay = new Gopay(
-            new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE),
-            $soap,
-            $helper
-        );
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
+        $callback = $this->createNullCallback();
 
         $service = new PaymentService($gopay);
         $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
+        $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
         Assert::exception(function () use ($payment, $callback, $service) {
             $service->pay($payment, 'nonexisting', $callback);
@@ -182,28 +140,11 @@ class PaymentServiceTest extends BaseTestCase
         Assert::exception(function () use ($paymentRet, $callback, $service) {
             $service->payInline($paymentRet, Gopay::METHOD_CARD_GPKB, $callback);
         }, 'Markette\Gopay\Exception\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
-
-        $soap->mockery_verify();
     }
 
     public function testCallbackCalled()
     {
-        $soap = Mockery::namedMock('GopaySoap4', 'Markette\Gopay\Api\GopaySoap');
-        $soap->shouldReceive('createPayment')->once()->andReturn(3000000001);
-
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
-        $callback = function ($id) {
-        };
-
-        $gopay = new Gopay(
-            new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE),
-            $soap,
-            $helper
-        );
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
+        $gopay = $this->createPaymentGopay();
 
         $called = NULL;
         $callback = function ($id) use (&$called) {
@@ -213,32 +154,23 @@ class PaymentServiceTest extends BaseTestCase
 
         $service = new PaymentService($gopay);
         $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
+
+        $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
         $service->pay($payment, $gopay::METHOD_CARD_GPKB, $callback);
 
         Assert::true($called);
-        $soap->mockery_verify();
     }
 
     public function testPayThrowsException()
     {
+        $gopay = $this->createPaymentGopay();
         $exmsg = "Fatal error during paying";
-        $soap = Mockery::namedMock('GopaySoap5', 'Markette\Gopay\Api\GopaySoap');
-        $soap->shouldReceive('createPayment')->twice()->andThrow('Exception', $exmsg);
-
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
-
-        $payment = new Payment(['sum' => 999, 'customer' => []]);
-        $callback = function ($id) {
-        };
-
-        $gopay = new Gopay(
-            new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE),
-            $soap,
-            $helper
-        );
+        $gopay->getSoap()->shouldReceive('createPayment')->twice()->andThrow('Exception', $exmsg);
 
         $service = new PaymentService($gopay);
         $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
+
+        $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
         Assert::throws(function () use ($service, $payment) {
             $response = $service->pay($payment, Gopay::METHOD_CARD_GPKB, function () {
@@ -249,8 +181,27 @@ class PaymentServiceTest extends BaseTestCase
             $response = $service->payInline($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
         }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+    }
 
-        $soap->mockery_verify();
+    public function testAllowChangeChannel()
+    {
+        $gopay = Mockery::mock(Gopay::class);
+
+        $service = Mockery::mock(PaymentService::class, [$gopay])->makePartial();
+        $service->shouldAllowMockingProtectedMethods();
+        $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
+        $service->addChannel($gopay::METHOD_CSAS, 'CSAS');
+
+        $service->allowChangeChannel(FALSE);
+        Assert::equal([
+            $gopay::METHOD_CSAS
+        ], $service->getPaymentChannels($gopay::METHOD_CSAS));
+
+        $service->allowChangeChannel(TRUE);
+        Assert::equal([
+            $gopay::METHOD_CARD_GPKB,
+            $gopay::METHOD_CSAS
+        ], $service->getPaymentChannels($gopay::METHOD_CARD_GPKB));
     }
 
 }

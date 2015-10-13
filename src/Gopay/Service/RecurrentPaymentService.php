@@ -7,8 +7,8 @@ use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Entity\RecurrentPayment;
 use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Exception\GopayFatalException;
+use Markette\Gopay\Exception\InvalidArgumentException;
 use Nette\Application\Responses\RedirectResponse;
-use Nette\InvalidArgumentException;
 
 /**
  * RecurrentPayment Service
@@ -38,7 +38,7 @@ class RecurrentPaymentService extends AbstractPaymentService
      * @throws GopayFatalException on maldefined parameters
      * @throws GopayException on failed communication with WS
      */
-    public function recurrentPay(RecurrentPayment $payment, $channel, $callback)
+    public function payRecurrent(RecurrentPayment $payment, $channel, $callback)
     {
         $paymentSessionId = $this->buildRecurrentPayment($payment, $channel);
 
@@ -63,7 +63,7 @@ class RecurrentPaymentService extends AbstractPaymentService
      * @throws GopayFatalException on maldefined parameters
      * @throws GopayException on failed communication with WS
      */
-    public function recurrentPayInline(RecurrentPayment $payment, $channel, $callback)
+    public function payRecurrentInline(RecurrentPayment $payment, $channel, $callback)
     {
         $paymentSessionId = $this->buildRecurrentPayment($payment, $channel);
 

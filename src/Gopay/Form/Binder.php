@@ -34,7 +34,7 @@ class Binder
      * @throws InvalidArgumentException
      * @return IPaymentButton
      */
-    public function bindPaymentButton(stdClass $channel, Container $container, $callbacks = [])
+    public function bindPaymentButton($channel, Container $container, $callbacks = [])
     {
         if (!isset($channel->logo)) {
             $button = $container['gopayChannel' . $channel->code] = new PaymentButton($channel->code, $channel->name);

@@ -60,6 +60,16 @@ abstract class AbstractService extends Object
     }
 
     /**
+     * Returns success URL
+     *
+     * @return string
+     */
+    public function getSuccessUrl()
+    {
+        return $this->successUrl;
+    }
+
+    /**
      * Sets URL when successful
      *
      * @param string $url
@@ -73,6 +83,16 @@ abstract class AbstractService extends Object
 
         $this->successUrl = $url;
         return $this;
+    }
+
+    /**
+     * Returns failed URL
+     *
+     * @return string
+     */
+    public function getFailureUrl()
+    {
+        return $this->failureUrl;
     }
 
     /**

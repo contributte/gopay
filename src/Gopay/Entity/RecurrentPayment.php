@@ -2,7 +2,7 @@
 
 namespace Markette\Gopay\Entity;
 
-use Nette\InvalidArgumentException;
+use Markette\Gopay\Exception\InvalidArgumentException;
 
 /**
  * Representation of recurrent payment
@@ -11,7 +11,7 @@ use Nette\InvalidArgumentException;
  * @property string $recurrenceCycle
  * @property int $recurrencePeriod
  */
-class RecurrentPayment extends Payment
+class RecurrentPayment extends BasePayment
 {
 
     /** @const denní perioda plateb */

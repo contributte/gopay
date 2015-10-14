@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Test: Markette\Gopay\Service\PaymentService
- *
- * @testCase
- */
-
 use Markette\Gopay\Config;
 use Markette\Gopay\Gopay;
 use Mockery\Exception\InvalidCountException;

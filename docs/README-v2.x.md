@@ -1,17 +1,22 @@
 # Markette :: Gopay
 
-## v2.1.0 - v2.2.0
+## v2.1.0 - v2.3.0
 
 ## Instalace
 
 Nejjednodušeji stáhněte Gopay přes Composer:
 
-### v2.2.0
+### v2.3.0 (PHP >= 5.4)
+```sh
+$ composer require markette/gopay:~2.3.0
+```
+
+### v2.2.0 (PHP >= 5.3.2)
 ```sh
 $ composer require markette/gopay:~2.2.0
 ```
 
-### v2.1.0
+### v2.1.0 (PHP >= 5.3.2)
 
 ```sh
 $ composer require markette/gopay:~2.1.0

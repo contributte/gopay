@@ -63,7 +63,7 @@ Ty si můžete pomocí `autowiringu` vstříknout do `Presenteru`.
 ```php
 use Markette\Gopay\Service\PaymentService;
 
-/** @var PaymentService @autowire */
+/** @var PaymentService @inject */
 public $paymentService;
 ```
 

@@ -16,12 +16,6 @@ $ composer require markette/gopay:~2.3.0
 $ composer require markette/gopay:~2.2.0
 ```
 
-### v2.1.0 (PHP >= 5.3.2)
-
-```sh
-$ composer require markette/gopay:~2.1.0
-```
-
 Pokud nepoužijete Composer, zkopírujte `/src/Gopay` adresář mezi vaše knihovny - pokud používáte
 RobotLoader, není nic víc potřeba.
 
@@ -283,7 +277,7 @@ V případě neúspěšné platby jsou opět předány všechny čtyři parametr
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 
-Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/example/2.x/GopayPresenter.php).
+Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/docs/v2.x/examples/GopayPresenter.php).
 
 ## Co tahle věc neumí a co s tím
 

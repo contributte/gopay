@@ -2,9 +2,11 @@
 
 [![Build Status](https://img.shields.io/travis/Markette/Gopay.svg?style=flat-square)](https://travis-ci.org/Markette/Gopay)
 [![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
-[![Downloads this Month](https://img.shields.io/packagist/dm/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
-[![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
 [![HHVM Status](https://img.shields.io/hhvm/markette/gopay.svg?style=flat-square)](http://hhvm.h4cc.de/package/markette/gopay)
+
+[![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+[![Pre prelease](https://img.shields.io/packagist/vpre/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+[![Downloads this Month](https://img.shields.io/packagist/dm/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
 
 ## Diskuze
 
@@ -29,6 +31,7 @@ Dokumentace k poslední verzi [**se nachází zde**](https://github.com/Markette
 * Opakované platby
 * Před-autorizované platby
 * Ověřování plateb
+* Inline platby (backport)
 
 ## Verze 2.x
 

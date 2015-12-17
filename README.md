@@ -17,13 +17,13 @@
 | Status 	| Composer 	| [GoPay API](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
 |:------:	|:--------:	|:----------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
 | dev  	    |dev-master |  2.5  							    | nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
-| testing   |~3.0.0     |  2.5  							    | nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
+| stable    |~3.0.0     |  2.5  							    | nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
 | stable  	|~2.3.0		|  2.5  							    | nette/utils: ~2.3 <br> nette/forms: ~2.3 <br> nette/application: ~2.3 	| >=5.4 	|
 | stable  	|~2.2.0		|  2.5  							    | nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
 
-## Aktuální verze
+## Verze 3.x
 
-Dokumentace k poslední verzi [**se nachází zde**](https://github.com/Markette/Gopay/blob/master/docs/v3.x/README-v3.x.md).
+Dokumentace k této verzi [**se nachází zde**](https://github.com/Markette/Gopay/blob/master/docs/v3.x/README-v3.x.md).
 
 ### Features
 

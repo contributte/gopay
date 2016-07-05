@@ -10,16 +10,51 @@
 
 ## Diskuze
 
-[![Join the chat at https://gitter.im/Markette/Gopay](https://badges.gitter.im/Join%20Chat.svg?style=flat-square)](https://gitter.im/Markette/Gopay?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/Markette/Gopay](https://img.shields.io/gitter/room/Markette/Gopay.svg?style=flat-square)](https://gitter.im/Markette/Gopay?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Vývoj
 
-| Status 	| Composer 	| [GoPay API](http://www.gopay.com/cs) 	|                                 [Nette](http://www.nette.org)             |   PHP   	|
-|:------:	|:--------:	|:----------------------------------:	|:---------------------------------------------------------------------:	|:-------:	|
-| dev  	    |dev-master |  2.5  							    | nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
-| stable    |~3.0.0     |  2.5  							    | nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0 	| >=5.5 	|
-| stable  	|~2.3.0		|  2.5  							    | nette/utils: ~2.3 <br> nette/forms: ~2.3 <br> nette/application: ~2.3 	| >=5.4 	|
-| stable  	|~2.2.0		|  2.5  							    | nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2 	| >=5.3.2 	|
+<table>
+    <thead>
+        <tr>
+            <th align="center">Status</th>
+            <th align="center">Composer</th>
+            <th align="center"><a href="http://www.gopay.com/cs">GoPay API</a></th>
+            <th align="center"><a href="http://www.nette.org">Nette</a></th>
+            <th align="center">PHP</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center">dev</td>
+            <td align="center">dev-master</td>
+            <td align="center">2.5</td>
+            <td align="center">nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0</td>
+            <td align="center">&gt;=5.5</td>
+        </tr>
+        <tr>
+            <td align="center">stable</td>
+            <td align="center">~3.0.0</td>
+            <td align="center">2.5</td>
+            <td align="center">nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0</td>
+            <td align="center">&gt;=5.5</td>
+        </tr>
+        <tr>
+            <td align="center">stable</td>
+            <td align="center">~2.3.0</td>
+            <td align="center">2.5</td>
+            <td align="center">nette/utils: ~2.3 <br> nette/forms: ~2.3 <br> nette/application: ~2.3</td>
+            <td align="center">&gt;=5.4</td>
+        </tr>
+        <tr>
+            <td align="center">stable</td>
+            <td align="center">~2.2.0</td>
+            <td align="center">2.5</td>
+            <td align="center">nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2</td>
+            <td align="center">&gt;=5.3.2</td>
+        </tr>
+    </tbody>
+</table>
 
 ## Verze 3.x
 

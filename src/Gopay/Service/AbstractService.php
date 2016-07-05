@@ -39,7 +39,8 @@ abstract class AbstractService extends Object
      */
     public function allowChangeChannel($changeChannel = TRUE)
     {
-        $this->changeChannel = (bool)$changeChannel;
+        $this->changeChannel = (bool) $changeChannel;
+
         return $this;
     }
 
@@ -56,6 +57,7 @@ abstract class AbstractService extends Object
             throw new InvalidArgumentException('Not supported language "' . $lang . '".');
         }
         $this->lang = $lang;
+
         return $this;
     }
 
@@ -82,6 +84,7 @@ abstract class AbstractService extends Object
         }
 
         $this->successUrl = $url;
+
         return $this;
     }
 
@@ -108,6 +111,7 @@ abstract class AbstractService extends Object
         }
 
         $this->failureUrl = $url;
+
         return $this;
     }
 
@@ -129,7 +133,7 @@ abstract class AbstractService extends Object
             throw new InvalidArgumentException("Channel with name '$code' is already defined.");
         }
 
-        $this->channels[$code] = (object)array_merge($params, [
+        $this->channels[$code] = (object) array_merge($params, [
             'code' => $code,
             'name' => $name,
             'logo' => $logo,

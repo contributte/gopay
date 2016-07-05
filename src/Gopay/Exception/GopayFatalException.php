@@ -9,4 +9,5 @@ use Exception;
  */
 class GopayFatalException extends Exception
 {
+
 }

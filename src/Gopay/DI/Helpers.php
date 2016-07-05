@@ -46,6 +46,7 @@ class Helpers
         FormContainer::extensionMethod('add' . $method . 'Button', function ($container, $channel, $callback = NULL) use ($binder, $service) {
             $channels = $service->getChannels();
             if (!isset($channels[$channel])) throw new InvalidArgumentException("Channel '$channel' is not allowed.");
+
             return $binder->bindPaymentButton($channels[$channel], $container, $callback = []);
         });
     }

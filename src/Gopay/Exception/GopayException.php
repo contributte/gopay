@@ -7,4 +7,5 @@ namespace Markette\Gopay\Exception;
  */
 class GopayException extends GopayFatalException
 {
+
 }

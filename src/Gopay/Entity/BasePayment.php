@@ -85,7 +85,8 @@ abstract class BasePayment extends Object
      */
     public function setSum($sum)
     {
-        $this->sum = (float)$sum;
+        $this->sum = (float) $sum;
+
         return $this;
     }
 
@@ -111,7 +112,8 @@ abstract class BasePayment extends Object
         if (!in_array($currency, $this->allowedCurrency)) {
             throw new InvalidArgumentException('Not supported currency "' . $currency . '".');
         }
-        $this->currency = (string)$currency;
+        $this->currency = (string) $currency;
+
         return $this;
     }
 
@@ -133,7 +135,8 @@ abstract class BasePayment extends Object
      */
     public function setVariable($variable)
     {
-        $this->variable = (int)$variable;
+        $this->variable = (int) $variable;
+
         return $this;
     }
 
@@ -155,7 +158,8 @@ abstract class BasePayment extends Object
      */
     public function setSpecific($specific)
     {
-        $this->specific = (int)$specific;
+        $this->specific = (int) $specific;
+
         return $this;
     }
 
@@ -178,6 +182,7 @@ abstract class BasePayment extends Object
     public function setProductName($name)
     {
         $this->productName = $name;
+
         return $this;
     }
 
@@ -210,8 +215,8 @@ abstract class BasePayment extends Object
             'phoneNumber',
         ];
 
-        $this->customer = (object)array_intersect_key(
-            (array)$customer,
+        $this->customer = (object) array_intersect_key(
+            (array) $customer,
             array_flip($allowedKeys)
         );
 
@@ -220,6 +225,7 @@ abstract class BasePayment extends Object
                 $this->customer->$key = '';
             }
         }
+
         return $this;
     }
 

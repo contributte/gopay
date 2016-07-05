@@ -85,7 +85,7 @@ abstract class AbstractPaymentService extends AbstractService
             GopayHelper::hash(
                 GopayHelper::concatPaymentSession(
                     $this->gopay->config->getGopayId(),
-                    (float)$paymentSessionId,
+                    (float) $paymentSessionId,
                     $this->gopay->config->getGopaySecretKey()
                 )
             ),

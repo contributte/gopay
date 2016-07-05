@@ -7,4 +7,5 @@ namespace Markette\Gopay\Entity;
  */
 class Payment extends BasePayment
 {
+
 }

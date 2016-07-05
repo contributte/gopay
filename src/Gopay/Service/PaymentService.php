@@ -71,7 +71,7 @@ class PaymentService extends AbstractPaymentService
 
         $response = [
             "url" => GopayConfig::fullNewIntegrationURL() . '/' . $paymentSessionId,
-            "signature" => $this->createSignature($paymentSessionId)
+            "signature" => $this->createSignature($paymentSessionId),
         ];
 
         call_user_func_array($callback, [$paymentSessionId]);

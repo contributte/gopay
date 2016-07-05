@@ -30,11 +30,11 @@ class RecurrentPayment extends BasePayment
     private $recurrenceCycle = self::PERIOD_DAY;
 
     /** @var array */
-    private $allowedCycle = array(
+    private $allowedCycle = [
         self::PERIOD_DAY,
         self::PERIOD_WEEK,
         self::PERIOD_MOTNTH,
-    );
+    ];
 
     /** @var int */
     private $recurrencePeriod = 30;

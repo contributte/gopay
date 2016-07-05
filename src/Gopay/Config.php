@@ -41,7 +41,7 @@ class Config
      */
     protected function setGopayId($id)
     {
-        $this->gopayId = (float)$id;
+        $this->gopayId = (float) $id;
     }
 
 
@@ -58,7 +58,7 @@ class Config
      */
     protected function setGopaySecretKey($secretKey)
     {
-        $this->gopaySecretKey = (string)$secretKey;
+        $this->gopaySecretKey = (string) $secretKey;
     }
 
     /**
@@ -74,7 +74,7 @@ class Config
      */
     protected function setTestMode($testMode = TRUE)
     {
-        $this->testMode = (bool)$testMode;
+        $this->testMode = (bool) $testMode;
         GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;
     }
 

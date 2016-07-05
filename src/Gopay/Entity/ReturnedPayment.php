@@ -63,15 +63,16 @@ class ReturnedPayment extends Payment
     {
         try {
             $this->getGopay()->getHelper()->checkPaymentIdentity(
-                (float)$this->valuesToBeVerified['targetGoId'],
-                (float)$this->valuesToBeVerified['paymentSessionId'],
+                (float) $this->valuesToBeVerified['targetGoId'],
+                (float) $this->valuesToBeVerified['paymentSessionId'],
                 NULL,
                 $this->valuesToBeVerified['orderNumber'],
                 $this->valuesToBeVerified['encryptedSignature'],
-                (float)$this->getGopay()->config->getGopayId(),
+                (float) $this->getGopay()->config->getGopayId(),
                 $this->getVariable(),
                 $this->getGopay()->config->getGopaySecretKey()
             );
+
             return FALSE;
         } catch (GopayFatalException $e) {
             throw $e;
@@ -88,6 +89,7 @@ class ReturnedPayment extends Payment
     public function isPaid()
     {
         $this->getStatus();
+
         return $this->result['sessionState'] === GopayHelper::PAID;
     }
 
@@ -99,6 +101,7 @@ class ReturnedPayment extends Payment
     public function isWaiting()
     {
         $this->getStatus();
+
         return $this->result['sessionState'] === GopayHelper::PAYMENT_METHOD_CHOSEN;
     }
 
@@ -110,6 +113,7 @@ class ReturnedPayment extends Payment
     public function isCanceled()
     {
         $this->getStatus();
+
         return $this->result['sessionState'] === GopayHelper::CANCELED;
     }
 
@@ -121,6 +125,7 @@ class ReturnedPayment extends Payment
     public function isRefunded()
     {
         $this->getStatus();
+
         return $this->result['sessionState'] === GopayHelper::REFUNDED;
     }
 
@@ -132,6 +137,7 @@ class ReturnedPayment extends Payment
     public function isAuthorized()
     {
         $this->getStatus();
+
         return $this->result['sessionState'] === GopayHelper::AUTHORIZED;
     }
 
@@ -143,6 +149,7 @@ class ReturnedPayment extends Payment
     public function isTimeouted()
     {
         $this->getStatus();
+
         return $this->result['sessionState'] === GopayHelper::TIMEOUTED;
     }
 
@@ -158,10 +165,10 @@ class ReturnedPayment extends Payment
         }
 
         return $this->result = $this->getGopay()->getSoap()->isPaymentDone(
-            (float)$this->valuesToBeVerified['paymentSessionId'],
-            (float)$this->getGopay()->config->getGopayId(),
+            (float) $this->valuesToBeVerified['paymentSessionId'],
+            (float) $this->getGopay()->config->getGopayId(),
             $this->getVariable(),
-            (int)$this->getSumInCents(),
+            (int) $this->getSumInCents(),
             $this->getCurrency(),
             $this->getProductName(),
             $this->getGopay()->config->getGopaySecretKey()

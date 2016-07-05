@@ -27,14 +27,16 @@
         "markette/gopay-api": "~2.5.1",
         "nette/forms": "~2.3.0",
         "nette/application": "~2.3.0",
-		"nette/di": "~2.3.0"
+        "nette/di": "~2.3.0"
     },
-	"require-dev": {
-		"nette/tester": "~1.5",
-		"mockery/mockery": "~0.9.0"
-	},
+    "require-dev": {
+        "nette/tester": "^1.7.0",
+        "mockery/mockery": "^0.9.5"
+    },
     "autoload": {
-        "classmap": ["src/"]
+        "psr-4": {
+            "Markette\\" : "src/"
+        }
     },
     "extra": {
         "branch-alias": {

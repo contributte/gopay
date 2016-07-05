@@ -1,3 +1,2 @@
 #!/usr/bin/env sh
-sh ../vendor/bin/tester cases -s -j 40 -log tester.log $@
-rm "./tmp" -f -R
+../vendor/bin/tester cases -s -j 40 -log tester.log $@

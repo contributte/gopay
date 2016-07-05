@@ -60,7 +60,7 @@ class PaymentService extends AbstractPaymentService
      * @param Payment $payment
      * @param string $channel
      * @param callable $callback
-     * @return RedirectResponse
+     * @return array
      * @throws InvalidArgumentException on undefined channel
      * @throws GopayFatalException on maldefined parameters
      * @throws GopayException on failed communication with WS

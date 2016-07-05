@@ -58,7 +58,7 @@ class RecurrentPaymentService extends AbstractPaymentService
      * @param RecurrentPayment $payment
      * @param string $channel
      * @param callable $callback
-     * @return RedirectResponse
+     * @return array
      * @throws InvalidArgumentException on undefined channel
      * @throws GopayFatalException on maldefined parameters
      * @throws GopayException on failed communication with WS
@@ -75,6 +75,26 @@ class RecurrentPaymentService extends AbstractPaymentService
         call_user_func_array($callback, [$paymentSessionId]);
 
         return $response;
+    }
+
+    /**
+     * Cancel recurrent payment via GoPay gateway
+     *
+     * @param float $paymentSessionId
+     * @throws GopayException
+     * @return void
+     */
+    public function voidRecurrent($paymentSessionId)
+    {
+        try {
+            $this->gopay->soap->voidRecurrentPayment(
+                $paymentSessionId,
+                $this->gopay->config->getGopayId(),
+                $this->gopay->config->getGopaySecretKey()
+            );
+        } catch (Exception $e) {
+            throw new GopayException($e->getMessage(), 0, $e);
+        }
     }
 
     /**

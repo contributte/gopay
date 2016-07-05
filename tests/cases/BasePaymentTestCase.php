@@ -73,6 +73,24 @@ class BasePaymentTestCase extends BaseTestCase
     }
 
     /**
+     * @return Gopay
+     */
+    protected function createGopay()
+    {
+        $soap = Mockery::namedMock('GopaySoap4' . md5(microtime()), 'Markette\Gopay\Api\GopaySoap');
+        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
+
+        $config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
+
+        $gopay = new Gopay($config, $soap, $helper);
+
+        $this->mocks[] = $soap;
+        $this->mocks[] = $helper;
+
+        return $gopay;
+    }
+
+    /**
      * @return Closure
      */
     protected function createNullCallback()

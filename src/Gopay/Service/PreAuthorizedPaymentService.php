@@ -58,7 +58,7 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
      * @param PreAuthorizedPayment $payment
      * @param string $channel
      * @param callable $callback
-     * @return RedirectResponse
+     * @return array
      * @throws InvalidArgumentException on undefined channel
      * @throws GopayFatalException on maldefined parameters
      * @throws GopayException on failed communication with WS
@@ -75,6 +75,26 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
         call_user_func_array($callback, [$paymentSessionId]);
 
         return $response;
+    }
+
+    /**
+     * Cancel pre authorized payment via GoPay gateway
+     *
+     * @param float $paymentSessionId
+     * @throws GopayException
+     * @return void
+     */
+    public function voidPreAuthorized($paymentSessionId)
+    {
+        try {
+            $this->gopay->soap->voidAuthorization(
+                $paymentSessionId,
+                $this->gopay->config->getGopayId(),
+                $this->gopay->config->getGopaySecretKey()
+            );
+        } catch (Exception $e) {
+            throw new GopayException($e->getMessage(), 0, $e);
+        }
     }
 
     /**

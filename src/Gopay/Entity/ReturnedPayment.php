@@ -56,8 +56,8 @@ class ReturnedPayment extends Payment
 
     /**
      * Returns TRUE if payment is declared fraud by Gopay
-     *
      * @return bool
+     * @throws GopayFatalException
      */
     public function isFraud()
     {
@@ -68,9 +68,9 @@ class ReturnedPayment extends Payment
                 NULL,
                 $this->valuesToBeVerified['orderNumber'],
                 $this->valuesToBeVerified['encryptedSignature'],
-                (float) $this->getGopay()->config->getGopayId(),
+                (float) $this->getGopay()->getConfig()->getGopayId(),
                 $this->getVariable(),
-                $this->getGopay()->config->getGopaySecretKey()
+                $this->getGopay()->getConfig()->getGopaySecretKey()
             );
 
             return FALSE;
@@ -166,12 +166,12 @@ class ReturnedPayment extends Payment
 
         return $this->result = $this->getGopay()->getSoap()->isPaymentDone(
             (float) $this->valuesToBeVerified['paymentSessionId'],
-            (float) $this->getGopay()->config->getGopayId(),
+            (float) $this->getGopay()->getConfig()->getGopayId(),
             $this->getVariable(),
             (int) $this->getSumInCents(),
             $this->getCurrency(),
             $this->getProductName(),
-            $this->getGopay()->config->getGopaySecretKey()
+            $this->getGopay()->getConfig()->getGopaySecretKey()
         );
     }
 

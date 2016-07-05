@@ -86,6 +86,31 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
             });
         }, 'Markette\Gopay\Exception\GopayException', $exmsg);
     }
+
+
+    public function testVoidRecurrent()
+    {
+        $gopay = $this->createGopay();
+        $service = new PreAuthorizedPaymentService($gopay);
+
+        $gopay->getSoap()->shouldReceive('voidAuthorization')->once()->andReturnUsing(function () {
+            Assert::truthy(TRUE);
+        });
+        $service->voidPreAuthorized(3000000001);
+    }
+
+    public function testVoidRecurrentException()
+    {
+        $gopay = $this->createGopay();
+        $exmsg = "Fatal error during paying";
+        $service = new PreAuthorizedPaymentService($gopay);
+
+        $gopay->getSoap()->shouldReceive('voidAuthorization')->once()->andThrow('Exception', $exmsg);
+
+        Assert::throws(function () use ($service) {
+            $service->voidPreAuthorized(3000000001);
+        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+    }
 }
 
 $test = new PreAuthorizedPaymentServiceTest();

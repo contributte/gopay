@@ -99,6 +99,30 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
             });
         }, 'Markette\Gopay\Exception\GopayException', $exmsg);
     }
+
+    public function testVoidRecurrent()
+    {
+        $gopay = $this->createGopay();
+        $service = new RecurrentPaymentService($gopay);
+
+        $gopay->getSoap()->shouldReceive('voidRecurrentPayment')->once()->andReturnUsing(function () {
+            Assert::truthy(TRUE);
+        });
+        $service->voidRecurrent(3000000001);
+    }
+
+    public function testVoidRecurrentException()
+    {
+        $gopay = $this->createGopay();
+        $exmsg = "Fatal error during paying";
+        $service = new RecurrentPaymentService($gopay);
+
+        $gopay->getSoap()->shouldReceive('voidRecurrentPayment')->once()->andThrow('Exception', $exmsg);
+
+        Assert::throws(function () use ($service) {
+            $service->voidRecurrent(3000000001);
+        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+    }
 }
 
 $test = new RecurrentPaymentServiceTest();

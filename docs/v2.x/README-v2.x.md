@@ -7,11 +7,13 @@
 Nejjednodušeji stáhněte Gopay přes Composer:
 
 ### v2.3.0 (PHP >= 5.4)
+
 ```sh
 $ composer require markette/gopay:~2.3.0
 ```
 
 ### v2.2.0 (PHP >= 5.3.2)
+
 ```sh
 $ composer require markette/gopay:~2.2.0
 ```
@@ -277,11 +279,13 @@ V případě neúspěšné platby jsou opět předány všechny čtyři parametr
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 
-Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/docs/v2.x/examples/GopayPresenter.php).
-
 ## Co tahle věc neumí a co s tím
 
 Tahle mini-knihovnička, spíše snippet kódu nepokrývá velkou část Gopay API.
 Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište,
 klidně i pošlete jako pull-request. Stejně tak můžete v issues informovat
 o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).
+
+-----
+
+Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/docs/v2.x/examples/GopayPresenter.php).

@@ -6,9 +6,16 @@
 
 Nejjednodušeji stáhněte Gopay přes Composer:
 
-### v3.0.0 (PHP >= 5.5)
+### v3.1.0 (PHP >= 5.6)
+
 ```sh
-$ composer require markette/gopay:~3.0.0
+$ composer require markette/gopay:~3.1.0
+```
+
+### v3.0.1 (PHP >= 5.5)
+
+```sh
+$ composer require markette/gopay:~3.0.1
 ```
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
@@ -41,9 +48,17 @@ Ty si můžete pomocí `autowiringu` vstříknout do `Presenteru`.
 
 ```php
 use Markette\Gopay\Service\PaymentService;
+use Markette\Gopay\Service\RecurrentPaymentService;
+use Markette\Gopay\Service\PreAuthorizedPaymentService;
 
 /** @var PaymentService @inject */
 public $paymentService;
+
+/** @var RecurrentPaymentService @inject */
+public $recurrentPaymentService;
+
+/** @var PreAuthorizedPaymentService @inject */
+public $preAuthorizedPaymentService;
 ```
 
 ### Před platbou
@@ -170,9 +185,10 @@ $storeIdCallback = function ($paymentId) use ($order) {
 	$order->setPaymentId($paymentId);
 };
 ```
+
 Samotné placení lze provést dvěma způsoby.
 
-### REDIRECT
+### REDIRECT brána
 
 ```php
 $response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
@@ -256,7 +272,7 @@ objektu platby:
 $order = $model->getOrderByPaymentId($paymentSessionId);
 
 $payment = $service->restorePayment([
-	'sum'          => $order->price,
+	'sum'         => $order->price,
 	'variable'    => $order->varSymbol,
 	'specific'    => $order->specSymbol,
 	'productName' => $order->product,
@@ -280,5 +296,35 @@ třeba zákazníkovi email.
 V případě neúspěšné platby jsou opět předány všechny čtyři parametry, je tedy
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
+
+### Opakované platby
+
+Provedení opakované platby je velmi jednoduché.
+
+```php
+$service->payRecurrent(PreAuthorizedPayment $payment, $gopay::METHOD_TRANSFER, function($paymentSessionId) {});
+```
+
+Pro zrušení opakované platby budeme potřebovat `$paymentSessionId`.
+
+```php
+$service->cancelRecurrent($paymentSessionId);
+```
+
+### Předautorizované platby
+
+Provedení předautorizované platby je velmi jednoduché.
+
+```php
+$service->payPreAuthorized(PreAuthorizedPayment $payment, $gopay::METHOD_TRANSFER, function($paymentSessionId) {});
+```
+
+Pro zrušení předautorizované platby budeme potřebovat `$paymentSessionId`.
+
+```php
+$service->cancelPreAuthorized($paymentSessionId);
+```
+
+-----
 
 Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/docs/v3.x/examples/GopayPresenter.php).

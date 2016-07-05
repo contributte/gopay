@@ -2,6 +2,11 @@
 
 namespace Markette\Gopay\DI;
 
+use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
+use Markette\Gopay\Config;
+use Markette\Gopay\Form\Binder;
+use Markette\Gopay\Gopay;
 use Markette\Gopay\Service\PaymentService;
 use Markette\Gopay\Service\PreAuthorizedPaymentService;
 use Markette\Gopay\Service\RecurrentPaymentService;
@@ -39,20 +44,20 @@ class Extension extends CompilerExtension
         $config = $this->validateConfig($this->defaults);
 
         $driver = $builder->addDefinition($this->prefix('driver'))
-            ->setClass('Markette\Gopay\Api\GopaySoap');
+            ->setClass(GopaySoap::class);
 
         $helper = $builder->addDefinition($this->prefix('helper'))
-            ->setClass('Markette\Gopay\Api\GopayHelper');
+            ->setClass(GopayHelper::class);
 
         $gconfig = $builder->addDefinition($this->prefix('config'))
-            ->setClass('Markette\Gopay\Config', [
+            ->setClass(Config::class, [
                 $config['gopayId'],
                 $config['gopaySecretKey'],
                 isset($config['testMode']) ? $config['testMode'] : FALSE,
             ]);
 
         $builder->addDefinition($this->prefix('gopay'))
-            ->setClass('Markette\Gopay\Gopay', [
+            ->setClass(Gopay::class, [
                 $gconfig,
                 $driver,
                 $helper,
@@ -80,7 +85,7 @@ class Extension extends CompilerExtension
             }
 
             if (isset($config['payments']['channels'])) {
-                $constants = ClassType::from('Markette\Gopay\Gopay');
+                $constants = ClassType::from(Gopay::class);
                 foreach ($config['payments']['channels'] as $code => $channel) {
                     $constChannel = 'METHOD_' . strtoupper($code);
                     if ($constants->hasConstant($constChannel)) {
@@ -102,7 +107,7 @@ class Extension extends CompilerExtension
         $builder = $this->getContainerBuilder();
 
         $builder->addDefinition($this->prefix('form.binder'))
-            ->setClass('Markette\Gopay\Form\Binder');
+            ->setClass(Binder::class);
     }
 
     /**

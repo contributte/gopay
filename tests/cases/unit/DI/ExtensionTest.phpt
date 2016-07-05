@@ -14,7 +14,6 @@ use Markette\Gopay\Service\PaymentService;
 use Markette\Gopay\Service\PreAuthorizedPaymentService;
 use Markette\Gopay\Service\RecurrentPaymentService;
 use Tester\Assert;
-use Tester\FileMock;
 
 require __DIR__ . '/../../../bootstrap.php';
 
@@ -86,20 +85,24 @@ class ExtensionTest extends BaseTestCase
         $property = new ReflectionProperty(PaymentService::class, 'changeChannel');
         $property->setAccessible(TRUE);
 
-        $container = $this->createContainer(FileMock::create('
-gopay:
-    payments:
-        changeChannel: off
-', 'neon'));
+        $container = $this->createContainer([
+            'gopay' => [
+                'payments' => [
+                    'changeChannel' => FALSE,
+                ],
+            ],
+        ]);
 
         $service = $container->getService('gopay.service.payment');
         Assert::false($property->getValue($service));
 
-        $container = $this->createContainer(FileMock::create('
-gopay:
-    payments:
-        changeChannel: on
-', 'neon'));
+        $container = $this->createContainer([
+            'gopay' => [
+                'payments' => [
+                    'changeChannel' => TRUE,
+                ],
+            ],
+        ]);
 
         $service = $container->getService('gopay.service.payment');
         Assert::true($property->getValue($service));

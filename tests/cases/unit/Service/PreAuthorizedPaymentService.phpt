@@ -88,31 +88,47 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
             $response = $service->payPreAuthorizedInline($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
         }, GopayException::class, $exmsg);
+
+        $gopay->getSoap()->mockery_verify();
     }
 
 
-    public function testVoidRecurrent()
+    public function testCancelRecurrent()
     {
         $gopay = $this->createGopay();
         $service = new PreAuthorizedPaymentService($gopay);
+        $paymentSessionId = 3000000001;
 
-        $gopay->getSoap()->shouldReceive('voidAuthorization')->once()->andReturnUsing(function () {
-            Assert::truthy(TRUE);
-        });
-        $service->voidPreAuthorized(3000000001);
+        $gopay->getSoap()
+            ->shouldReceive('voidAuthorization')
+            ->once()
+            ->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
+            ->andReturnUsing(function () {
+                Assert::truthy(TRUE);
+            });
+        $service->cancelPreAuthorized(3000000001);
+
+        $gopay->getSoap()->mockery_verify();
     }
 
-    public function testVoidRecurrentException()
+    public function testCancelRecurrentException()
     {
         $gopay = $this->createGopay();
+        $paymentSessionId = 3000000001;
         $exmsg = "Fatal error during paying";
         $service = new PreAuthorizedPaymentService($gopay);
 
-        $gopay->getSoap()->shouldReceive('voidAuthorization')->once()->andThrow('Exception', $exmsg);
+        $gopay->getSoap()
+            ->shouldReceive('voidAuthorization')
+            ->once()
+            ->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
+            ->andThrow('Exception', $exmsg);
 
-        Assert::throws(function () use ($service) {
-            $service->voidPreAuthorized(3000000001);
+        Assert::throws(function () use ($service, $paymentSessionId) {
+            $service->cancelPreAuthorized($paymentSessionId);
         }, GopayException::class, $exmsg);
+
+        $gopay->getSoap()->mockery_verify();
     }
 }
 

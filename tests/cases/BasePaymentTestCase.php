@@ -1,5 +1,7 @@
 <?php
 
+use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
 use Markette\Gopay\Config;
 use Markette\Gopay\Gopay;
 use Mockery\Exception\InvalidCountException;
@@ -17,10 +19,10 @@ class BasePaymentTestCase extends BaseTestCase
      */
     protected function createPaymentGopay()
     {
-        $soap = Mockery::namedMock('GopaySoap1' . md5(microtime()), 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap1x' . md5(microtime()), GopaySoap::class);
         $soap->shouldReceive('createPayment')->once()->andReturn(3000000001)->byDefault();
 
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::mock(GopayHelper::class);
 
         $config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
 
@@ -37,10 +39,10 @@ class BasePaymentTestCase extends BaseTestCase
      */
     protected function createRecurrentPaymentGopay()
     {
-        $soap = Mockery::namedMock('GopaySoap2' . md5(microtime()), 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap2x' . md5(microtime()), GopaySoap::class);
         $soap->shouldReceive('createRecurrentPayment')->once()->andReturn(3000000001)->byDefault();
 
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::mock(GopayHelper::class);
 
         $config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
 
@@ -57,10 +59,10 @@ class BasePaymentTestCase extends BaseTestCase
      */
     protected function createPreAuthorizedPaymentGopay()
     {
-        $soap = Mockery::namedMock('GopaySoap3' . md5(microtime()), 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap3x' . md5(microtime()), GopaySoap::class);
         $soap->shouldReceive('createPreAutorizedPayment')->once()->andReturn(3000000001)->byDefault();
 
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::mock(GopayHelper::class);
 
         $config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
 
@@ -77,8 +79,8 @@ class BasePaymentTestCase extends BaseTestCase
      */
     protected function createGopay()
     {
-        $soap = Mockery::namedMock('GopaySoap4' . md5(microtime()), 'Markette\Gopay\Api\GopaySoap');
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
+        $soap = Mockery::namedMock('GopaySoap4x' . md5(microtime()), GopaySoap::class);
+        $helper = Mockery::mock(GopayHelper::class);
 
         $config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
 

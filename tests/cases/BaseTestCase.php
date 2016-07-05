@@ -10,20 +10,20 @@ abstract class BaseTestCase extends TestCase
 {
 
     /**
-     * @param string $config
+     * @param mixed $config
      * @return Container
      */
-    protected function createContainer($config)
+    protected function createContainer($config = NULL)
     {
         $loader = new ContainerLoader(TEMP_DIR);
-        $className = $loader->load($config, function (Compiler $compiler) use ($config) {
+        $className = $loader->load(function (Compiler $compiler) use ($config) {
             $compiler->addExtension('gopay', new Extension());
             if (is_array($config)) {
                 $compiler->addConfig($config);
-            } else {
+            } else if (is_file($config)) {
                 $compiler->loadConfig($config);
             }
-        });
+        }, md5(serialize([microtime(TRUE), $config])));
 
         return new $className;
     }

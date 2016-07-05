@@ -84,7 +84,7 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
      * @throws GopayException
      * @return void
      */
-    public function voidPreAuthorized($paymentSessionId)
+    public function cancelPreAuthorized($paymentSessionId)
     {
         try {
             $this->gopay->soap->voidAuthorization(

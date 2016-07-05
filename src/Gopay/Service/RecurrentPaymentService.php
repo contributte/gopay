@@ -84,7 +84,7 @@ class RecurrentPaymentService extends AbstractPaymentService
      * @throws GopayException
      * @return void
      */
-    public function voidRecurrent($paymentSessionId)
+    public function cancelRecurrent($paymentSessionId)
     {
         try {
             $this->gopay->soap->voidRecurrentPayment(

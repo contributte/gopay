@@ -7,6 +7,7 @@
  */
 
 use Markette\Gopay\Entity\Payment;
+use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Gopay;
 use Tester\Assert;
 
@@ -26,7 +27,7 @@ class PaymentTest extends BaseTestCase
             'countryCode' => 'CZE',
             'email' => 'email@example.com',
             'phoneNumber' => '+420123456789',
-            'undefined' => 'should be ignored'
+            'undefined' => 'should be ignored',
         ];
 
         $values = [
@@ -36,7 +37,7 @@ class PaymentTest extends BaseTestCase
             'specific' => 6789012345,
             'productName' => 'Produkt',
             'customer' => $customer,
-            'undefined' => 'should be ignored'
+            'undefined' => 'should be ignored',
         ];
 
         $payment = new Payment($values);
@@ -45,9 +46,9 @@ class PaymentTest extends BaseTestCase
         Assert::equal(99912.0, $payment->getSumInCents());
         Assert::equal(Gopay::CURRENCY_EUR, $payment->getCurrency());
         Assert::equal(1234567890, $payment->getVariable());
-        Assert::equal((int)6789012345, $payment->getSpecific());
+        Assert::equal((int) 6789012345, $payment->getSpecific());
         Assert::equal('Produkt', $payment->getProductName());
-        Assert::equal((object)[
+        Assert::equal((object) [
             'firstName' => 'First',
             'lastName' => 'Last',
             'street' => 'Fake street 9',
@@ -64,7 +65,7 @@ class PaymentTest extends BaseTestCase
         $payment = new Payment([]);
         Assert::exception(function () use ($payment) {
             $payment->setCurrency('NAN');
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Not supported currency \"NAN\".");
+        }, InvalidArgumentException::class, "Not supported currency \"NAN\".");
     }
 }
 

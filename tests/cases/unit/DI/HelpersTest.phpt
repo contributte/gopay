@@ -7,6 +7,9 @@
  */
 
 use Markette\Gopay\DI\Helpers;
+use Markette\Gopay\Exception\InvalidArgumentException;
+use Markette\Gopay\Form\ImagePaymentButton;
+use Markette\Gopay\Form\PaymentButton;
 use Markette\Gopay\Service;
 use Nette\Application\UI\Form;
 use Tester\Assert;
@@ -30,10 +33,10 @@ class HelpersTest extends BaseTestCase
         $binder->bindPaymentButtons($service, $form, $callback);
 
 
-        Assert::type('Markette\Gopay\Form\PaymentButton', $form->getComponent('gopayChanneleu_gp_u'));
-        Assert::type('Markette\Gopay\Form\PaymentButton', $form->getComponent('gopayChanneleu_bank'));
-        Assert::type('Markette\Gopay\Form\PaymentButton', $form->getComponent('gopayChannelSUPERCASH'));
-        Assert::type('Markette\Gopay\Form\ImagePaymentButton', $form->getComponent('gopayChanneltest'));
+        Assert::type(PaymentButton::class, $form->getComponent('gopayChanneleu_gp_u'));
+        Assert::type(PaymentButton::class, $form->getComponent('gopayChanneleu_bank'));
+        Assert::type(PaymentButton::class, $form->getComponent('gopayChannelSUPERCASH'));
+        Assert::type(ImagePaymentButton::class, $form->getComponent('gopayChanneltest'));
 
         Assert::same([$callback], $form->getComponent('gopayChanneleu_gp_u')->onClick);
         Assert::same([$callback], $form->getComponent('gopayChanneleu_bank')->onClick);
@@ -80,7 +83,7 @@ class HelpersTest extends BaseTestCase
         $form = new Form();
         Assert::throws(function () use ($form) {
             $form->addPaymentButton('test');
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Channel 'test' is not allowed.");
+        }, InvalidArgumentException::class, "Channel 'test' is not allowed.");
     }
 }
 

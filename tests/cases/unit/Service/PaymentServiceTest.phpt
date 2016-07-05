@@ -6,9 +6,13 @@
  * @testCase
  */
 
+use Markette\Gopay\Entity\Payment;
 use Markette\Gopay\Entity\ReturnedPayment;
+use Markette\Gopay\Exception\GopayException;
+use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Gopay;
 use Markette\Gopay\Service\PaymentService;
+use Nette\Application\Responses\RedirectResponse;
 use Tester\Assert;
 
 require __DIR__ . '/../../../bootstrap.php';
@@ -28,7 +32,7 @@ class PaymentServiceTest extends BasePaymentTestCase
 
         $response = $service->pay($payment, $gopay::METHOD_CARD_GPKB, $this->createNullCallback());
 
-        Assert::type('Nette\Application\Responses\RedirectResponse', $response);
+        Assert::type(RedirectResponse::class, $response);
         Assert::same('https://testgw.gopay.cz/gw/pay-full-v2?sessionInfo.targetGoId=1234567890&sessionInfo.paymentSessionId=3000000001&sessionInfo.encryptedSignature=999c4a90f42af5bdd9b5b7eaff43f27eb671b03a1efd4662b729dd21b9be41c22d5b25fe5955ff8d',
             $response->getUrl()
         );
@@ -81,7 +85,7 @@ class PaymentServiceTest extends BasePaymentTestCase
 
         Assert::exception(function () use ($service) {
             $service->setLang('de');
-        }, 'Markette\Gopay\Exception\InvalidArgumentException');
+        }, InvalidArgumentException::class);
     }
 
     public function testDuplicateChannel()
@@ -91,7 +95,7 @@ class PaymentServiceTest extends BasePaymentTestCase
 
         Assert::exception(function () use ($service) {
             $service->addChannel('test', 'test-name');
-        }, 'Markette\Gopay\Exception\InvalidArgumentException');
+        }, InvalidArgumentException::class);
     }
 
     public function testCreatePayment()
@@ -101,7 +105,7 @@ class PaymentServiceTest extends BasePaymentTestCase
         $service = new PaymentService($gopay);
         $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
-        Assert::type('Markette\Gopay\Entity\Payment', $payment);
+        Assert::type(Payment::class, $payment);
     }
 
     public function testRestorePayment()
@@ -111,7 +115,7 @@ class PaymentServiceTest extends BasePaymentTestCase
         $service = new PaymentService($gopay);
         $payment = $service->restorePayment(['sum' => 999, 'customer' => []], []);
 
-        Assert::type('Markette\Gopay\Entity\ReturnedPayment', $payment);
+        Assert::type(ReturnedPayment::class, $payment);
     }
 
     public function testPayExceptions()
@@ -121,25 +125,25 @@ class PaymentServiceTest extends BasePaymentTestCase
         $callback = $this->createNullCallback();
 
         $service = new PaymentService($gopay);
-        $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
+        $service->addChannel(Gopay::METHOD_CARD_GPKB, 'KB');
         $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
         Assert::exception(function () use ($payment, $callback, $service) {
             $service->pay($payment, 'nonexisting', $callback);
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Payment channel 'nonexisting' is not supported");
+        }, InvalidArgumentException::class, "Payment channel 'nonexisting' is not supported");
 
         $paymentRet = new ReturnedPayment(['sum' => 999, 'customer' => []], []);
         Assert::exception(function () use ($paymentRet, $callback, $service) {
             $service->pay($paymentRet, Gopay::METHOD_CARD_GPKB, $callback);
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
+        }, InvalidArgumentException::class, "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
 
         Assert::exception(function () use ($payment, $callback, $service) {
             $service->payInline($payment, 'nonexisting', $callback);
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Payment channel 'nonexisting' is not supported");
+        }, InvalidArgumentException::class, "Payment channel 'nonexisting' is not supported");
 
         Assert::exception(function () use ($paymentRet, $callback, $service) {
             $service->payInline($paymentRet, Gopay::METHOD_CARD_GPKB, $callback);
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
+        }, InvalidArgumentException::class, "Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
     }
 
     public function testCallbackCalled()
@@ -173,14 +177,14 @@ class PaymentServiceTest extends BasePaymentTestCase
         $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
         Assert::throws(function () use ($service, $payment) {
-            $response = $service->pay($payment, Gopay::METHOD_CARD_GPKB, function () {
+            $service->pay($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
 
         Assert::throws(function () use ($service, $payment) {
-            $response = $service->payInline($payment, Gopay::METHOD_CARD_GPKB, function () {
+            $service->payInline($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
     }
 
     public function testAllowChangeChannel()
@@ -189,19 +193,19 @@ class PaymentServiceTest extends BasePaymentTestCase
 
         $service = Mockery::mock(PaymentService::class, [$gopay])->makePartial();
         $service->shouldAllowMockingProtectedMethods();
-        $service->addChannel($gopay::METHOD_CARD_GPKB, 'KB');
-        $service->addChannel($gopay::METHOD_CSAS, 'CSAS');
+        $service->addChannel(Gopay::METHOD_CARD_GPKB, 'KB');
+        $service->addChannel(Gopay::METHOD_CSAS, 'CSAS');
 
         $service->allowChangeChannel(FALSE);
         Assert::equal([
-            $gopay::METHOD_CSAS
-        ], $service->getPaymentChannels($gopay::METHOD_CSAS));
+            Gopay::METHOD_CSAS,
+        ], $service->getPaymentChannels(Gopay::METHOD_CSAS));
 
         $service->allowChangeChannel(TRUE);
         Assert::equal([
-            $gopay::METHOD_CARD_GPKB,
-            $gopay::METHOD_CSAS
-        ], $service->getPaymentChannels($gopay::METHOD_CARD_GPKB));
+            Gopay::METHOD_CARD_GPKB,
+            Gopay::METHOD_CSAS,
+        ], $service->getPaymentChannels(Gopay::METHOD_CARD_GPKB));
     }
 
 }

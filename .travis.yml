@@ -1,17 +1,31 @@
 language: php
+
+sudo: false
+
 php:
-    - 5.5
     - 5.6
     - 7.0
     - hhvm
     - hhvm-nightly
 
+env:
+    global:
+     - COMPOSER_GLOBAL_FLAGS=--no-interaction --prefer-source -o
+
+    matrix:
+     - COMPOSER_MATRIX_FLAGS=--prefer-lowest
+     - COMPOSER_MATRIX_FLAGS=--prefer-stable
+
 matrix:
     allow_failures:
         - php: hhvm-nightly
 
-before_script:
-    - composer install --no-interaction --prefer-source
+install:
+    # Update Composer
+    - travis_retry composer self-update
+
+    # Install Nette Tester
+    - travis_retry composer update ${COMPOSER_GLOBAL_FLAGS} ${COMPOSER_MATRIX_FLAGS}
 
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then cat ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini >> ./tests/php-unix.ini; fi
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then NTESTER_FLAGS="--coverage ./coverage.xml --coverage-src ./src/Gopay"; else TESTER_FLAGS=""; fi
@@ -22,9 +36,11 @@ script:
 
 after_script:
     - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then composer require satooshi/php-coveralls; fi
-    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then php vendor/bin/coveralls -c tests/.coveralls.yml -v; fi 
+    - if [ "$TRAVIS_PHP_VERSION" == "5.6" ]; then php vendor/bin/coveralls -c tests/.coveralls.yml -v; fi
 
-sudo: false
+after_failure:
+    # Print *.actual content
+    - 'for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
 
 cache:
     directories:

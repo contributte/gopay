@@ -7,8 +7,10 @@
  */
 
 use Markette\Gopay\Entity\RecurrentPayment;
+use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Gopay;
 use Markette\Gopay\Service\RecurrentPaymentService;
+use Nette\Application\Responses\RedirectResponse;
 use Tester\Assert;
 
 require __DIR__ . '/../../../bootstrap.php';
@@ -33,7 +35,7 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
 
         $response = $service->payRecurrent($payment, $gopay::METHOD_CARD_GPKB, $this->createNullCallback());
 
-        Assert::type('Nette\Application\Responses\RedirectResponse', $response);
+        Assert::type(RedirectResponse::class, $response);
         Assert::same('https://testgw.gopay.cz/gw/pay-full-v2?sessionInfo.targetGoId=1234567890&sessionInfo.paymentSessionId=3000000001&sessionInfo.encryptedSignature=999c4a90f42af5bdd9b5b7eaff43f27eb671b03a1efd4662b729dd21b9be41c22d5b25fe5955ff8d',
             $response->getUrl()
         );
@@ -75,7 +77,7 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
         $service = new RecurrentPaymentService($gopay);
         $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
-        Assert::type('Markette\Gopay\Entity\RecurrentPayment', $payment);
+        Assert::type(RecurrentPayment::class, $payment);
     }
 
     public function testPayThrowsException()
@@ -92,12 +94,12 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
         Assert::throws(function () use ($service, $payment) {
             $response = $service->payRecurrent($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
 
         Assert::throws(function () use ($service, $payment) {
             $response = $service->payRecurrentInline($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
     }
 
     public function testVoidRecurrent()
@@ -121,7 +123,7 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
 
         Assert::throws(function () use ($service) {
             $service->voidRecurrent(3000000001);
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
     }
 }
 

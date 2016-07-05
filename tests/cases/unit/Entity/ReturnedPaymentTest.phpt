@@ -7,11 +7,12 @@
  */
 
 use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
 use Markette\Gopay\Config;
 use Markette\Gopay\Entity\ReturnedPayment;
+use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Gopay;
 use Tester\Assert;
-use Markette\Gopay\Exception\GopayException;
 
 require __DIR__ . '/../../../bootstrap.php';
 
@@ -24,7 +25,7 @@ class ReturnedPaymentTest extends BaseTestCase
             'targetGoId' => 1,
             'paymentSessionId' => 2,
             'encryptedSignature' => 3,
-            'orderNumber' => 4
+            'orderNumber' => 4,
         ];
         $returnedPayment = new ReturnedPayment([], $toBeVerified);
 
@@ -35,13 +36,13 @@ class ReturnedPaymentTest extends BaseTestCase
 
     public function testFraud()
     {
-        $config = Mockery::namedMock('Config1', 'Markette\Gopay\Config');
+        $config = Mockery::namedMock('Config1', Config::class);
         $config->shouldReceive('getGopayId')->once()->andReturn(1);
         $config->shouldReceive('getGopaySecretKey')->once()->andReturn(1);
 
-        $soap = Mockery::namedMock('GopaySoap1', 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap1', GopaySoap::class);
 
-        $helper = Mockery::namedMock('GopayHelper1', 'Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::namedMock('GopayHelper1', GopayHelper::class);
         $helper->shouldReceive('checkPaymentIdentity')->once()->andThrow('Exception');
 
         $gopay = new Gopay($config, $soap, $helper);
@@ -50,7 +51,7 @@ class ReturnedPaymentTest extends BaseTestCase
             'targetGoId' => 1,
             'paymentSessionId' => 2,
             'encryptedSignature' => 3,
-            'orderNumber' => 4
+            'orderNumber' => 4,
         ];
         $returnedPayment = new ReturnedPayment([], $toBeVerified);
         $returnedPayment->setGopay($gopay);
@@ -63,13 +64,13 @@ class ReturnedPaymentTest extends BaseTestCase
 
     public function testFraudFalse()
     {
-        $config = Mockery::namedMock('Config2', 'Markette\Gopay\Config');
+        $config = Mockery::namedMock('Config2', Config::class);
         $config->shouldReceive('getGopayId')->once()->andReturn(1);
         $config->shouldReceive('getGopaySecretKey')->once()->andReturn(1);
 
-        $soap = Mockery::namedMock('GopaySoap2', 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap2', GopaySoap::class);
 
-        $helper = Mockery::namedMock('GopayHelper2', 'Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::namedMock('GopayHelper2', GopayHelper::class);
         $helper->shouldReceive('checkPaymentIdentity')->once()->andReturnNull();
 
         $gopay = new Gopay($config, $soap, $helper);
@@ -78,7 +79,7 @@ class ReturnedPaymentTest extends BaseTestCase
             'targetGoId' => 1,
             'paymentSessionId' => 2,
             'encryptedSignature' => 3,
-            'orderNumber' => 4
+            'orderNumber' => 4,
         ];
         $returnedPayment = new ReturnedPayment([], $toBeVerified);
         $returnedPayment->setGopay($gopay);
@@ -92,14 +93,14 @@ class ReturnedPaymentTest extends BaseTestCase
     public function testGetStatus()
     {
         $result = ['sessionState' => GopayHelper::CANCELED];
-        $config = Mockery::namedMock('Config3', 'Markette\Gopay\Config');
+        $config = Mockery::namedMock('Config3', Config::class);
         $config->shouldReceive('getGopayId')->once()->andReturn(1);
         $config->shouldReceive('getGopaySecretKey')->once()->andReturn(1);
 
-        $soap = Mockery::namedMock('GopaySoap3', 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap3', GopaySoap::class);
         $soap->shouldReceive('isPaymentDone')->once()->andReturn($result);
 
-        $helper = Mockery::namedMock('GopayHelper3', 'Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::namedMock('GopayHelper3', GopayHelper::class);
 
         $gopay = new Gopay($config, $soap, $helper);
 
@@ -116,14 +117,14 @@ class ReturnedPaymentTest extends BaseTestCase
     public function testStatuses()
     {
         $result = ['sessionState' => GopayHelper::CANCELED];
-        $config = Mockery::namedMock('Config4', 'Markette\Gopay\Config');
+        $config = Mockery::namedMock('Config4', Config::class);
         $config->shouldReceive('getGopayId')->once()->andReturn(1);
         $config->shouldReceive('getGopaySecretKey')->once()->andReturn(1);
 
-        $soap = Mockery::namedMock('GopaySoap4', 'Markette\Gopay\Api\GopaySoap');
+        $soap = Mockery::namedMock('GopaySoap4', GopaySoap::class);
         $soap->shouldReceive('isPaymentDone')->once()->andReturn($result);
 
-        $helper = Mockery::namedMock('GopayHelper4', 'Markette\Gopay\Api\GopayHelper');
+        $helper = Mockery::namedMock('GopayHelper4', GopayHelper::class);
 
         $gopay = new Gopay($config, $soap, $helper);
 

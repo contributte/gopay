@@ -6,6 +6,9 @@
  * @testCase
  */
 
+use Markette\Gopay\Api\GopayHelper;
+use Markette\Gopay\Api\GopaySoap;
+use Markette\Gopay\Config;
 use Markette\Gopay\Gopay;
 use Tester\Assert;
 
@@ -16,9 +19,9 @@ class GopayTest extends BaseTestCase
 
     public function testGetters()
     {
-        $config = Mockery::mock('Markette\Gopay\Config');
-        $soap = Mockery::mock('Markette\Gopay\Api\GopaySoap');
-        $helper = Mockery::mock('Markette\Gopay\Api\GopayHelper');
+        $config = Mockery::mock(Config::class);
+        $soap = Mockery::mock(GopaySoap::class);
+        $helper = Mockery::mock(GopayHelper::class);
 
         $gopay = new Gopay($config, $soap, $helper);
 

@@ -6,8 +6,11 @@
  * @testCase
  */
 
+use Markette\Gopay\Entity\PreAuthorizedPayment;
+use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Gopay;
 use Markette\Gopay\Service\PreAuthorizedPaymentService;
+use Nette\Application\Responses\RedirectResponse;
 use Tester\Assert;
 
 require __DIR__ . '/../../../bootstrap.php';
@@ -26,7 +29,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
 
         $response = $service->payPreAuthorized($payment, $gopay::METHOD_CARD_GPKB, $this->createNullCallback());
 
-        Assert::type('Nette\Application\Responses\RedirectResponse', $response);
+        Assert::type(RedirectResponse::class, $response);
         Assert::same('https://testgw.gopay.cz/gw/pay-full-v2?sessionInfo.targetGoId=1234567890&sessionInfo.paymentSessionId=3000000001&sessionInfo.encryptedSignature=999c4a90f42af5bdd9b5b7eaff43f27eb671b03a1efd4662b729dd21b9be41c22d5b25fe5955ff8d',
             $response->getUrl()
         );
@@ -62,7 +65,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
         $service = new PreAuthorizedPaymentService($gopay);
         $payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
-        Assert::type('Markette\Gopay\Entity\PreAuthorizedPayment', $payment);
+        Assert::type(PreAuthorizedPayment::class, $payment);
     }
 
     public function testPayThrowsException()
@@ -79,12 +82,12 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
         Assert::throws(function () use ($service, $payment) {
             $response = $service->payPreAuthorized($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
 
         Assert::throws(function () use ($service, $payment) {
             $response = $service->payPreAuthorizedInline($payment, Gopay::METHOD_CARD_GPKB, function () {
             });
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
     }
 
 
@@ -109,7 +112,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
 
         Assert::throws(function () use ($service) {
             $service->voidPreAuthorized(3000000001);
-        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+        }, GopayException::class, $exmsg);
     }
 }
 

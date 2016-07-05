@@ -7,6 +7,7 @@
  */
 
 use Markette\Gopay\Entity\RecurrentPayment;
+use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Gopay;
 use Tester\Assert;
 
@@ -47,8 +48,8 @@ class RecurrentPaymentTest extends BaseTestCase
     public function testExceptions()
     {
         Assert::exception(function () {
-            $payment = new RecurrentPayment(['recurrenceCycle' => 'x']);
-        }, 'Markette\Gopay\Exception\InvalidArgumentException', "Not supported cycle \"x\".");
+            new RecurrentPayment(['recurrenceCycle' => 'x']);
+        }, InvalidArgumentException::class, "Not supported cycle \"x\".");
     }
 }
 

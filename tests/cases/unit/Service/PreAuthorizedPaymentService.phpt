@@ -87,8 +87,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
         }, 'Markette\Gopay\Exception\GopayException', $exmsg);
     }
 
-
-    public function testVoidRecurrent()
+    public function testCancelRecurrent()
     {
         $gopay = $this->createGopay();
         $service = new PreAuthorizedPaymentService($gopay);
@@ -96,7 +95,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
         $gopay->getSoap()->shouldReceive('voidAuthorization')->once()->andReturnUsing(function () {
             Assert::truthy(TRUE);
         });
-        $service->voidPreAuthorized(3000000001);
+        $service->cancelPreAuthorized(3000000001);
     }
 
     public function testVoidRecurrentException()
@@ -108,8 +107,46 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
         $gopay->getSoap()->shouldReceive('voidAuthorization')->once()->andThrow('Exception', $exmsg);
 
         Assert::throws(function () use ($service) {
-            $service->voidPreAuthorized(3000000001);
+            $service->cancelPreAuthorized(3000000001);
         }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+    }
+
+    public function testCaptureRecurrent()
+    {
+        $gopay = $this->createGopay();
+        $service = new PreAuthorizedPaymentService($gopay);
+        $paymentSessionId = 3000000001;
+
+        $gopay->getSoap()
+            ->shouldReceive('capturePayment')
+            ->once()
+            ->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
+            ->andReturnUsing(function () {
+                Assert::truthy(TRUE);
+            });
+        $service->capturePreAuthorized(3000000001);
+
+        $gopay->getSoap()->mockery_verify();
+    }
+
+    public function testCaputreRecurrentException()
+    {
+        $gopay = $this->createGopay();
+        $paymentSessionId = 3000000001;
+        $exmsg = "Fatal error during paying";
+        $service = new PreAuthorizedPaymentService($gopay);
+
+        $gopay->getSoap()
+            ->shouldReceive('capturePayment')
+            ->once()
+            ->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
+            ->andThrow('Exception', $exmsg);
+
+        Assert::throws(function () use ($service, $paymentSessionId) {
+            $service->capturePreAuthorized($paymentSessionId);
+        }, 'Markette\Gopay\Exception\GopayException', $exmsg);
+
+        $gopay->getSoap()->mockery_verify();
     }
 }
 

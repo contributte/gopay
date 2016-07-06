@@ -325,6 +325,56 @@ Pro zrušení předautorizované platby budeme potřebovat `$paymentSessionId`.
 $service->cancelPreAuthorized($paymentSessionId);
 ```
 
+### Vlastní implementace
+
+Pokud vám nějaká vlastnost chybí, můžete si většinu tříd podědit, případně složit přes `composition`.
+
+#### Inheritance
+
+```php
+use Markette\Gopay\Service\RecurrentPaymentService;
+
+final class MyRecurrentPaymentService extends RecurrentPaymentService
+{
+
+}
+```
+
+```yaml
+extensions: 
+    gopay: Markette\Gopay\DI\Extension
+
+services:
+    gopay.service.payment: MyPaymentService
+    gopay.service.recurrentPayment: MyRecurrentPaymentService
+    gopay.service.preAuthorizedPayment: MyPreAuthorizedPaymentService
+```
+
+#### Composition
+
+```php
+use Markette\Gopay\Service\RecurrentPaymentService;
+
+final class MyRecurrentPaymentService
+{
+
+    /** @var RecurrentPaymentService */
+    private $gopay;
+    
+    public function __construct(RecurrentPaymentService $gopay)
+    {
+        $this->gopay = $gopay;
+    }
+
+}
+```
+
+```yaml
+services:
+    - MyRecurrentPaymentService
+```
+
+
 -----
 
 Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/docs/v3.x/examples/GopayPresenter.php).

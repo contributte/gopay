@@ -92,7 +92,6 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
         $gopay->getSoap()->mockery_verify();
     }
 
-
     public function testCancelRecurrent()
     {
         $gopay = $this->createGopay();
@@ -126,6 +125,44 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
 
         Assert::throws(function () use ($service, $paymentSessionId) {
             $service->cancelPreAuthorized($paymentSessionId);
+        }, GopayException::class, $exmsg);
+
+        $gopay->getSoap()->mockery_verify();
+    }
+
+    public function testCaptureRecurrent()
+    {
+        $gopay = $this->createGopay();
+        $service = new PreAuthorizedPaymentService($gopay);
+        $paymentSessionId = 3000000001;
+
+        $gopay->getSoap()
+            ->shouldReceive('capturePayment')
+            ->once()
+            ->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
+            ->andReturnUsing(function () {
+                Assert::truthy(TRUE);
+            });
+        $service->capturePreAuthorized(3000000001);
+
+        $gopay->getSoap()->mockery_verify();
+    }
+
+    public function testCaputreRecurrentException()
+    {
+        $gopay = $this->createGopay();
+        $paymentSessionId = 3000000001;
+        $exmsg = "Fatal error during paying";
+        $service = new PreAuthorizedPaymentService($gopay);
+
+        $gopay->getSoap()
+            ->shouldReceive('capturePayment')
+            ->once()
+            ->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
+            ->andThrow('Exception', $exmsg);
+
+        Assert::throws(function () use ($service, $paymentSessionId) {
+            $service->capturePreAuthorized($paymentSessionId);
         }, GopayException::class, $exmsg);
 
         $gopay->getSoap()->mockery_verify();

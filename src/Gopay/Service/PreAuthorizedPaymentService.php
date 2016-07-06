@@ -78,6 +78,26 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
     }
 
     /**
+     * Capture pre authorized payment via GoPay gateway
+     *
+     * @param float $paymentSessionId
+     * @throws GopayException
+     * @return void
+     */
+    public function capturePreAuthorized($paymentSessionId)
+    {
+        try {
+            $this->gopay->soap->capturePayment(
+                $paymentSessionId,
+                $this->gopay->config->getGopayId(),
+                $this->gopay->config->getGopaySecretKey()
+            );
+        } catch (Exception $e) {
+            throw new GopayException($e->getMessage(), 0, $e);
+        }
+    }
+
+    /**
      * Cancel pre authorized payment via GoPay gateway
      *
      * @param float $paymentSessionId

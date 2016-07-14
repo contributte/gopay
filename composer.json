@@ -32,7 +32,7 @@
     "require-dev": {
         "nette/tester": "^1.7.0",
         "mockery/mockery": "^0.9.5",
-        "nette/di": "~2.4.0"
+        "nette/di": "~2.4.1"
     },
     "autoload": {
         "psr-4": {

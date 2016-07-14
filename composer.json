@@ -32,10 +32,8 @@
     "require-dev": {
         "nette/tester": "^1.7.0",
         "mockery/mockery": "^0.9.5",
-        "nette/di": "2.4.x-dev"
+        "nette/di": "~2.4.0"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "Markette\\" : "src/"

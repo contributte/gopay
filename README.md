@@ -33,7 +33,7 @@
             <td align="center">&gt;=5.6</td>
         </tr>
         <tr>
-            <td align="center">pre-released</td>
+            <td align="center">stable</td>
             <td align="center">~3.1.0</td>
             <td align="center">2.5</td>
             <td align="center">nette/forms: ~2.3.0|~2.4.0 <br> nette/application: ~2.3.0|~2.4.0 <br> nette/di: ~2.3.0|~2.4.0</td>

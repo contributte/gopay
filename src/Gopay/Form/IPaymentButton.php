@@ -8,11 +8,11 @@ namespace Markette\Gopay\Form;
 interface IPaymentButton
 {
 
-    /**
-     * Returns name (title) of payment channel.
-     *
-     * @return string
-     */
-    function getChannel();
+	/**
+	 * Returns name (title) of payment channel.
+	 *
+	 * @return string
+	 */
+	public function getChannel();
 
 }

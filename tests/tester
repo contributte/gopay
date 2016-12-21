@@ -1,2 +1,0 @@
-#!/usr/bin/env sh
-../vendor/bin/tester cases -s -j 40 -log tester.log $@

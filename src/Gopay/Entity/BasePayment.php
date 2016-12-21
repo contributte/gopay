@@ -21,212 +21,212 @@ use stdClass;
 abstract class BasePayment extends Object
 {
 
-    /** @var float */
-    private $sum;
+	/** @var float */
+	private $sum;
 
-    /** @var string */
-    private $currency = Gopay::CURRENCY_CZK;
+	/** @var string */
+	private $currency = Gopay::CURRENCY_CZK;
 
-    /** @var int */
-    private $variable;
+	/** @var int */
+	private $variable;
 
-    /** @var int */
-    private $specific;
+	/** @var int */
+	private $specific;
 
-    /** @var string */
-    private $productName;
+	/** @var string */
+	private $productName;
 
-    /** @var stdClass */
-    private $customer;
+	/** @var stdClass */
+	private $customer;
 
-    /** @var array */
-    private $allowedCurrency = [
-        Gopay::CURRENCY_CZK,
-        Gopay::CURRENCY_EUR,
-    ];
+	/** @var array */
+	private $allowedCurrency = [
+		Gopay::CURRENCY_CZK,
+		Gopay::CURRENCY_EUR,
+	];
 
-    /**
-     * @param array $values
-     */
-    public function __construct(array $values)
-    {
-        foreach (['sum', 'currency', 'variable', 'specific', 'productName', 'customer'] as $param) {
-            if (isset($values[$param])) {
-                $this->{'set' . ucfirst($param)}($values[$param]);
-            }
-        }
-    }
+	/**
+	 * @param array $values
+	 */
+	public function __construct(array $values)
+	{
+		foreach (['sum', 'currency', 'variable', 'specific', 'productName', 'customer'] as $param) {
+			if (isset($values[$param])) {
+				$this->{'set' . ucfirst($param)}($values[$param]);
+			}
+		}
+	}
 
-    /**
-     * Returns sum of payment
-     *
-     * @return float
-     */
-    public function getSum()
-    {
-        return $this->sum;
-    }
+	/**
+	 * Returns sum of payment
+	 *
+	 * @return float
+	 */
+	public function getSum()
+	{
+		return $this->sum;
+	}
 
-    /**
-     * Return sum in cents
-     *
-     * @return int
-     */
-    public function getSumInCents()
-    {
-        return round($this->getSum() * 100);
-    }
+	/**
+	 * Return sum in cents
+	 *
+	 * @return int
+	 */
+	public function getSumInCents()
+	{
+		return round($this->getSum() * 100);
+	}
 
-    /**
-     * Sets sum of payment
-     *
-     * @param float $sum
-     * @return static provides a fluent interface
-     */
-    public function setSum($sum)
-    {
-        $this->sum = (float) $sum;
+	/**
+	 * Sets sum of payment
+	 *
+	 * @param float $sum
+	 * @return static provides a fluent interface
+	 */
+	public function setSum($sum)
+	{
+		$this->sum = (float) $sum;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns payment currency
-     *
-     * @return string
-     */
-    public function getCurrency()
-    {
-        return $this->currency;
-    }
+	/**
+	 * Returns payment currency
+	 *
+	 * @return string
+	 */
+	public function getCurrency()
+	{
+		return $this->currency;
+	}
 
-    /**
-     * Sets payment currency
-     *
-     * @param string $currency
-     * @throws InvalidArgumentException
-     * @return self
-     */
-    public function setCurrency($currency)
-    {
-        if (!in_array($currency, $this->allowedCurrency)) {
-            throw new InvalidArgumentException('Not supported currency "' . $currency . '".');
-        }
-        $this->currency = (string) $currency;
+	/**
+	 * Sets payment currency
+	 *
+	 * @param string $currency
+	 * @throws InvalidArgumentException
+	 * @return static
+	 */
+	public function setCurrency($currency)
+	{
+		if (!in_array($currency, $this->allowedCurrency)) {
+			throw new InvalidArgumentException('Not supported currency "' . $currency . '".');
+		}
+		$this->currency = (string) $currency;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns variable symbol
-     *
-     * @return int
-     */
-    public function getVariable()
-    {
-        return $this->variable;
-    }
+	/**
+	 * Returns variable symbol
+	 *
+	 * @return int
+	 */
+	public function getVariable()
+	{
+		return $this->variable;
+	}
 
-    /**
-     * Sets variable symbol
-     *
-     * @param int $variable
-     * @return self
-     */
-    public function setVariable($variable)
-    {
-        $this->variable = (int) $variable;
+	/**
+	 * Sets variable symbol
+	 *
+	 * @param int $variable
+	 * @return static
+	 */
+	public function setVariable($variable)
+	{
+		$this->variable = (int) $variable;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns specific symbol
-     *
-     * @return int
-     */
-    public function getSpecific()
-    {
-        return $this->specific;
-    }
+	/**
+	 * Returns specific symbol
+	 *
+	 * @return int
+	 */
+	public function getSpecific()
+	{
+		return $this->specific;
+	}
 
-    /**
-     * Sets specific symbol
-     *
-     * @param int $specific
-     * @return self
-     */
-    public function setSpecific($specific)
-    {
-        $this->specific = (int) $specific;
+	/**
+	 * Sets specific symbol
+	 *
+	 * @param int $specific
+	 * @return static
+	 */
+	public function setSpecific($specific)
+	{
+		$this->specific = (int) $specific;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns product name
-     *
-     * @return string
-     */
-    public function getProductName()
-    {
-        return $this->productName;
-    }
+	/**
+	 * Returns product name
+	 *
+	 * @return string
+	 */
+	public function getProductName()
+	{
+		return $this->productName;
+	}
 
-    /**
-     * Sets product name
-     *
-     * @param string $name
-     * @return self
-     */
-    public function setProductName($name)
-    {
-        $this->productName = $name;
+	/**
+	 * Sets product name
+	 *
+	 * @param string $name
+	 * @return static
+	 */
+	public function setProductName($name)
+	{
+		$this->productName = $name;
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /**
-     * Returns customer data
-     *
-     * @return stdClass
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
+	/**
+	 * Returns customer data
+	 *
+	 * @return stdClass
+	 */
+	public function getCustomer()
+	{
+		return $this->customer;
+	}
 
-    /**
-     * Sets customer data
-     *
-     * @param array|stdClass
-     * @return self
-     */
-    public function setCustomer($customer)
-    {
-        $allowedKeys = [
-            'firstName',
-            'lastName',
-            'street',
-            'city',
-            'postalCode',
-            'countryCode',
-            'email',
-            'phoneNumber',
-        ];
+	/**
+	 * Sets customer data
+	 *
+	 * @param array|stdClass $customer
+	 * @return static
+	 */
+	public function setCustomer($customer)
+	{
+		$allowedKeys = [
+			'firstName',
+			'lastName',
+			'street',
+			'city',
+			'postalCode',
+			'countryCode',
+			'email',
+			'phoneNumber',
+		];
 
-        $this->customer = (object) array_intersect_key(
-            (array) $customer,
-            array_flip($allowedKeys)
-        );
+		$this->customer = (object) array_intersect_key(
+			(array) $customer,
+			array_flip($allowedKeys)
+		);
 
-        foreach ($allowedKeys as $key) {
-            if (!isset($this->customer->$key)) {
-                $this->customer->$key = '';
-            }
-        }
+		foreach ($allowedKeys as $key) {
+			if (!isset($this->customer->$key)) {
+				$this->customer->$key = '';
+			}
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
 }

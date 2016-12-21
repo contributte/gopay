@@ -12,25 +12,25 @@ use Nette\Forms\Controls\SubmitButton;
 class PaymentButton extends SubmitButton implements IPaymentButton
 {
 
-    /** @var string */
-    private $channel;
+	/** @var string */
+	private $channel;
 
-    /**
-     * @param string $channel
-     * @param string $caption
-     */
-    public function __construct($channel, $caption = NULL)
-    {
-        parent::__construct($caption);
-        $this->channel = $channel;
-    }
+	/**
+	 * @param string $channel
+	 * @param string $caption
+	 */
+	public function __construct($channel, $caption = NULL)
+	{
+		parent::__construct($caption);
+		$this->channel = $channel;
+	}
 
-    /**
-     * @return string
-     */
-    public function getChannel()
-    {
-        return $this->channel;
-    }
+	/**
+	 * @return string
+	 */
+	public function getChannel()
+	{
+		return $this->channel;
+	}
 
 }

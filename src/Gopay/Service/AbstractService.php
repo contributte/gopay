@@ -27,12 +27,6 @@ abstract class AbstractService extends Object
 	/** @var array */
 	protected $channels = [];
 
-	/** @var array */
-	protected $allowedLang = [
-		Gopay::LANG_CS,
-		Gopay::LANG_EN,
-	];
-
 	/**
 	 * @param bool $changeChannel
 	 * @return static
@@ -48,14 +42,10 @@ abstract class AbstractService extends Object
 	 * Sets payment gateway language
 	 *
 	 * @param string $lang
-	 * @throws InvalidArgumentException if language is not supported
 	 * @return static
 	 */
 	public function setLang($lang)
 	{
-		if (!in_array($lang, $this->allowedLang)) {
-			throw new InvalidArgumentException('Not supported language "' . $lang . '".');
-		}
 		$this->lang = $lang;
 
 		return $this;

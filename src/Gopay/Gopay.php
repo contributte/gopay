@@ -101,6 +101,12 @@ class Gopay extends Object
 	const LANG_CS = 'CS';
 	/** @const English */
 	const LANG_EN = 'EN';
+	/** @const Slovak */
+	const LANG_SK = 'SK';
+	/** @const German */
+	const LANG_DE = 'DE';
+	/** @const Russian */
+	const LANG_RU = 'RU';
 
 	/** @var Config */
 	private $config;

@@ -31,6 +31,9 @@ abstract class AbstractService extends Object
 	protected $allowedLang = [
 		Gopay::LANG_CS,
 		Gopay::LANG_EN,
+		Gopay::LANG_SK,
+		Gopay::LANG_DE,
+		Gopay::LANG_RU,
 	];
 
 	/**

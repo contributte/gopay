@@ -1,6 +1,7 @@
 <?php
 
-use App\Model\ShopModel;
+namespace Examples\Gopay3x;
+
 use Markette\Gopay\Service\PaymentService;
 use Markette\Gopay\Service\PreAuthorizedPaymentService;
 use Markette\Gopay\Service\RecurrentPaymentService;

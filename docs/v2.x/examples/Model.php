@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model;
+namespace Examples\Gopay2x;
 
 class ShopModel
 {

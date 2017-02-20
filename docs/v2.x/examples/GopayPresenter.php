@@ -1,8 +1,9 @@
 <?php
 
+namespace Examples\Gopay2x;
+
 use Markette\Gopay\Service;
 use Nette\Application\UI\Presenter;
-use App\Model\ShopModel;
 
 final class GopayPresenter extends Presenter
 {

@@ -32,8 +32,8 @@
   "require-dev": {
     "ninjify/qa": "^0.3.3",
     "ninjify/nunjuck": "^0.1.4",
-    "mockery/mockery": "^0.9.7",
-    "nette/di": "~2.4.5"
+    "mockery/mockery": "^0.9.9",
+    "nette/di": "~2.4.8"
   },
   "autoload": {
     "psr-4": {

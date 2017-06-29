@@ -95,6 +95,18 @@ class Gopay extends Object
 	/** @const Euro */
 	const CURRENCY_EUR = 'EUR';
 
+	/** @const Polish zloty */
+	const CURRENCY_PLN = 'PLN';
+
+	/** @const Hungarian forint */
+	const CURRENCY_HUF = 'HUF';
+
+	/** @const British pound */
+	const CURRENCY_GBP = 'GBP';
+
+	/** @const US dollar */
+	const CURRENCY_USD = 'USD';
+
 	// LANGUAGES ===============================================================
 
 	/** @const Czech */

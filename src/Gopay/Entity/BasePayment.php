@@ -43,6 +43,10 @@ abstract class BasePayment extends Object
 	private $allowedCurrency = [
 		Gopay::CURRENCY_CZK,
 		Gopay::CURRENCY_EUR,
+		Gopay::CURRENCY_PLN,
+		Gopay::CURRENCY_HUF,
+		Gopay::CURRENCY_GBP,
+		Gopay::CURRENCY_USD,
 	];
 
 	/**

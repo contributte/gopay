@@ -27,7 +27,7 @@ abstract class BasePayment extends Object
 	/** @var string */
 	private $currency = Gopay::CURRENCY_CZK;
 
-	/** @var int */
+	/** @var string */
 	private $variable;
 
 	/** @var int */
@@ -134,12 +134,12 @@ abstract class BasePayment extends Object
 	/**
 	 * Sets variable symbol
 	 *
-	 * @param int $variable
+	 * @param string $variable
 	 * @return static
 	 */
 	public function setVariable($variable)
 	{
-		$this->variable = (int) $variable;
+		$this->variable = $variable;
 
 		return $this;
 	}

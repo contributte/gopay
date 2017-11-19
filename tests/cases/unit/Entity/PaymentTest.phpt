@@ -40,7 +40,7 @@ class PaymentTest extends BaseTestCase
 		$values = [
 			'sum' => 999.12,
 			'currency' => Gopay::CURRENCY_EUR,
-			'variable' => 1234567890,
+			'variable' => 'string1234567890',
 			'specific' => 6789012345,
 			'productName' => 'Produkt',
 			'customer' => $customer,
@@ -52,7 +52,7 @@ class PaymentTest extends BaseTestCase
 		Assert::equal(999.12, $payment->getSum());
 		Assert::equal(99912.0, $payment->getSumInCents());
 		Assert::equal(Gopay::CURRENCY_EUR, $payment->getCurrency());
-		Assert::equal(1234567890, $payment->getVariable());
+		Assert::equal('string1234567890', $payment->getVariable());
 		Assert::equal((int) 6789012345, $payment->getSpecific());
 		Assert::equal('Produkt', $payment->getProductName());
 		Assert::equal((object) [

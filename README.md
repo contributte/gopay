@@ -14,6 +14,8 @@
 
 ## Vývoj
 
+> Tato verze využívá komunikaci přes SOAP. Doporučujeme přejít na modernější [GopayInline](https://github.com/Markette/GopayInline), jenž využívá JSON REST API.
+
 <table>
     <thead>
         <tr>

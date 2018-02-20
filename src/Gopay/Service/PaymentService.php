@@ -44,7 +44,7 @@ class PaymentService extends AbstractPaymentService
 		$paymentSessionId = $this->buildPayment($payment, $channel);
 
 		$url = GopayConfig::fullIntegrationURL()
-			. '?sessionInfo.targetGoId=' . $this->gopay->config->getGopayId()
+			. '?sessionInfo.targetGoId=' . $this->gopay->getConfig()->getGopayId()
 			. '&sessionInfo.paymentSessionId=' . $paymentSessionId
 			. '&sessionInfo.encryptedSignature=' . $this->createSignature($paymentSessionId);
 
@@ -98,8 +98,8 @@ class PaymentService extends AbstractPaymentService
 
 		try {
 			$customer = $payment->getCustomer();
-			$paymentSessionId = $this->gopay->soap->createPayment(
-				$this->gopay->config->getGopayId(),
+			$paymentSessionId = $this->gopay->getSoap()->createPayment(
+				$this->gopay->getConfig()->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
 				$payment->getCurrency(),
@@ -108,7 +108,7 @@ class PaymentService extends AbstractPaymentService
 				$this->failureUrl,
 				$channels,
 				$channel,
-				$this->gopay->config->getGopaySecretKey(),
+				$this->gopay->getConfig()->getGopaySecretKey(),
 				$customer->firstName,
 				$customer->lastName,
 				$customer->city,

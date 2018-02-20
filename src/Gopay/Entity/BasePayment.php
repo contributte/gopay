@@ -4,7 +4,6 @@ namespace Markette\Gopay\Entity;
 
 use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Gopay;
-use Nette\Object;
 use stdClass;
 
 /**
@@ -18,7 +17,7 @@ use stdClass;
  * @property       string $productName
  * @property       stdClass $customer
  */
-abstract class BasePayment extends Object
+abstract class BasePayment
 {
 
 	/** @var float */

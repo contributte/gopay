@@ -4,12 +4,11 @@ namespace Markette\Gopay\Service;
 
 use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Gopay;
-use Nette\Object;
 
 /**
  * Abstract Service
  */
-abstract class AbstractService extends Object
+abstract class AbstractService
 {
 
 	/** @var bool */

@@ -43,7 +43,7 @@ class RecurrentPaymentService extends AbstractPaymentService
 		$paymentSessionId = $this->buildRecurrentPayment($payment, $channel);
 
 		$url = GopayConfig::fullIntegrationURL()
-			. '?sessionInfo.targetGoId=' . $this->gopay->config->getGopayId()
+			. '?sessionInfo.targetGoId=' . $this->gopay->getConfig()->getGopayId()
 			. '&sessionInfo.paymentSessionId=' . $paymentSessionId
 			. '&sessionInfo.encryptedSignature=' . $this->createSignature($paymentSessionId);
 
@@ -87,10 +87,10 @@ class RecurrentPaymentService extends AbstractPaymentService
 	public function cancelRecurrent($paymentSessionId)
 	{
 		try {
-			$this->gopay->soap->voidRecurrentPayment(
+			$this->gopay->getSoap()->voidRecurrentPayment(
 				$paymentSessionId,
-				$this->gopay->config->getGopayId(),
-				$this->gopay->config->getGopaySecretKey()
+				$this->gopay->getConfig()->getGopayId(),
+				$this->gopay->getConfig()->getGopaySecretKey()
 			);
 		} catch (Exception $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
@@ -113,8 +113,8 @@ class RecurrentPaymentService extends AbstractPaymentService
 
 		try {
 			$customer = $payment->getCustomer();
-			$paymentSessionId = $this->gopay->soap->createRecurrentPayment(
-				$this->gopay->config->getGopayId(),
+			$paymentSessionId = $this->gopay->getSoap()->createRecurrentPayment(
+				$this->gopay->getConfig()->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
 				$payment->getCurrency(),
@@ -126,7 +126,7 @@ class RecurrentPaymentService extends AbstractPaymentService
 				$payment->getRecurrencePeriod(),
 				$channels,
 				$channel,
-				$this->gopay->config->getGopaySecretKey(),
+				$this->gopay->getConfig()->getGopaySecretKey(),
 				$customer->firstName,
 				$customer->lastName,
 				$customer->city,

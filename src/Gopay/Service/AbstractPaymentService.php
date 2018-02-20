@@ -84,12 +84,12 @@ abstract class AbstractPaymentService extends AbstractService
 		return GopayHelper::encrypt(
 			GopayHelper::hash(
 				GopayHelper::concatPaymentSession(
-					$this->gopay->config->getGopayId(),
+					$this->gopay->getConfig()->getGopayId(),
 					(float) $paymentSessionId,
-					$this->gopay->config->getGopaySecretKey()
+					$this->gopay->getConfig()->getGopaySecretKey()
 				)
 			),
-			$this->gopay->config->getGopaySecretKey()
+			$this->gopay->getConfig()->getGopaySecretKey()
 		);
 	}
 

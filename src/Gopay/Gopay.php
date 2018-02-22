@@ -4,6 +4,7 @@ namespace Markette\Gopay;
 
 use Markette\Gopay\Api\GopayHelper;
 use Markette\Gopay\Api\GopaySoap;
+use Nette;
 
 /**
  * Base Gopay class
@@ -14,6 +15,8 @@ use Markette\Gopay\Api\GopaySoap;
  */
 class Gopay
 {
+
+	use Nette\SmartObject;
 
 	// METHODS =================================================================
 

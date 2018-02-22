@@ -43,7 +43,7 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 		$paymentSessionId = $this->buildPreAuthorizedPayment($payment, $channel);
 
 		$url = GopayConfig::fullIntegrationURL()
-			. '?sessionInfo.targetGoId=' . $this->gopay->getConfig()->getGopayId()
+			. '?sessionInfo.targetGoId=' . $this->gopay->config->getGopayId()
 			. '&sessionInfo.paymentSessionId=' . $paymentSessionId
 			. '&sessionInfo.encryptedSignature=' . $this->createSignature($paymentSessionId);
 
@@ -87,10 +87,10 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	public function capturePreAuthorized($paymentSessionId)
 	{
 		try {
-			$this->gopay->getSoap()->capturePayment(
+			$this->gopay->soap->capturePayment(
 				$paymentSessionId,
-				$this->gopay->getConfig()->getGopayId(),
-				$this->gopay->getConfig()->getGopaySecretKey()
+				$this->gopay->config->getGopayId(),
+				$this->gopay->config->getGopaySecretKey()
 			);
 		} catch (Exception $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
@@ -107,10 +107,10 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	public function cancelPreAuthorized($paymentSessionId)
 	{
 		try {
-			$this->gopay->getSoap()->voidAuthorization(
+			$this->gopay->soap->voidAuthorization(
 				$paymentSessionId,
-				$this->gopay->getConfig()->getGopayId(),
-				$this->gopay->getConfig()->getGopaySecretKey()
+				$this->gopay->config->getGopayId(),
+				$this->gopay->config->getGopaySecretKey()
 			);
 		} catch (Exception $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
@@ -134,7 +134,7 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 		try {
 			$customer = $payment->getCustomer();
 			$paymentSessionId = $this->gopay->getSoap()->createPreAutorizedPayment(
-				$this->gopay->getConfig()->getGopayId(),
+				$this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
 				$payment->getCurrency(),
@@ -143,7 +143,7 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 				$this->failureUrl,
 				$channels,
 				$channel,
-				$this->gopay->getConfig()->getGopaySecretKey(),
+				$this->gopay->config->getGopaySecretKey(),
 				$customer->firstName,
 				$customer->lastName,
 				$customer->city,

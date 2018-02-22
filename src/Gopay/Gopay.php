@@ -4,7 +4,7 @@ namespace Markette\Gopay;
 
 use Markette\Gopay\Api\GopayHelper;
 use Markette\Gopay\Api\GopaySoap;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * Base Gopay class
@@ -13,8 +13,10 @@ use Nette\Object;
  * @property-read GopaySoap $soap
  * @property-read GopayHelper $helper
  */
-class Gopay extends Object
+class Gopay
 {
+
+	use SmartObject;
 
 	// METHODS =================================================================
 

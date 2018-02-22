@@ -3,7 +3,7 @@
     "description": "Integrace platebního systému Gopay pro Nette Framework.",
     "keywords": ["nette", "eshop", "payment", "gopay"],
     "homepage": "https://github.com/Markette/Gopay",
-    "license": "New BSD",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "Vojtěch Dobeš",

@@ -133,7 +133,7 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 
 		try {
 			$customer = $payment->getCustomer();
-			$paymentSessionId = $this->gopay->getSoap()->createPreAutorizedPayment(
+			$paymentSessionId = $this->gopay->soap->createPreAutorizedPayment(
 				$this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),

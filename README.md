@@ -1,6 +1,6 @@
 # Markette :: Gopay
 
-[![Build Status](https://img.shields.io/travis/contributte/Gopay.svg?style=flat-square)](https://travis-ci.org/Markette/Gopay)
+[![Build Status](https://img.shields.io/travis/contributte/Gopay.svg?style=flat-square)](https://travis-ci.org/contributte/Gopay)
 [![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
 
 [![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)

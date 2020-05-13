@@ -1,62 +1,105 @@
 # Markette :: Gopay
 
-## v2.1.0 - v2.3.0
+## Content
+
+- [Features](#features)
+- [Instalace](#instalace)
+    - [v3.1.0 (PHP >= 5.6)](#v310-php--56)
+    - [v3.0.1 (PHP >= 5.5)](#v301-php--55)
+- [Použití](#použití)
+    - [Služby](#služby)
+    - [Před platbou](#před-platbou)
+        - [Vlastní platební kanály](#vlastní-platební-kanály)
+    - [Provedení platby](#provedení-platby)
+    - [REDIRECT brána](#redirect-brána)
+    - [INLINE brána](#inline-brána)
+        - [Chyby s platbou](#chyby-s-platbou)
+    - [Po platbě](#po-platbě)
+    - [Opakované platby](#opakované-platby)
+    - [Předautorizované platby](#předautorizované-platby)
+    - [Vlastní implementace](#vlastní-implementace)
+        - [Inheritance](#inheritance)
+        - [Composition](#composition)
+
+## Features
+
+* Standardní platby
+* Opakované platby
+* Před-autorizované platby
+* Ověřování plateb
+* Inline platby (backport)
+
 
 ## Instalace
 
 Nejjednodušeji stáhněte Gopay přes Composer:
 
-### v2.3.0 (PHP >= 5.4)
+### v3.1.0 (PHP >= 5.6)
 
 ```sh
-$ composer require markette/gopay:~2.3.0
+$ composer require markette/gopay:~3.1.0
 ```
 
-### v2.2.0 (PHP >= 5.3.2)
+### v3.0.1 (PHP >= 5.5)
 
 ```sh
-$ composer require markette/gopay:~2.2.0
+$ composer require markette/gopay:~3.0.1
 ```
-
-Pokud nepoužijete Composer, zkopírujte `/src/Gopay` adresář mezi vaše knihovny - pokud používáte
-RobotLoader, není nic víc potřeba.
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
 
 ```neon
 extensions:
-    gopay: Markette\Gopay\Extension
+	gopay: Markette\Gopay\DI\Extension
 ```
 
 Poté můžeme v konfiguračním souboru nastavit parametry:
 
 ```neon
 gopay:
-    gopayId        : ***
-    gopaySecretKey : ***
-    testMode       : false
-```
-
-A přístup v presenteru pak bude díky autowiringu a `@inject` anotaci vypadat:
-
-```php
-use Markette\Gopay;
-
-/** @var Gopay\Service @inject */
-public $gopay;
+	gopayId        : ***
+	gopaySecretKey : ***
+	testMode       : false
 ```
 
 ## Použití
+
+### Služby
+
+V aktuální implementaci máte na výber 3 služby.
+
+* **PaymentService** (klasické platby)
+* **RecurrentPaymentService** (opakované platby)
+* **PreAuthorizedPaymentService** (před-autorizované platby)
+
+Ty si můžete pomocí `autowiringu` vstříknout do `Presenteru`.
+
+```php
+use Markette\Gopay\Service\PaymentService;
+use Markette\Gopay\Service\RecurrentPaymentService;
+use Markette\Gopay\Service\PreAuthorizedPaymentService;
+
+/** @var PaymentService @inject */
+public $paymentService;
+
+/** @var RecurrentPaymentService @inject */
+public $recurrentPaymentService;
+
+/** @var PreAuthorizedPaymentService @inject */
+public $preAuthorizedPaymentService;
+```
 
 ### Před platbou
 
 Před platbou je třeba vytvořit formulář s odpovídajícími platebními tlačítky.
 Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře můžete
-tlačítka jednoduše přidat metodou `bindPaymentButtons()`:
+tlačítka jednoduše přidat přes **Binder** metodou `bindPaymentButtons()`:
 
 ```php
-$gopay->bindPaymentButtons($form, [$this, 'submitForm']);
+$binder->bindPaymentButtons($service, $form, [$this, 'submitForm']);
+
 // nebo vice callbacku
+
 $gopay->bindPaymentButtons($form, [
     [$this, 'preProcessForm'],
     [$this, 'processForm'],
@@ -69,11 +112,11 @@ z platebních tlačítek (tedy jako po zavolání `->onClick[]` na daném tlač�
 Zvolený kanál lze získat z tlačítka:
 
 ```php
-use Markette\Gopay;
+use Markette\Gopay\Form;
 
-public function submittedForm(Gopay\PaymentButton $button)
+public function submittedForm(Form\PaymentButton $button)
 {
-    $channel = $button->getChannel();
+	$channel = $button->getChannel();
 }
 ```
 
@@ -82,12 +125,12 @@ maker), je nejlepší si do šablony předat seznam použitých kanálů a itero
 nad ním:
 
 ```php
-$this->template->channels = $gopay->getChannels();
+$this->template->channels = $service->getChannels();
 ```
 
 ```html
 {foreach $channels as $channel}
-    {input $channel->control}
+	{input $channel->control}
 {/foreach}
 ```
 
@@ -115,16 +158,18 @@ Tato nastavení můžeme provést i v konfiguračním souboru:
 
 ```yaml
 gopay:
-    channels:
-		gopay: 'Gopay - Elektronická peněženka'
-		card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'
+	payments:
+	    channels:
+            gopay: 'Gopay - Elektronická peněženka'
+            card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'
 ```
 
 Pokud chceme umožnit změnit **channel** na straně GoPay:
 
 ```yaml
 gopay:
-    changeChannel: yes
+    payments:
+        changeChannel: yes
 ```
 
 ### Provedení platby
@@ -133,21 +178,21 @@ Platbu lze uskutečnit v následující krocích. Nejprve je třeba si vytvořit
 novou instanci platby:
 
 ```php
-$payment = $gopay->createPayment([
-    'sum'         => $sum,      // placená částka
-    'variable'    => $variable, // variabilní symbol
-    'specific'    => $specific, // specifický symbol
-    'productName' => $product,  // název produktu (popis účelu platby)
-    'customer' => [
-        'firstName'   => $name,
-        'lastName'    => NULL,    // všechna parametry jsou volitelné
-        'street'      => NULL,    // pokud některý neuvedete,
-        'city'        => NULL,    // použije se prázdný řetězec
-        'postalCode'  => $postal,
-        'countryCode' => 'CZE',
-        'email'       => $email,
-        'phoneNumber' => NULL,
-    ],
+$payment = $service->createPayment([
+	'sum'         => $sum,      // placená částka
+	'variable'    => $variable, // variabilní symbol
+	'specific'    => $specific, // specifický symbol
+	'productName' => $product,  // název produktu (popis účelu platby)
+	'customer' => [
+		'firstName'   => $name,
+		'lastName'    => NULL,    // všechna parametry jsou volitelné
+		'street'      => NULL,    // pokud některý neuvedete,
+		'city'        => NULL,    // použije se prázdný řetězec
+		'postalCode'  => $postal,
+		'countryCode' => 'CZE',
+		'email'       => $email,
+		'phoneNumber' => NULL,
+	],
 ]);
 ```
 
@@ -155,8 +200,8 @@ Zadruhé nastavit adresy, na které Gopay platební brána přesměruje při ús
 naopak selhání platby.
 
 ```php
-$gopay->successUrl = $this->link('//success');
-$gopay->failureUrl = $this->link('//failure');
+$service->setSuccessUrl($this->link('//success', ['orderId' => $orderId]));
+$service->setFailureUrl($this->link('//failure', ['orderId' => $orderId]));
 ```
 
 Je užitečné si poznačit ID platby (například pokud se má platba vázat
@@ -165,12 +210,13 @@ parametru metodě `pay()`.
 
 ```php
 $storeIdCallback = function ($paymentId) use ($order) {
-    $order->setPaymentId($paymentId);
+	$order->setPaymentId($paymentId);
 };
 ```
+
 Samotné placení lze provést dvěma způsoby.
 
-### REDIRECT
+### REDIRECT brána
 
 ```php
 $response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
@@ -221,12 +267,12 @@ straně.
 
 ```php
 try {
-    $gopay->pay($payment, $gopay::TRANSFER, $storeIdCallback);
-    // nebo
-    $gopay->payInline($payment, $gopay::TRANSFER, $storeIdCallback);
+	$gopay->pay($payment, $gopay::TRANSFER, $storeIdCallback);
+	// nebo
+	$gopay->payInline($payment, $gopay::TRANSFER, $storeIdCallback);
 } catch (GopayException $e) {
-    echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
-    prosím za chvíli.';
+	echo 'Platební služba Gopay bohužel momentálně nefunguje. Zkuste to
+	prosím za chvíli.';
 }
 ```
 
@@ -251,18 +297,18 @@ Všechny tyto údaje + údaje z načtené objednávky pak použijeme ke znovuses
 objektu platby:
 
 ```php
-$order = $database->getOrderByPaymentId($paymentSessionId);
+$order = $model->getOrderByPaymentId($paymentSessionId);
 
-$payment = $gopay->restorePayment([
-    'sum'          => $order->price,
-    'variable'    => $order->varSymbol,
-    'specific'    => $order->specSymbol,
-    'productName' => $order->product,
+$payment = $service->restorePayment([
+	'sum'         => $order->price,
+	'variable'    => $order->varSymbol,
+	'specific'    => $order->specSymbol,
+	'productName' => $order->product,
 ], [
-    'paymentSessionId'   => $paymentSessionId,
-    'targetGoId'         => $targetGoId,
-    'orderNumber'        => $orderNumber,
-    'encryptedSignature' => $encryptedSignature,
+	'paymentSessionId'   => $paymentSessionId,
+	'targetGoId'         => $targetGoId,
+	'orderNumber'        => $orderNumber,
+	'encryptedSignature' => $encryptedSignature,
 ]);
 ```
 
@@ -279,13 +325,83 @@ V případě neúspěšné platby jsou opět předány všechny čtyři parametr
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 
-## Co tahle věc neumí a co s tím
+### Opakované platby
 
-Tahle mini-knihovnička, spíše snippet kódu nepokrývá velkou část Gopay API.
-Pokud vám v ní chybí, co potřebujete, laskavě si potřebnou část dopište,
-klidně i pošlete jako pull-request. Stejně tak můžete v issues informovat
-o aktualizaci oficiálního API (které se zrovna před nedávném rozšířilo).
+Provedení opakované platby je velmi jednoduché.
+
+```php
+$service->payRecurrent(PreAuthorizedPayment $payment, $gopay::METHOD_TRANSFER, function($paymentSessionId) {});
+```
+
+Pro zrušení opakované platby budeme potřebovat `$paymentSessionId`.
+
+```php
+$service->cancelRecurrent($paymentSessionId);
+```
+
+### Předautorizované platby
+
+Provedení předautorizované platby je velmi jednoduché.
+
+```php
+$service->payPreAuthorized(PreAuthorizedPayment $payment, $gopay::METHOD_TRANSFER, function($paymentSessionId) {});
+```
+
+Pro zrušení předautorizované platby budeme potřebovat `$paymentSessionId`.
+
+```php
+$service->cancelPreAuthorized($paymentSessionId);
+```
+
+### Vlastní implementace
+
+Pokud vám nějaká vlastnost chybí, můžete si většinu tříd podědit, případně složit přes `composition`.
+
+#### Inheritance
+
+```php
+use Markette\Gopay\Service\RecurrentPaymentService;
+
+final class MyRecurrentPaymentService extends RecurrentPaymentService
+{
+
+}
+```
+
+```yaml
+extensions: 
+    gopay: Markette\Gopay\DI\Extension
+
+services:
+    gopay.service.payment: MyPaymentService
+    gopay.service.recurrentPayment: MyRecurrentPaymentService
+    gopay.service.preAuthorizedPayment: MyPreAuthorizedPaymentService
+```
+
+#### Composition
+
+```php
+use Markette\Gopay\Service\RecurrentPaymentService;
+
+final class MyRecurrentPaymentService
+{
+
+    /** @var RecurrentPaymentService */
+    private $gopay;
+    
+    public function __construct(RecurrentPaymentService $gopay)
+    {
+        $this->gopay = $gopay;
+    }
+
+}
+```
+
+```yaml
+services:
+    - MyRecurrentPaymentService
+```
 
 -----
 
-Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/docs/v2.x/examples/GopayPresenter.php).
+Příklad použití `gopay` služby si můžete prohlédnout v [ukázkovém presenteru](https://github.com/Markette/Gopay/blob/master/.docs/examples/GopayPresenter.php).

@@ -12,7 +12,7 @@ use Markette\Gopay\Service\PreAuthorizedPaymentService;
 use Markette\Gopay\Service\RecurrentPaymentService;
 use Nette\DI\CompilerExtension;
 use Nette\PhpGenerator\ClassType;
-use Nette\Reflection\ClassType as ReflectionClassType;
+use ReflectionClass;
 
 /**
  * Compiler extension for Nette Framework
@@ -54,20 +54,20 @@ class Extension extends CompilerExtension
 		$config = $this->validateConfig($this->defaults);
 
 		$driver = $builder->addDefinition($this->prefix('driver'))
-			->setClass(GopaySoap::class);
+			->setType(GopaySoap::class);
 
 		$helper = $builder->addDefinition($this->prefix('helper'))
-			->setClass(GopayHelper::class);
+			->setType(GopayHelper::class);
 
 		$gconfig = $builder->addDefinition($this->prefix('config'))
-			->setClass(Config::class, [
+			->setFactory(Config::class, [
 				$config['gopayId'],
 				$config['gopaySecretKey'],
 				isset($config['testMode']) ? $config['testMode'] : FALSE,
 			]);
 
 		$builder->addDefinition($this->prefix('gopay'))
-			->setClass(Gopay::class, [
+			->setFactory(Gopay::class, [
 				$gconfig,
 				$driver,
 				$helper,
@@ -93,14 +93,14 @@ class Extension extends CompilerExtension
 
 		foreach ($services as $serviceName => $serviceClass) {
 			$def = $builder->addDefinition($this->prefix('service.' . $serviceName))
-				->setClass($serviceClass, [$gopay]);
+				->setFactory($serviceClass, [$gopay]);
 
 			if (is_bool($config['payments']['changeChannel'])) {
 				$def->addSetup('allowChangeChannel', [$config['payments']['changeChannel']]);
 			}
 
 			if (isset($config['payments']['channels'])) {
-				$constants = ReflectionClassType::from(Gopay::class);
+				$constants = new ReflectionClass(Gopay::class);
 				foreach ($config['payments']['channels'] as $code => $channel) {
 					$constChannel = 'METHOD_' . strtoupper($code);
 					if ($constants->hasConstant($constChannel)) {
@@ -127,7 +127,7 @@ class Extension extends CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition($this->prefix('form.binder'))
-			->setClass(Binder::class);
+			->setType(Binder::class);
 	}
 
 	/**

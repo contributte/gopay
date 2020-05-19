@@ -41,7 +41,7 @@ class Helpers
 	public static function registerAddPaymentButtons(Binder $binder, AbstractPaymentService $service)
 	{
 		$class = new ReflectionClass($service);
-		$method = lcfirst(str_replace('Service', '', $class->getShortName()));
+		$method = ucfirst(str_replace('Service', '', $class->getShortName()));
 		FormContainer::extensionMethod('add' . $method . 'Buttons', function ($container, $callbacks) use ($binder, $service) {
 			$binder->bindPaymentButtons($service, $container, $callbacks);
 		});

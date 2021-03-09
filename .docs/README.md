@@ -36,26 +36,26 @@ Nejjednodušeji stáhněte Gopay přes Composer:
 
 ### v3.1.0 (PHP >= 5.6)
 
-```sh
-$ composer require markette/gopay:~3.1.0
+```bash
+composer require markette/gopay:~3.1.0
 ```
 
 ### v3.0.1 (PHP >= 5.5)
 
-```sh
-$ composer require markette/gopay:~3.0.1
+```bash
+composer require markette/gopay:~3.0.1
 ```
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
 
-```neon
+```yaml
 extensions:
 	gopay: Markette\Gopay\DI\Extension
 ```
 
 Poté můžeme v konfiguračním souboru nastavit parametry:
 
-```neon
+```yaml
 gopay:
 	gopayId        : ***
 	gopaySecretKey : ***
@@ -128,7 +128,7 @@ nad ním:
 $this->template->channels = $service->getChannels();
 ```
 
-```html
+```latte
 {foreach $channels as $channel}
 	{input $channel->control}
 {/foreach}

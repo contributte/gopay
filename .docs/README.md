@@ -4,22 +4,22 @@
 
 - [Features](#features)
 - [Instalace](#instalace)
-    - [v3.1.0 (PHP >= 5.6)](#v310-php--56)
-    - [v3.0.1 (PHP >= 5.5)](#v301-php--55)
+	- [v3.1.0 (PHP >= 5.6)](#v310-php--56)
+	- [v3.0.1 (PHP >= 5.5)](#v301-php--55)
 - [Použití](#použití)
-    - [Služby](#služby)
-    - [Před platbou](#před-platbou)
-        - [Vlastní platební kanály](#vlastní-platební-kanály)
-    - [Provedení platby](#provedení-platby)
-    - [REDIRECT brána](#redirect-brána)
-    - [INLINE brána](#inline-brána)
-        - [Chyby s platbou](#chyby-s-platbou)
-    - [Po platbě](#po-platbě)
-    - [Opakované platby](#opakované-platby)
-    - [Předautorizované platby](#předautorizované-platby)
-    - [Vlastní implementace](#vlastní-implementace)
-        - [Inheritance](#inheritance)
-        - [Composition](#composition)
+	- [Služby](#služby)
+	- [Před platbou](#před-platbou)
+		- [Vlastní platební kanály](#vlastní-platební-kanály)
+	- [Provedení platby](#provedení-platby)
+	- [REDIRECT brána](#redirect-brána)
+	- [INLINE brána](#inline-brána)
+		- [Chyby s platbou](#chyby-s-platbou)
+	- [Po platbě](#po-platbě)
+	- [Opakované platby](#opakované-platby)
+	- [Předautorizované platby](#předautorizované-platby)
+	- [Vlastní implementace](#vlastní-implementace)
+		- [Inheritance](#inheritance)
+		- [Composition](#composition)
 
 ## Features
 
@@ -48,18 +48,18 @@ composer require markette/gopay:~3.0.1
 
 Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
 
-```yaml
+```neon
 extensions:
 	gopay: Markette\Gopay\DI\Extension
 ```
 
 Poté můžeme v konfiguračním souboru nastavit parametry:
 
-```yaml
+```neon
 gopay:
-	gopayId        : ***
-	gopaySecretKey : ***
-	testMode       : false
+	gopayId: ***
+	gopaySecretKey: ***
+	testMode: false
 ```
 
 ## Použití
@@ -101,9 +101,9 @@ $binder->bindPaymentButtons($service, $form, [$this, 'submitForm']);
 // nebo vice callbacku
 
 $gopay->bindPaymentButtons($form, [
-    [$this, 'preProcessForm'],
-    [$this, 'processForm'],
-    [$this, 'postProcessForm'],
+	[$this, 'preProcessForm'],
+	[$this, 'processForm'],
+	[$this, 'postProcessForm'],
 ]);
 ```
 
@@ -130,7 +130,7 @@ $this->template->channels = $service->getChannels();
 
 ```latte
 {foreach $channels as $channel}
-	{input $channel->control}
+    {input $channel->control}
 {/foreach}
 ```
 
@@ -156,20 +156,20 @@ $gopay->allowChannel($gopay::METHOD_GOPAY);
 
 Tato nastavení můžeme provést i v konfiguračním souboru:
 
-```yaml
+```neon
 gopay:
 	payments:
-	    channels:
-            gopay: 'Gopay - Elektronická peněženka'
-            card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'
+		channels:
+			gopay: 'Gopay - Elektronická peněženka'
+			card_gpkb: 'Platba kartou - Komerční banka, a.s. - Global Payments'
 ```
 
 Pokud chceme umožnit změnit **channel** na straně GoPay:
 
-```yaml
+```neon
 gopay:
-    payments:
-        changeChannel: yes
+	payments:
+		changeChannel: yes
 ```
 
 ### Provedení platby
@@ -179,19 +179,19 @@ novou instanci platby:
 
 ```php
 $payment = $service->createPayment([
-	'sum'         => $sum,      // placená částka
-	'variable'    => $variable, // variabilní symbol
-	'specific'    => $specific, // specifický symbol
-	'productName' => $product,  // název produktu (popis účelu platby)
+	'sum'				=> $sum,      // placená částka
+	'variable'			=> $variable, // variabilní symbol
+	'specific'			=> $specific, // specifický symbol
+	'productName'		=> $product,  // název produktu (popis účelu platby)
 	'customer' => [
-		'firstName'   => $name,
-		'lastName'    => NULL,    // všechna parametry jsou volitelné
-		'street'      => NULL,    // pokud některý neuvedete,
-		'city'        => NULL,    // použije se prázdný řetězec
-		'postalCode'  => $postal,
-		'countryCode' => 'CZE',
-		'email'       => $email,
-		'phoneNumber' => NULL,
+		'firstName'		=> $name,
+		'lastName'		=> NULL,    // všechna parametry jsou volitelné
+		'street'		=> NULL,    // pokud některý neuvedete,
+		'city'			=> NULL,    // použije se prázdný řetězec
+		'postalCode'	=> $postal,
+		'countryCode'	=> 'CZE',
+		'email'			=> $email,
+		'phoneNumber'	=> NULL,
 	],
 ]);
 ```
@@ -238,8 +238,8 @@ Akce `payInline()` vám vrátí pole s klíči **url** a **signature**.
 
 ```php
 [ 
-    "url" => "https://gate.gopay.cz/gw/v3/3100000099",
-    "signature" => "25ee53a1ec­cc253a8310f5267d2de6b483f58a­f9676d883e26600ce3316ai"
+	"url" => "https://gate.gopay.cz/gw/v3/3100000099",
+	"signature" => "25ee53a1ec­cc253a8310f5267d2de6b483f58a­f9676d883e26600ce3316ai"
 ];
 ```
 
@@ -300,15 +300,15 @@ objektu platby:
 $order = $model->getOrderByPaymentId($paymentSessionId);
 
 $payment = $service->restorePayment([
-	'sum'         => $order->price,
-	'variable'    => $order->varSymbol,
-	'specific'    => $order->specSymbol,
-	'productName' => $order->product,
+	'sum'			=> $order->price,
+	'variable'		=> $order->varSymbol,
+	'specific'		=> $order->specSymbol,
+	'productName'	=> $order->product,
 ], [
-	'paymentSessionId'   => $paymentSessionId,
-	'targetGoId'         => $targetGoId,
-	'orderNumber'        => $orderNumber,
-	'encryptedSignature' => $encryptedSignature,
+	'paymentSessionId'		=> $paymentSessionId,
+	'targetGoId'			=> $targetGoId,
+	'orderNumber'			=> $orderNumber,
+	'encryptedSignature'	=> $encryptedSignature,
 ]);
 ```
 
@@ -368,14 +368,14 @@ final class MyRecurrentPaymentService extends RecurrentPaymentService
 }
 ```
 
-```yaml
+```neon
 extensions: 
-    gopay: Markette\Gopay\DI\Extension
+	gopay: Markette\Gopay\DI\Extension
 
 services:
-    gopay.service.payment: MyPaymentService
-    gopay.service.recurrentPayment: MyRecurrentPaymentService
-    gopay.service.preAuthorizedPayment: MyPreAuthorizedPaymentService
+	gopay.service.payment: MyPaymentService
+	gopay.service.recurrentPayment: MyRecurrentPaymentService
+	gopay.service.preAuthorizedPayment: MyPreAuthorizedPaymentService
 ```
 
 #### Composition
@@ -386,20 +386,20 @@ use Markette\Gopay\Service\RecurrentPaymentService;
 final class MyRecurrentPaymentService
 {
 
-    /** @var RecurrentPaymentService */
-    private $gopay;
-    
-    public function __construct(RecurrentPaymentService $gopay)
-    {
-        $this->gopay = $gopay;
+	/** @var RecurrentPaymentService */
+	private $gopay;
+
+	public function __construct(RecurrentPaymentService $gopay)
+	{
+		$this->gopay = $gopay;
     }
 
 }
 ```
 
-```yaml
+```neon
 services:
-    - MyRecurrentPaymentService
+	- MyRecurrentPaymentService
 ```
 
 -----

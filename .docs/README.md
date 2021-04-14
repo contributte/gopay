@@ -3,36 +3,34 @@
 ## Content
 
 - [Features](#features)
-- [Instalace](#instalace)
+- [Installation](#installation)
 	- [v3.1.0 (PHP >= 5.6)](#v310-php--56)
 	- [v3.0.1 (PHP >= 5.5)](#v301-php--55)
-- [Použití](#použití)
-	- [Služby](#služby)
-	- [Před platbou](#před-platbou)
-		- [Vlastní platební kanály](#vlastní-platební-kanály)
-	- [Provedení platby](#provedení-platby)
-	- [REDIRECT brána](#redirect-brána)
-	- [INLINE brána](#inline-brána)
-		- [Chyby s platbou](#chyby-s-platbou)
-	- [Po platbě](#po-platbě)
-	- [Opakované platby](#opakované-platby)
-	- [Předautorizované platby](#předautorizované-platby)
-	- [Vlastní implementace](#vlastní-implementace)
+- [Usage](#usage)
+	- [Services](#services)
+	- [Before payment](#before-payment)
+		- [Own payment channels](#own-payment-channels)
+	- [Make a payment](#make-a-payment)
+	- [Redirect after a payment](#redirect-after-a-payment)
+	- [Inline payment](#inline-payment)
+		- [Payment exception](#payment-exception)
+	- [After payment](#after-payment)
+	- [Recurring payments](#recurring-payments)
+	- [Pre-authorized payments](#pre-authorized-payments)
+	- [Own implementation](#own-implementation)
 		- [Inheritance](#inheritance)
 		- [Composition](#composition)
 
 ## Features
 
-* Standardní platby
-* Opakované platby
-* Před-autorizované platby
-* Ověřování plateb
-* Inline platby (backport)
+* Standard payments
+* Recurring payments
+* Pre-authorized payments
+* Identification payments
+* Inline payments (backport)
 
 
-## Instalace
-
-Nejjednodušeji stáhněte Gopay přes Composer:
+## Installation
 
 ### v3.1.0 (PHP >= 5.6)
 
@@ -46,33 +44,29 @@ composer require markette/gopay:~3.1.0
 composer require markette/gopay:~3.0.1
 ```
 
-Samotnou knihovnu lze nejsnáze zaregistrovat jako rozšíření v souboru `config.neon`:
+Register extension in DI
 
 ```neon
 extensions:
 	gopay: Markette\Gopay\DI\Extension
-```
 
-Poté můžeme v konfiguračním souboru nastavit parametry:
-
-```neon
 gopay:
 	gopayId: ***
 	gopaySecretKey: ***
 	testMode: false
 ```
 
-## Použití
+## Usage
 
-### Služby
+### Services
 
-V aktuální implementaci máte na výber 3 služby.
+You can choose from three services
 
-* **PaymentService** (klasické platby)
-* **RecurrentPaymentService** (opakované platby)
-* **PreAuthorizedPaymentService** (před-autorizované platby)
+* **PaymentService** (standard payments)
+* **RecurrentPaymentService** (recurring payments)
+* **PreAuthorizedPaymentService** (pre-authorized payments)
 
-Ty si můžete pomocí `autowiringu` vstříknout do `Presenteru`.
+You can use `autowiring` and inject into `Presenteru`.
 
 ```php
 use Markette\Gopay\Service\PaymentService;
@@ -89,7 +83,7 @@ public $recurrentPaymentService;
 public $preAuthorizedPaymentService;
 ```
 
-### Před platbou
+### Before payment
 
 Před platbou je třeba vytvořit formulář s odpovídajícími platebními tlačítky.
 Každý platební kanál je reprezentován jedním tlačítkem. Do formuláře můžete
@@ -138,7 +132,7 @@ Volání `getChannels()` je dobré obalit zachytáváním výjimky `GopayFatalEx
 protože napoprvé se v ní provádí dotaz na Gopay server kvůli získání výchozího
 seznamu.
 
-#### Vlastní platební kanály
+#### Own payment channels
 
 Můžete si zaregistrovat vlastí platební kanály pro jednotnou práci:
 
@@ -172,7 +166,7 @@ gopay:
 		changeChannel: yes
 ```
 
-### Provedení platby
+### Make a payment
 
 Platbu lze uskutečnit v následující krocích. Nejprve je třeba si vytvořit
 novou instanci platby:
@@ -216,7 +210,7 @@ $storeIdCallback = function ($paymentId) use ($order) {
 
 Samotné placení lze provést dvěma způsoby.
 
-### REDIRECT brána
+### Redirect after a payment
 
 ```php
 $response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
@@ -228,7 +222,7 @@ Akce `pay()` vrátí `Response` objekt. Resp. `RedirectResponse`, který vás p�
 $this->sendResponse($response);
 ```
 
-### INLINE brána
+### Inline payment
 
 ```php
 $response = $gopay->payInline($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
@@ -253,7 +247,7 @@ Platební bránu je možné vytvořit pomocí formuláře, který najdete v [dok
 </form>
 ```
 
-#### Chyby s platbou
+#### Payment exception
 
 V okamžiku zavolání `pay()` nebo `payInline()` se mohou pokazit dvě věci:
 
@@ -276,7 +270,7 @@ try {
 }
 ```
 
-### Po platbě
+### After payment
 
 Váš zákazník provede potřebné úkony na Gopay platební bráně, a jakmile je proces
 dokončen, je přesměrován zpátky do vaší aplikace, buď na `successUrl`
@@ -325,7 +319,7 @@ V případě neúspěšné platby jsou opět předány všechny čtyři parametr
 opět možné načíst si informace o související objednávce. Nic však kontrolovat
 není třeba, informace o neúspěchu je zcela jasná z povahy daného požadavku.
 
-### Opakované platby
+### Recurring payments
 
 Provedení opakované platby je velmi jednoduché.
 
@@ -339,7 +333,7 @@ Pro zrušení opakované platby budeme potřebovat `$paymentSessionId`.
 $service->cancelRecurrent($paymentSessionId);
 ```
 
-### Předautorizované platby
+### Pre-authorized payments
 
 Provedení předautorizované platby je velmi jednoduché.
 
@@ -353,7 +347,7 @@ Pro zrušení předautorizované platby budeme potřebovat `$paymentSessionId`.
 $service->cancelPreAuthorized($paymentSessionId);
 ```
 
-### Vlastní implementace
+### Own implementation
 
 Pokud vám nějaká vlastnost chybí, můžete si většinu tříd podědit, případně složit přes `composition`.
 

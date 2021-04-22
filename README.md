@@ -1,43 +1,38 @@
-# Markette :: Gopay
+![](https://heatbadger.vercel.app/github/readme/contributte/gopay/)
 
-[![Build Status](https://img.shields.io/travis/contributte/Gopay.svg?style=flat-square)](https://travis-ci.org/contributte/Gopay)
-[![Code coverage](https://img.shields.io/coveralls/Markette/Gopay.svg?style=flat-square)](https://coveralls.io/r/Markette/Gopay)
+<p align=center>
+  <a href="https://github.com/contributte/gopay/actions"><img src="https://badgen.net/github/checks/contributte/gopay/master"></a>
+  <a href="https://coveralls.io/r/Markette/Gopay"><img src="https://badgen.net/coveralls/c/github/contributte/gopay"></a>
+  <a href="https://packagist.org/packages/markette/gopay"><img src="https://badgen.net/packagist/dm/markette/gopay"></a>
+  <a href="https://packagist.org/packages/markette/gopay"><img src="https://badgen.net/packagist/v/markette/gopay"></a>
+</p>
+<p align=center>
+  <a href="https://packagist.org/packages/markette/gopay"><img src="https://badgen.net/packagist/php/markette/gopay"></a>
+  <a href="https://github.com/contributte/gopay"><img src="https://badgen.net/github/license/contributte/gopay"></a>
+  <a href="https://bit.ly/ctteg"><img src="https://badgen.net/badge/support/gitter/cyan"></a>
+  <a href="https://bit.ly/cttfo"><img src="https://badgen.net/badge/support/forum/yellow"></a>
+  <a href="https://contributte.org/partners.html"><img src="https://badgen.net/badge/sponsor/donations/F96854"></a>
+</p>
 
-[![Latest stable](https://img.shields.io/packagist/v/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
-[![Pre prelease](https://img.shields.io/packagist/vpre/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
-[![Downloads this Month](https://img.shields.io/packagist/dm/markette/gopay.svg?style=flat-square)](https://packagist.org/packages/markette/gopay)
+<p align=center>
+Website 🚀 <a href="https://contributte.org">contributte.org</a> | Contact 👨🏻‍💻 <a href="https://f3l1x.io">f3l1x.io</a> | Twitter 🐦 <a href="https://twitter.com/contributte">@contributte</a>
+</p>
 
-## Diskuze
+## Usage
 
-[![Join the chat at https://gitter.im/Markette/Gopay](https://img.shields.io/gitter/room/Markette/Gopay.svg?style=flat-square)](https://gitter.im/Markette/Gopay?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+To install the latest version of `markette/gopay` use [Composer](https://getcomposer.org).
 
-## Dokumentace
+```bash
+composer require markette/gopay
+```
 
-- [Verze 3.x](.docs/README.md#verze-3x)
-    - [Features](.docs/README.md#features)
-    - [v3.0.0](.docs/README.md#v300)
-        - [Instalace](.docs/README.md#instalace)
-            - [v3.1.0 (PHP >= 5.6)](.docs/README.md#v310-php--56)
-            - [v3.0.1 (PHP >= 5.5)](.docs/README.md#v301-php--55)
-        - [Použití](.docs/README.md#použití)
-            - [Služby](.docs/README.md#služby)
-            - [Před platbou](.docs/README.md#před-platbou)
-                - [Vlastní platební kanály](.docs/README.md#vlastní-platební-kanály)
-            - [Provedení platby](.docs/README.md#provedení-platby)
-            - [REDIRECT brána](.docs/README.md#redirect-brána)
-            - [INLINE brána](.docs/README.md#inline-brána)
-                - [Chyby s platbou](.docs/README.md#chyby-s-platbou)
-            - [Po platbě](.docs/README.md#po-platbě)
-            - [Opakované platby](.docs/README.md#opakované-platby)
-            - [Předautorizované platby](.docs/README.md#předautorizované-platby)
-            - [Vlastní implementace](.docs/README.md#vlastní-implementace)
-                - [Inheritance](.docs/README.md#inheritance)
-                - [Composition](.docs/README.md#composition)
-- [Verze 2.x](https://github.com/contributte/gopay/tree/v2.3.x)
+## Documentation
 
-## Vývoj
+For details on how to use this package, check out our [documentation](.docs).
 
-> Tato verze využívá komunikaci přes SOAP. Doporučujeme přejít na modernější [GopayInline](https://github.com/Markette/GopayInline), jenž využívá JSON REST API.
+## Versions
+
+> This version use communication through SOAP. We recommend use [GopayInline](https://github.com/Markette/GopayInline) which uses JSON REST API.
 
 <table>
     <thead>
@@ -88,6 +83,17 @@
     </tbody>
 </table>
 
----
+## Development
 
-Thank you for testing, reporting and contributing.
+See [how to contribute](https://contributte.org/contributing.html) to this package.
+
+This package is currently maintaining by these authors.
+
+<a href="https://github.com/f3l1x">
+  <img width="80" height="80" src="https://avatars2.githubusercontent.com/u/538058?v=3&s=80">
+</a>
+
+-----
+
+Consider to [support](https://contributte.org/partners.html) **contributte** development team.
+Also thank you for using this package.

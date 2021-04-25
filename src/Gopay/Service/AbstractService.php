@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Service;
 
@@ -39,7 +39,7 @@ abstract class AbstractService
 	 * @param bool $changeChannel
 	 * @return static
 	 */
-	public function allowChangeChannel($changeChannel = TRUE)
+	public function allowChangeChannel($changeChannel = true)
 	{
 		$this->changeChannel = (bool) $changeChannel;
 
@@ -58,6 +58,7 @@ abstract class AbstractService
 		if (!in_array($lang, $this->allowedLang)) {
 			throw new InvalidArgumentException('Not supported language "' . $lang . '".');
 		}
+
 		$this->lang = $lang;
 
 		return $this;
@@ -129,7 +130,7 @@ abstract class AbstractService
 	 * @throws InvalidArgumentException on channel name conflict
 	 * @return static
 	 */
-	public function addChannel($code, $name, $logo = NULL, $offline = NULL, $description = NULL, array $params = [])
+	public function addChannel($code, $name, $logo = null, $offline = null, $description = null, array $params = [])
 	{
 		if (isset($this->channels[$code])) {
 			throw new InvalidArgumentException(sprintf('Channel with name \'%s\' is already defined.', $code));

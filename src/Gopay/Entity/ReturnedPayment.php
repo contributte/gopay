@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Entity;
 
-use Exception;
 use Markette\Gopay\Api\GopayHelper;
 use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Exception\GopayFatalException;
 use Markette\Gopay\Gopay;
+use Throwable;
 
 /**
  * Representation of payment returned from Gopay Payment Gate
@@ -67,7 +67,7 @@ class ReturnedPayment extends Payment
 			$this->getGopay()->getHelper()->checkPaymentIdentity(
 				(float) $this->valuesToBeVerified['targetGoId'],
 				(float) $this->valuesToBeVerified['paymentSessionId'],
-				NULL,
+				null,
 				$this->valuesToBeVerified['orderNumber'],
 				$this->valuesToBeVerified['encryptedSignature'],
 				(float) $this->getGopay()->getConfig()->getGopayId(),
@@ -75,11 +75,11 @@ class ReturnedPayment extends Payment
 				$this->getGopay()->getConfig()->getGopaySecretKey()
 			);
 
-			return FALSE;
+			return false;
 		} catch (GopayFatalException $e) {
 			throw $e;
-		} catch (Exception $e) {
-			return TRUE;
+		} catch (Throwable $e) {
+			return true;
 		}
 	}
 
@@ -162,7 +162,7 @@ class ReturnedPayment extends Payment
 	 */
 	public function getStatus()
 	{
-		if ($this->result !== NULL) {
+		if ($this->result !== null) {
 			return $this->result;
 		}
 

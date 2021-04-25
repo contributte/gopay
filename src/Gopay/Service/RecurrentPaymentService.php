@@ -1,14 +1,14 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Service;
 
-use Exception;
 use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Entity\RecurrentPayment;
 use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Exception\GopayFatalException;
 use Markette\Gopay\Exception\InvalidArgumentException;
 use Nette\Application\Responses\RedirectResponse;
+use Throwable;
 
 /**
  * RecurrentPayment Service
@@ -92,7 +92,7 @@ class RecurrentPaymentService extends AbstractPaymentService
 				$this->gopay->config->getGopayId(),
 				$this->gopay->config->getGopaySecretKey()
 			);
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
 		}
 	}
@@ -113,7 +113,7 @@ class RecurrentPaymentService extends AbstractPaymentService
 
 		try {
 			$customer = $payment->getCustomer();
-			$paymentSessionId = $this->gopay->soap->createRecurrentPayment(
+			return $this->gopay->soap->createRecurrentPayment(
 				$this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
@@ -135,15 +135,13 @@ class RecurrentPaymentService extends AbstractPaymentService
 				$customer->countryCode,
 				$customer->email,
 				$customer->phoneNumber,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
+				null,
+				null,
+				null,
+				null,
 				$this->lang
 			);
-
-			return $paymentSessionId;
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
 		}
 	}

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Markette\Gopay\DI\Extension
@@ -56,37 +56,37 @@ class ExtensionTest extends BaseTestCase
 				'eu_gp_u' => (object) [
 					'code' => 'eu_gp_u',
 					'name' => 'Platba kartou - Česká spořitelna',
-					'logo' => NULL,
-					'offline' => NULL,
-					'description' => NULL,
+					'logo' => null,
+					'offline' => null,
+					'description' => null,
 				],
 				'eu_bank' => (object) [
 					'code' => 'eu_bank',
 					'name' => 'Běžný bankovní převod',
-					'logo' => NULL,
-					'offline' => NULL,
-					'description' => NULL,
+					'logo' => null,
+					'offline' => null,
+					'description' => null,
 				],
 				'SUPERCASH' => (object) [
 					'code' => 'SUPERCASH',
 					'name' => 'Terminál České pošty',
-					'logo' => NULL,
-					'offline' => NULL,
-					'description' => NULL,
+					'logo' => null,
+					'offline' => null,
+					'description' => null,
 				],
 				'cz_kb' => (object) [
 					'code' => 'cz_kb',
 					'name' => 'Platba KB - Mojeplatba',
-					'logo' => NULL,
-					'offline' => NULL,
-					'description' => NULL,
+					'logo' => null,
+					'offline' => null,
+					'description' => null,
 				],
 				'sk_otpbank' => (object) [
 					'code' => 'sk_otpbank',
 					'name' => 'Platba OTP banka Slovensko, a.s.',
 					'logo' => 'opt-logo.png',
-					'offline' => NULL,
-					'description' => NULL,
+					'offline' => null,
+					'description' => null,
 				],
 			],
 			$paymentService->getChannels()
@@ -100,12 +100,12 @@ class ExtensionTest extends BaseTestCase
 	public function testChangeChannel()
 	{
 		$property = new ReflectionProperty(PaymentService::class, 'changeChannel');
-		$property->setAccessible(TRUE);
+		$property->setAccessible(true);
 
 		$container = $this->createContainer([
 			'gopay' => [
 				'payments' => [
-					'changeChannel' => FALSE,
+					'changeChannel' => false,
 				],
 			],
 		]);
@@ -116,7 +116,7 @@ class ExtensionTest extends BaseTestCase
 		$container = $this->createContainer([
 			'gopay' => [
 				'payments' => [
-					'changeChannel' => TRUE,
+					'changeChannel' => true,
 				],
 			],
 		]);

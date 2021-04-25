@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Entity;
 
@@ -115,6 +115,7 @@ abstract class BasePayment
 		if (!in_array($currency, $this->allowedCurrency)) {
 			throw new InvalidArgumentException('Not supported currency "' . $currency . '".');
 		}
+
 		$this->currency = (string) $currency;
 
 		return $this;

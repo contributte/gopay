@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\DI;
 
@@ -22,11 +22,11 @@ class Extension extends CompilerExtension
 
 	/** @var array */
 	private $defaults = [
-		'gopayId' => NULL,
-		'gopaySecretKey' => NULL,
-		'testMode' => TRUE,
+		'gopayId' => null,
+		'gopaySecretKey' => null,
+		'testMode' => true,
 		'payments' => [
-			'changeChannel' => NULL,
+			'changeChannel' => null,
 			'channels' => [],
 		],
 	];
@@ -63,7 +63,7 @@ class Extension extends CompilerExtension
 			->setFactory(Config::class, [
 				$config['gopayId'],
 				$config['gopaySecretKey'],
-				isset($config['testMode']) ? $config['testMode'] : FALSE,
+				$config['testMode'] ?? false,
 			]);
 
 		$builder->addDefinition($this->prefix('gopay'))
@@ -106,10 +106,11 @@ class Extension extends CompilerExtension
 					if ($constants->hasConstant($constChannel)) {
 						$code = $constants->getConstant($constChannel);
 					}
+
 					if (is_array($channel)) {
 						$channel['code'] = $code;
 						$def->addSetup('addChannel', $channel);
-					} else if (is_scalar($channel)) {
+					} elseif (is_scalar($channel)) {
 						$def->addSetup('addChannel', [$code, $channel]);
 					}
 				}

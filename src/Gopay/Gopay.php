@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay;
 
@@ -21,106 +21,106 @@ class Gopay
 	// METHODS =================================================================
 
 	/** @const Platba kartou - Komerční banka, a.s. - Global Payments */
-	const METHOD_CARD_GPKB = 'eu_gp_kb';
+	public const METHOD_CARD_GPKB = 'eu_gp_kb';
 
 	/** @const Platba kartou - GoPay - platební karty B */
-	const METHOD_CARD_GPB = 'eu_om';
+	public const METHOD_CARD_GPB = 'eu_om';
 
 	/** @const Paysafecard - kupón */
-	const METHOD_PAYSAFECARD = 'eu_psc';
+	public const METHOD_PAYSAFECARD = 'eu_psc';
 
 	/** @const Elektronická peněženka PayPal */
-	const METHOD_PAYPAL = 'eu_paypal';
+	public const METHOD_PAYPAL = 'eu_paypal';
 
 	/** @const Terminály České pošty, s.p. a spol. Sazka, a.s. */
-	const METHOD_SUPERCASH = 'SUPERCASH';
+	public const METHOD_SUPERCASH = 'SUPERCASH';
 
 	/** @const Mobilní telefon - Premium SMS */
-	const METHOD_PREMIUMSMS = 'eu_pr_sms';
+	public const METHOD_PREMIUMSMS = 'eu_pr_sms';
 
 	/** @const Mobilní telefon - platební brána operátora */
-	const METHOD_MPLATBA = 'cz_mp';
+	public const METHOD_MPLATBA = 'cz_mp';
 
 	/** @const Platební tlačítko - Platba KB - Mojeplatba - Internetové bankovnictví Komerční banky a.s. */
-	const METHOD_KOMERCNIB = 'cz_kb';
+	public const METHOD_KOMERCNIB = 'cz_kb';
 
 	/** @const Platební tlačítko - Platba RB - ePlatby - Internetové bankovnictví Raiffeisenbank a.s. */
-	const METHOD_RAIFFEISENB = 'cz_rb';
+	public const METHOD_RAIFFEISENB = 'cz_rb';
 
 	/** @const Platební tlačítko - Platba mBank - mPeníze - Internetové bankovnictví MBank */
-	const METHOD_MBANK = 'cz_mb';
+	public const METHOD_MBANK = 'cz_mb';
 
 	/** @const Platební tlačítko - Platba Fio Banky - Internetové bankovnictví Fio banky */
-	const METHOD_FIOB = 'cz_fb';
+	public const METHOD_FIOB = 'cz_fb';
 
 	/** @const Platební tlačítko - Platba Česká spořitelna - Internetové bankovnictví České spořitelny */
-	const METHOD_CSAS = 'cz_csas';
+	public const METHOD_CSAS = 'cz_csas';
 
 	/** @const Běžný bankovní převod */
-	const METHOD_TRANSFER = 'eu_bank';
+	public const METHOD_TRANSFER = 'eu_bank';
 
 	/** @const Gopay - Elektronická peněženka. */
-	const METHOD_GOPAY = 'eu_gp_w';
+	public const METHOD_GOPAY = 'eu_gp_w';
 
 	/** @const Platební tlačítko - Platba UniCredit Bank - uniplatba - Internetové bankovnictví UniCredit Bank a.s. */
-	const METHOD_SK_UNICREDITB = 'sk_uni';
+	public const METHOD_SK_UNICREDITB = 'sk_uni';
 
 	/** @const Platební tlačítko - Platba SLSP - sporopay - Internetové bankovnictví Slovenská sporiteľňa, a. s. */
-	const METHOD_SK_SLOVENSKAS = 'sk_sp';
+	public const METHOD_SK_SLOVENSKAS = 'sk_sp';
 
 	/** @const Platební tlačítko - Platba Všeobecná úverová banka - Internetové bankovnictví Všeobecná úverová banka, a.s. */
-	const METHOD_SK_VUB = 'sk_vubbank';
+	public const METHOD_SK_VUB = 'sk_vubbank';
 
 	/** @const Platební tlačítko - Platba Tatra banka - Internetové bankovnictví Tatra banka a.s. */
-	const METHOD_SK_TATRA = 'sk_tatrabank';
+	public const METHOD_SK_TATRA = 'sk_tatrabank';
 
 	/** @const Platební tlačítko - Platba Poštová banka - Internetové bankovnictví Poštová banka a.s. */
-	const METHOD_SK_PAB = 'sk_pabank';
+	public const METHOD_SK_PAB = 'sk_pabank';
 
 	/** @const Platební tlačítko - Platba Sberbank Slovensko - Internetové bankovnictví Sberbank Slovensko, a.s. */
-	const METHOD_SK_SBERB = 'sk_sberbank';
+	public const METHOD_SK_SBERB = 'sk_sberbank';
 
 	/** @const Platební tlačítko - Platba Československá obchodná banka - Internetová bankovnictví Československá obchodná banka, a.s. */
-	const METHOD_SK_CSOB = 'sk_csob';
+	public const METHOD_SK_CSOB = 'sk_csob';
 
 	/** @const Platební tlačítko - Platba OTP banka Slovensko, a.s. - Internetové bankovnictví OTP banka Slovensko, a.s. */
-	const METHOD_SK_OPTB = 'sk_otpbank';
+	public const METHOD_SK_OPTB = 'sk_otpbank';
 
 	/** @const Platbu vybere uživatel */
-	const METHOD_USER_SELECT = NULL;
+	public const METHOD_USER_SELECT = null;
 
 	// CURRENCIES ==============================================================
 
 	/** @const Czech koruna */
-	const CURRENCY_CZK = 'CZK';
+	public const CURRENCY_CZK = 'CZK';
 
 	/** @const Euro */
-	const CURRENCY_EUR = 'EUR';
+	public const CURRENCY_EUR = 'EUR';
 
 	/** @const Polish zloty */
-	const CURRENCY_PLN = 'PLN';
+	public const CURRENCY_PLN = 'PLN';
 
 	/** @const Hungarian forint */
-	const CURRENCY_HUF = 'HUF';
+	public const CURRENCY_HUF = 'HUF';
 
 	/** @const British pound */
-	const CURRENCY_GBP = 'GBP';
+	public const CURRENCY_GBP = 'GBP';
 
 	/** @const US dollar */
-	const CURRENCY_USD = 'USD';
+	public const CURRENCY_USD = 'USD';
 
 	// LANGUAGES ===============================================================
 
 	/** @const Czech */
-	const LANG_CS = 'CS';
+	public const LANG_CS = 'CS';
 	/** @const English */
-	const LANG_EN = 'EN';
+	public const LANG_EN = 'EN';
 	/** @const Slovak */
-	const LANG_SK = 'SK';
+	public const LANG_SK = 'SK';
 	/** @const German */
-	const LANG_DE = 'DE';
+	public const LANG_DE = 'DE';
 	/** @const Russian */
-	const LANG_RU = 'RU';
+	public const LANG_RU = 'RU';
 
 	/** @var Config */
 	private $config;

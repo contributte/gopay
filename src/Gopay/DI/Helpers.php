@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\DI;
 
@@ -45,7 +45,7 @@ class Helpers
 		FormContainer::extensionMethod('add' . $method . 'Buttons', function ($container, $callbacks) use ($binder, $service) {
 			$binder->bindPaymentButtons($service, $container, $callbacks);
 		});
-		FormContainer::extensionMethod('add' . $method . 'Button', function ($container, $channel, $callback = NULL) use ($binder, $service) {
+		FormContainer::extensionMethod('add' . $method . 'Button', function ($container, $channel, $callback = null) use ($binder, $service) {
 			$channels = $service->getChannels();
 			if (!isset($channels[$channel])) throw new InvalidArgumentException('Channel \'' . $channel . '\' is not allowed.');
 

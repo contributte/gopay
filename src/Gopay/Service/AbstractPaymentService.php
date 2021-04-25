@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Service;
 
@@ -64,7 +64,7 @@ abstract class AbstractPaymentService extends AbstractService
 			throw new InvalidArgumentException(sprintf('Payment channel \'%s\' is not supported', $channel));
 		}
 
-		if ($this->changeChannel === TRUE) {
+		if ($this->changeChannel === true) {
 			$channels = array_keys($this->channels);
 		} else {
 			$channels = [$channel];

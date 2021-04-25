@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Entity;
 
@@ -15,16 +15,16 @@ class RecurrentPayment extends BasePayment
 {
 
 	/** @const denní perioda plateb */
-	const PERIOD_DAY = 'DAY';
+	public const PERIOD_DAY = 'DAY';
 
 	/** @const týdenní perioda plateb */
-	const PERIOD_WEEK = 'WEEK';
+	public const PERIOD_WEEK = 'WEEK';
 
 	/** @const měsíční perioda plateb */
-	const PERIOD_MOTNTH = 'MONTH';
+	public const PERIOD_MOTNTH = 'MONTH';
 
 	/** @var string */
-	private $recurrenceDateTo = NULL;
+	private $recurrenceDateTo = null;
 
 	/** @var string */
 	private $recurrenceCycle = self::PERIOD_DAY;

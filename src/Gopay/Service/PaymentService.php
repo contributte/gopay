@@ -1,8 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Service;
 
-use Exception;
 use Markette\Gopay\Api\GopayConfig;
 use Markette\Gopay\Entity\Payment;
 use Markette\Gopay\Entity\ReturnedPayment;
@@ -10,6 +9,7 @@ use Markette\Gopay\Exception\GopayException;
 use Markette\Gopay\Exception\GopayFatalException;
 use Markette\Gopay\Exception\InvalidArgumentException;
 use Nette\Application\Responses\RedirectResponse;
+use Throwable;
 
 /**
  * Payment Service
@@ -98,7 +98,7 @@ class PaymentService extends AbstractPaymentService
 
 		try {
 			$customer = $payment->getCustomer();
-			$paymentSessionId = $this->gopay->soap->createPayment(
+			return $this->gopay->soap->createPayment(
 				$this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
@@ -117,15 +117,13 @@ class PaymentService extends AbstractPaymentService
 				$customer->countryCode,
 				$customer->email,
 				$customer->phoneNumber,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
+				null,
+				null,
+				null,
+				null,
 				$this->lang
 			);
-
-			return $paymentSessionId;
-		} catch (Exception $e) {
+		} catch (Throwable $e) {
 			throw new GopayException($e->getMessage(), 0, $e);
 		}
 	}

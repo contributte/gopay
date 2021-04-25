@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay\Form;
 
@@ -20,7 +20,7 @@ class ImagePaymentButton extends ImageButton implements IPaymentButton
 	 * @param string $src
 	 * @param string $alt
 	 */
-	public function __construct($channel, $src = NULL, $alt = NULL)
+	public function __construct($channel, $src = null, $alt = null)
 	{
 		parent::__construct($src, $alt);
 		$this->channel = $channel;

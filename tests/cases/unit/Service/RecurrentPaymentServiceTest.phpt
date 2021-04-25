@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Markette\Gopay\Service\RecurrentPaymentService
@@ -116,12 +116,12 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
 		$payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
 		Assert::throws(function () use ($service, $payment) {
-			$response = $service->payRecurrent($payment, Gopay::METHOD_CARD_GPKB, function () {
+			$service->payRecurrent($payment, Gopay::METHOD_CARD_GPKB, function () {
 			});
 		}, GopayException::class, $exmsg);
 
 		Assert::throws(function () use ($service, $payment) {
-			$response = $service->payRecurrentInline($payment, Gopay::METHOD_CARD_GPKB, function () {
+			$service->payRecurrentInline($payment, Gopay::METHOD_CARD_GPKB, function () {
 			});
 		}, GopayException::class, $exmsg);
 
@@ -138,7 +138,7 @@ class RecurrentPaymentServiceTest extends BasePaymentTestCase
 		$service = new RecurrentPaymentService($gopay);
 
 		$gopay->getSoap()->shouldReceive('voidRecurrentPayment')->once()->andReturnUsing(function () {
-			Assert::truthy(TRUE);
+			Assert::truthy(true);
 		});
 		$service->cancelRecurrent(3000000001);
 

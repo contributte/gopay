@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Markette\Gopay;
 
@@ -14,7 +14,7 @@ class Config
 	private $gopaySecretKey;
 
 	/** @var bool */
-	private $testMode = FALSE;
+	private $testMode = false;
 
 	/**
 	 * @param float $gopayId
@@ -64,7 +64,7 @@ class Config
 	}
 
 	/**
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isTestMode()
 	{
@@ -75,7 +75,7 @@ class Config
 	 * @param bool $testMode
 	 * @return void
 	 */
-	protected function setTestMode($testMode = TRUE)
+	protected function setTestMode($testMode = true)
 	{
 		$this->testMode = (bool) $testMode;
 		GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;

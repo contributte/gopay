@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Markette\Gopay\Service\PreAuthorizedPaymentService
@@ -104,12 +104,12 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
 		$payment = $service->createPayment(['sum' => 999, 'customer' => []]);
 
 		Assert::throws(function () use ($service, $payment) {
-			$response = $service->payPreAuthorized($payment, Gopay::METHOD_CARD_GPKB, function () {
+			$service->payPreAuthorized($payment, Gopay::METHOD_CARD_GPKB, function () {
 			});
 		}, GopayException::class, $exmsg);
 
 		Assert::throws(function () use ($service, $payment) {
-			$response = $service->payPreAuthorizedInline($payment, Gopay::METHOD_CARD_GPKB, function () {
+			$service->payPreAuthorizedInline($payment, Gopay::METHOD_CARD_GPKB, function () {
 			});
 		}, GopayException::class, $exmsg);
 
@@ -131,7 +131,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
 			->once()
 			->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
 			->andReturnUsing(function () {
-				Assert::truthy(TRUE);
+				Assert::truthy(true);
 			});
 		$service->cancelPreAuthorized(3000000001);
 
@@ -177,7 +177,7 @@ class PreAuthorizedPaymentServiceTest extends BasePaymentTestCase
 			->once()
 			->with(Mockery::mustBe($paymentSessionId), Mockery::type('float'), Mockery::type('string'))
 			->andReturnUsing(function () {
-				Assert::truthy(TRUE);
+				Assert::truthy(true);
 			});
 		$service->capturePreAuthorized(3000000001);
 

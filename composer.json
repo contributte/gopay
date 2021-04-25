@@ -1,7 +1,12 @@
 {
   "name": "markette/gopay",
   "description": "Integrace platebního systému Gopay pro Nette Framework.",
-  "keywords": ["nette", "eshop", "payment", "gopay"],
+  "keywords": [
+    "nette",
+    "eshop",
+    "payment",
+    "gopay"
+  ],
   "homepage": "https://github.com/Markette/Gopay",
   "license": "BSD-3-Clause",
   "authors": [
@@ -30,13 +35,13 @@
     "nette/di": "^3.0"
   },
   "require-dev": {
-    "ninjify/qa": "^0.3.3",
-    "ninjify/nunjuck": "^0.1.4",
-    "mockery/mockery": "^1.3"
+    "mockery/mockery": "^1.3",
+    "ninjify/nunjuck": "^0.3",
+    "ninjify/qa": "^0.12"
   },
   "autoload": {
     "psr-4": {
-      "Markette\\" : "src/"
+      "Markette\\": "src/"
     }
   },
   "autoload-dev": {
@@ -44,55 +49,9 @@
       "Tests\\Engine\\": "tests/engine"
     }
   },
-  "scripts": {
-    "qa": [
-      "@qa-linter",
-      "@qa-codesniffer"
-    ],
-    "ci": [
-      "@qa-linter",
-      "@qa-codesniffer",
-      "@qa-tester-info",
-      "@qa-tester"
-    ],
-    "qa-codesniffer": [
-      "Ninjify\\Composer\\Script\\CodeSniffer::execute"
-    ],
-    "qa-codefixer": [
-      "Ninjify\\Composer\\Script\\CodeFixer::execute"
-    ],
-    "qa-linter": [
-      "Ninjify\\Composer\\Script\\Linter::execute"
-    ],
-    "qa-tester": [
-      "nunjuck tests/cases -s -p php -c tests/php-unix.ini"
-    ],
-    "qa-tester-info": [
-      "nunjuck tests/cases -s -p php -c tests/php-unix.ini -i"
-    ],
-    "qa-tester-coverage": [
-      "nunjuck tests/cases -s -p php -c tests/php-unix.ini -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src"
-    ],
-    "qa-tester-coverage-info": [
-      "nunjuck tests/cases -s -p php -c tests/php-unix.ini -d extension=xdebug.so --coverage ./coverage.xml --coverage-src ./src -i"
-    ]
-  },
   "extra": {
-    "ninjify": {
-      "qa": {
-        "codesniffer": {
-          "folders": ["src", "tests"]
-        },
-        "codefixer": {
-          "folders": ["src", "tests"]
-        },
-        "linter": {
-          "folders": ["src", "tests"]
-        }
-      }
-    },
     "branch-alias": {
-        "dev-master": "3.2-dev"
+      "dev-master": "3.2-dev"
     }
   }
 }

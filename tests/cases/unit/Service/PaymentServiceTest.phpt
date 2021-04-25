@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 /**
  * Test: Markette\Gopay\Service\PaymentService
@@ -194,9 +194,9 @@ class PaymentServiceTest extends BasePaymentTestCase
 	{
 		$gopay = $this->createPaymentGopay();
 
-		$called = NULL;
+		$called = null;
 		$callback = function ($id) use (&$called) {
-			$called = TRUE;
+			$called = true;
 			Assert::same(3000000001, $id);
 		};
 
@@ -248,12 +248,12 @@ class PaymentServiceTest extends BasePaymentTestCase
 		$service->addChannel(Gopay::METHOD_CARD_GPKB, 'KB');
 		$service->addChannel(Gopay::METHOD_CSAS, 'CSAS');
 
-		$service->allowChangeChannel(FALSE);
+		$service->allowChangeChannel(false);
 		Assert::equal([
 			Gopay::METHOD_CSAS,
 		], $service->getPaymentChannels(Gopay::METHOD_CSAS));
 
-		$service->allowChangeChannel(TRUE);
+		$service->allowChangeChannel(true);
 		Assert::equal([
 			Gopay::METHOD_CARD_GPKB,
 			Gopay::METHOD_CSAS,

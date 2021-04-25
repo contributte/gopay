@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Engine;
 
@@ -27,7 +27,7 @@ class BasePaymentTestCase extends BaseTestCase
 
 		$helper = Mockery::mock(GopayHelper::class);
 
-		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
+		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', true);
 
 		$gopay = new Gopay($config, $soap, $helper);
 
@@ -47,7 +47,7 @@ class BasePaymentTestCase extends BaseTestCase
 
 		$helper = Mockery::mock(GopayHelper::class);
 
-		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
+		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', true);
 
 		$gopay = new Gopay($config, $soap, $helper);
 
@@ -67,7 +67,7 @@ class BasePaymentTestCase extends BaseTestCase
 
 		$helper = Mockery::mock(GopayHelper::class);
 
-		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
+		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', true);
 
 		$gopay = new Gopay($config, $soap, $helper);
 
@@ -85,7 +85,7 @@ class BasePaymentTestCase extends BaseTestCase
 		$soap = Mockery::namedMock('GopaySoap4x' . md5(microtime()), GopaySoap::class);
 		$helper = Mockery::mock(GopayHelper::class);
 
-		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', TRUE);
+		$config = new Config(1234567890, 'fruC9a9e8ajuwrace4r3chaxu', true);
 
 		$gopay = new Gopay($config, $soap, $helper);
 

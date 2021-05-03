@@ -65,7 +65,7 @@ class HelpersTest extends BaseTestCase
 
 		$form = new Form();
 		$form->addPaymentButton('eu_gp_u');
-		Assert::null($form->getComponent('gopayChanneleu_gp_u')->onClick);
+		Assert::equal([], $form->getComponent('gopayChanneleu_gp_u')->onClick);
 	}
 
 	/**
@@ -85,7 +85,7 @@ class HelpersTest extends BaseTestCase
 
 		$form = new Form();
 		$form->addPaymentButton('eu_gp_u');
-		Assert::null($form->getComponent('gopayChanneleu_gp_u')->onClick);
+		Assert::equal([], $form->getComponent('gopayChanneleu_gp_u')->onClick);
 	}
 
 	/**

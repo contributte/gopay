@@ -20,6 +20,8 @@ Website ðŸš€ <a href="https://contributte.org">contributte.org</a> | Contact ðŸ‘
 
 ## Usage
 
+> This version use communication through SOAP. We recommend use [contributte/gopay-inline](https://github.com/contributte/gopay-inline) which uses JSON REST API.
+
 To install the latest version of `markette/gopay` use [Composer](https://getcomposer.org).
 
 ```bash
@@ -32,56 +34,14 @@ For details on how to use this package, check out our [documentation](.docs).
 
 ## Versions
 
-> This version use communication through SOAP. We recommend use [GopayInline](https://github.com/Markette/GopayInline) which uses JSON REST API.
-
-<table>
-    <thead>
-        <tr>
-            <th align="center">Status</th>
-            <th align="center">Composer</th>
-            <th align="center"><a href="http://www.gopay.com/cs">GoPay API</a></th>
-            <th align="center"><a href="http://www.nette.org">Nette</a></th>
-            <th align="center">PHP</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td align="center">dev</td>
-            <td align="center">dev-master</td>
-            <td align="center">2.5</td>
-            <td align="center">nette/forms: ~2.3.0|~2.4.0 <br> nette/application: ~2.3.0|~2.4.0 <br> nette/di: ~2.3.0|~2.4.0</td>
-            <td align="center">&gt;=5.6</td>
-        </tr>
-        <tr>
-            <td align="center">stable</td>
-            <td align="center">~3.1.2</td>
-            <td align="center">2.5</td>
-            <td align="center">nette/forms: ~2.3.0|~2.4.0 <br> nette/application: ~2.3.0|~2.4.0 <br> nette/di: ~2.3.0|~2.4.0</td>
-            <td align="center">&gt;=5.6</td>
-        </tr>
-        <tr>
-            <td align="center">stable</td>
-            <td align="center">~3.0.1</td>
-            <td align="center">2.5</td>
-            <td align="center">nette/forms: ~2.3.0 <br> nette/application: ~2.3.0 <br> nette/di: ~2.3.0</td>
-            <td align="center">&gt;=5.5</td>
-        </tr>
-        <tr>
-            <td align="center">stable</td>
-            <td align="center">~2.3.0</td>
-            <td align="center">2.5</td>
-            <td align="center">nette/utils: ~2.3 <br> nette/forms: ~2.3 <br> nette/application: ~2.3</td>
-            <td align="center">&gt;=5.4</td>
-        </tr>
-        <tr>
-            <td align="center">stable</td>
-            <td align="center">~2.2.0</td>
-            <td align="center">2.5</td>
-            <td align="center">nette/utils: ~2.2 <br> nette/forms: ~2.2 <br> nette/application: ~2.2</td>
-            <td align="center">&gt;=5.3.2</td>
-        </tr>
-    </tbody>
-</table>
+| State  | Version      | Branch   | Nette  | PHP       |
+|--------|--------------|----------|--------|-----------|
+| dev    | `^3.4.0`     | `master` | `3.0+` | `>=7.1`   |
+| stable | `^3.3.0`     | `master` | `3.0+` | `>=7.1`   |
+| stable | `^3.2.0`     | `master` | `2.4`  | `>=5.6`   |
+| stable | `^3.0.0`     | `master` | `2.3`  | `>=5.5`   |
+| stable | `^2.3.0`     | `master` | `2.3`  | `>=5.4`   |
+| stable | `^2.2.0`     | `master` | `2.2`  | `>=5.3.2` |
 
 ## Development
 

@@ -9,7 +9,7 @@
 - [Usage](#usage)
 	- [Services](#services)
 	- [Before payment](#before-payment)
-		- [Own payment channels](#own-payment-channels)
+		- [Custom payment channels](#custom-payment-channels)
 	- [Make a payment](#make-a-payment)
 	- [Redirect after a payment](#redirect-after-a-payment)
 	- [Inline payment](#inline-payment)
@@ -17,7 +17,7 @@
 	- [After payment](#after-payment)
 	- [Recurring payments](#recurring-payments)
 	- [Pre-authorized payments](#pre-authorized-payments)
-	- [Own implementation](#own-implementation)
+	- [Custom implementation](#custom-implementation)
 		- [Inheritance](#inheritance)
 		- [Composition](#composition)
 
@@ -66,7 +66,7 @@ You can choose from three services
 * **RecurrentPaymentService** (recurring payments)
 * **PreAuthorizedPaymentService** (pre-authorized payments)
 
-You can use `autowiring` and inject into `Presenteru`.
+You can use `autowiring` and inject them into `Presenteru`.
 
 ```php
 use Markette\Gopay\Service\PaymentService;
@@ -85,8 +85,7 @@ public $preAuthorizedPaymentService;
 
 ### Before payment
 
-Before payment, you need to create a form with the corresponding payment buttons. Each payment channel is represented by one button. You can add to the form  Buttons simply add via **Binder** with the `bindPaymentButtons ()` method:
-
+Before payment, you need to create a form with the corresponding payment buttons. Each payment channel is represented by one button. You can add buttons to the form simply via Binder with the `bindPaymentButtons()` method:
 
 ```php
 $binder->bindPaymentButtons($service, $form, [$this, 'submitForm']);
@@ -123,9 +122,9 @@ $this->template->channels = $service->getChannels();
 {/foreach}
 ```
 
-It's a good idea to wrap the `getChannels ()` call by catching the` GopayFatalException` exception because for the first time it queries the Gopay server to get the default list.
+It's a good idea to wrap the `getChannels()` call by catching the `GopayFatalException` exception because for the first time it queries the Gopay server to get the default list.
 
-#### Own payment channels
+#### Custom payment channels
 
 You can register your custom payment channels for a single job:
 
@@ -188,7 +187,7 @@ $service->setSuccessUrl($this->link('//success', ['orderId' => $orderId]));
 $service->setFailureUrl($this->link('//failure', ['orderId' => $orderId]));
 ```
 
-It is useful to make a note of the payment ID (for example if the payment is to be bound to an order etc.). This can be accomplished by passing the callback as the third parameter to the `pay ()` method.
+It is useful to make a note of the payment ID (for example if the payment is to be bound to an order etc.). This can be accomplished by passing the callback as the third parameter to the `pay()` method.
 
 ```php
 $storeIdCallback = function ($paymentId) use ($order) {
@@ -204,7 +203,7 @@ The payment itself can be made in two ways:
 $response = $gopay->pay($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
 ```
 
-The `pay ()` action returns an `RedirectResponse`, which redirects you to the Gopay gateway.
+The `pay()` action returns an RedirectResponse, which redirects you to the Gopay gateway.
 
 ```php
 $this->sendResponse($response);
@@ -216,7 +215,7 @@ $this->sendResponse($response);
 $response = $gopay->payInline($payment, $gopay::METHOD_TRANSFER, $storeIdCallback);
 ```
 
-The `payInline ()` action returns a field with the **url** and **signature** keys.
+The `payInline()` action returns a field with the **url** and **signature** keys.
 
 ```php
 [ 
@@ -237,14 +236,14 @@ The payment gateway can be created using the form, which can be found in [docume
 
 #### Payment exception
 
-Two things can go wrong when calling `pay ()` or `payInline ()`:
+Two things can go wrong when calling `pay()` or `payInline()`:
 
 1. Bad parameters are provided somewhere
 2. The official Gopay payment gateway is broken
 
 The first mistake should never occur. It means a mistake in your code.
 
-The second can happen at any time, so it generates a slightly different exception You need to catch and inform the customer according to it that the error is not up to you side.
+The second can happen at any time, so it generates a slightly different exception that you need to catch and inform the customer according to it that the error is not on to Your side.
 
 ```php
 try {
@@ -259,18 +258,18 @@ try {
 
 ### After payment
 
-Your customer will perform the necessary actions on the Gopay payment gateway, and once the process is done completed, is redirected back to your application, either to `successUrl` or `failureUrl` address. Both will receive the following set of parameters from Gopay:
+Your customer will perform the necessary actions on the Gopay payment gateway, and once the process is completed, he is redirected back to your application, either to `successUrl` or `failureUrl` address. Both will receive the following set of parameters from Gopay:
 
 - paymentSessionId
 - targetGoId
-- orderNumber // varyingg number 
+- orderNumber // varying number 
 - encryptedSignature
 
-*PPlus the parameters you specify in successUrl or failureUrl.*
+*Plus the parameters you specify in successUrl or failureUrl.*
 
-The first parameter is identical to the one we saved in the previous chapter our internal model representation of the order. So we can use it for hers reload.
+The first parameter is identical to the one that we have saved in the previous chapter to our internal model representation of the order. So we can use it for reload.
 
-We will then use all this data + data from the loaded order for reassembly payment object:
+We will then use all this data + data from the loaded order for payment object reassembly:
 
 ```php
 $order = $model->getOrderByPaymentId($paymentSessionId);
@@ -288,11 +287,11 @@ $payment = $service->restorePayment([
 ]);
 ```
 
-Two control methods can be called on a payment object: `isFraud ()` and `isPaid ()`. The first informs us whether the payment is genuine or not for fraud (internally, the four parameters passed from the payment system are checked by payment gate).
+Two control methods can be called on a payment object: `isFraud()` and `isPaid()`. The first informs us whether the payment is genuine or not for fraud (internally, the four parameters passed from the payment system are checked by payment gate).
 
-The second `isPaid ()` then returns `TRUE` if the payment is actually paid. If yes, the process is over, we can mark that the order is paid and send for example, an email to the customer.
+The second `isPaid()` then returns TRUE if the payment is actually paid. If yes, the process is over, we can mark that the order is paid and send for example, an email to the customer.
 
-In case of unsuccessful payment, all four parameters are passed again, so it is again it is possible to retrieve information about the related order. However there is no need to check anything, the information about the failure is quite clear from the character of the request.
+In case of unsuccessful payment, all four parameters are passed again, so it is possible to retrieve information about the related order. However there is no need to check anything, the information about the failure is quite clear from the character of the request.
 
 ### Recurring payments
 
@@ -322,7 +321,7 @@ We will need `$paymentSessionId` to cancel the pre-authorized payment.
 $service->cancelPreAuthorized($paymentSessionId);
 ```
 
-### Own implementation
+### Custom implementation
 
 If you are missing a functionality, you can inherit most classes or compose them via `composition`.
 

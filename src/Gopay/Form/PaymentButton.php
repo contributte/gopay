@@ -7,7 +7,7 @@ use Nette\Forms\Controls\SubmitButton;
 /**
  * Payment button
  *
- * @property-read $channel
+ * @property-read string $channel
  */
 class PaymentButton extends SubmitButton implements IPaymentButton
 {

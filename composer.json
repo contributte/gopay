@@ -8,7 +8,7 @@
     "gopay"
   ],
   "homepage": "https://github.com/contributte/gopay",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "authors": [
     {
       "name": "Vojtěch Dobeš",

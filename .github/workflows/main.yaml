@@ -1,6 +1,14 @@
 name: "build"
 
-on: [push, pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - ".docs/**"
+  push:
+    branches:
+      - "*"
+  schedule:
+    - cron: "0 8 * * 1" # At 08:00 on Monday
 
 env:
   extensions: "json"
@@ -15,8 +23,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
       fail-fast: false
 
     steps:
@@ -74,8 +82,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
       fail-fast: false
 
     steps:
@@ -130,8 +138,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.2", "7.3", "7.4", "8.0"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.2", "7.3", "7.4", "8.0" ]
+        operating-system: [ "ubuntu-latest" ]
         composer-args: [ "" ]
         include:
           - php-version: "7.2"
@@ -199,8 +207,8 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ["7.4"]
-        operating-system: ["ubuntu-latest"]
+        php-version: [ "7.4" ]
+        operating-system: [ "ubuntu-latest" ]
       fail-fast: false
 
     if: "github.event_name == 'push'"

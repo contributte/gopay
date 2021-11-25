@@ -86,15 +86,15 @@ class PaymentServiceTest extends BasePaymentTestCase
 
 		$service->setSuccessUrl('www.nette.org');
 		Assert::same('http://www.nette.org', $service->getSuccessUrl());
-		$service->setSuccessUrl('http://www.travis-ci.org');
-		Assert::same('http://www.travis-ci.org', $service->getSuccessUrl());
+		$service->setSuccessUrl('http://www.contributte.org');
+		Assert::same('http://www.contributte.org', $service->getSuccessUrl());
 		$service->setSuccessUrl('https://www.github.com');
 		Assert::same('https://www.github.com', $service->getSuccessUrl());
 
 		$service->setFailureUrl('www.nette.org');
 		Assert::same('http://www.nette.org', $service->getFailureUrl());
-		$service->setFailureUrl('http://www.travis-ci.org');
-		Assert::same('http://www.travis-ci.org', $service->getFailureUrl());
+		$service->setFailureUrl('http://www.contributte.org');
+		Assert::same('http://www.contributte.org', $service->getFailureUrl());
 		$service->setFailureUrl('https://www.github.com');
 		Assert::same('https://www.github.com', $service->getFailureUrl());
 	}

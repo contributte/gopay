@@ -62,31 +62,26 @@ abstract class BasePayment
 
 	/**
 	 * Returns sum of payment
-	 *
-	 * @return float
 	 */
-	public function getSum()
+	public function getSum(): ?float
 	{
 		return $this->sum;
 	}
 
 	/**
 	 * Return sum in cents
-	 *
-	 * @return int
 	 */
-	public function getSumInCents()
+	public function getSumInCents(): int
 	{
-		return round($this->getSum() * 100);
+		return (int) round($this->getSum() * 100);
 	}
 
 	/**
 	 * Sets sum of payment
 	 *
-	 * @param float $sum
 	 * @return static provides a fluent interface
 	 */
-	public function setSum($sum)
+	public function setSum(float $sum): self
 	{
 		$this->sum = (float) $sum;
 
@@ -95,10 +90,8 @@ abstract class BasePayment
 
 	/**
 	 * Returns payment currency
-	 *
-	 * @return string
 	 */
-	public function getCurrency()
+	public function getCurrency(): string
 	{
 		return $this->currency;
 	}
@@ -106,11 +99,9 @@ abstract class BasePayment
 	/**
 	 * Sets payment currency
 	 *
-	 * @param string $currency
 	 * @throws InvalidArgumentException
-	 * @return static
 	 */
-	public function setCurrency($currency)
+	public function setCurrency(string $currency): self
 	{
 		if (!in_array($currency, $this->allowedCurrency)) {
 			throw new InvalidArgumentException('Not supported currency "' . $currency . '".');
@@ -123,21 +114,16 @@ abstract class BasePayment
 
 	/**
 	 * Returns variable symbol
-	 *
-	 * @return int
 	 */
-	public function getVariable()
+	public function getVariable(): ?string
 	{
 		return $this->variable;
 	}
 
 	/**
 	 * Sets variable symbol
-	 *
-	 * @param string $variable
-	 * @return static
 	 */
-	public function setVariable($variable)
+	public function setVariable(string $variable): self
 	{
 		$this->variable = $variable;
 
@@ -146,21 +132,16 @@ abstract class BasePayment
 
 	/**
 	 * Returns specific symbol
-	 *
-	 * @return int
 	 */
-	public function getSpecific()
+	public function getSpecific(): int
 	{
 		return $this->specific;
 	}
 
 	/**
 	 * Sets specific symbol
-	 *
-	 * @param int $specific
-	 * @return static
 	 */
-	public function setSpecific($specific)
+	public function setSpecific(int $specific): self
 	{
 		$this->specific = (int) $specific;
 
@@ -169,10 +150,8 @@ abstract class BasePayment
 
 	/**
 	 * Returns product name
-	 *
-	 * @return string
 	 */
-	public function getProductName()
+	public function getProductName(): ?string
 	{
 		return $this->productName;
 	}
@@ -183,7 +162,7 @@ abstract class BasePayment
 	 * @param string $name
 	 * @return static
 	 */
-	public function setProductName($name)
+	public function setProductName(string $name): self
 	{
 		$this->productName = $name;
 
@@ -192,10 +171,8 @@ abstract class BasePayment
 
 	/**
 	 * Returns customer data
-	 *
-	 * @return stdClass
 	 */
-	public function getCustomer()
+	public function getCustomer(): stdClass
 	{
 		return $this->customer;
 	}
@@ -204,9 +181,8 @@ abstract class BasePayment
 	 * Sets customer data
 	 *
 	 * @param array|stdClass $customer
-	 * @return static
 	 */
-	public function setCustomer($customer)
+	public function setCustomer($customer): self
 	{
 		$allowedKeys = [
 			'firstName',

@@ -15,20 +15,13 @@ class PaymentButton extends SubmitButton implements IPaymentButton
 	/** @var string */
 	private $channel;
 
-	/**
-	 * @param string $channel
-	 * @param string $caption
-	 */
-	public function __construct($channel, $caption = null)
+	public function __construct(string $channel, ?string $caption = null)
 	{
 		parent::__construct($caption);
 		$this->channel = $channel;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getChannel()
+	public function getChannel(): string
 	{
 		return $this->channel;
 	}

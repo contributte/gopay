@@ -54,10 +54,8 @@ class RecurrentPayment extends BasePayment
 
 	/**
 	 * Returns cycle
-	 *
-	 * @return string
 	 */
-	public function getRecurrenceCycle()
+	public function getRecurrenceCycle(): string
 	{
 		return $this->recurrenceCycle;
 	}
@@ -66,9 +64,8 @@ class RecurrentPayment extends BasePayment
 	 * Sets cycle
 	 *
 	 * @param string $cycle DAY, MONTH, WEEK
-	 * @return void
 	 */
-	public function setRecurrenceCycle($cycle)
+	public function setRecurrenceCycle(string $cycle): void
 	{
 		if (!in_array($cycle, $this->allowedCycle)) {
 			throw new InvalidArgumentException('Not supported cycle "' . $cycle . '".');
@@ -79,8 +76,6 @@ class RecurrentPayment extends BasePayment
 
 	/**
 	 * Return date to
-	 *
-	 * @return string
 	 */
 	public function getRecurrenceDateTo()
 	{
@@ -91,30 +86,24 @@ class RecurrentPayment extends BasePayment
 	 * Sets expiration date
 	 *
 	 * @param string $date YYYY-MM-DD
-	 * @return void
 	 */
-	public function setRecurrenceDateTo($date)
+	public function setRecurrenceDateTo(string $date): void
 	{
 		$this->recurrenceDateTo = $date;
 	}
 
 	/**
 	 * Returns period
-	 *
-	 * @return int
 	 */
-	public function getRecurrencePeriod()
+	public function getRecurrencePeriod(): int
 	{
 		return $this->recurrencePeriod;
 	}
 
 	/**
 	 * Sets number of period
-	 *
-	 * @param int $period
-	 * @return void
 	 */
-	public function setRecurrencePeriod($period)
+	public function setRecurrencePeriod(int $period): void
 	{
 		$this->recurrencePeriod = intval($period);
 	}

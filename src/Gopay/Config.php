@@ -16,11 +16,6 @@ class Config
 	/** @var bool */
 	private $testMode = false;
 
-	/**
-	 * @param float $gopayId
-	 * @param string $gopaySecretKey
-	 * @param bool $testMode
-	 */
 	public function __construct($gopayId, $gopaySecretKey, $testMode)
 	{
 		$this->setGopayId($gopayId);
@@ -28,54 +23,33 @@ class Config
 		$this->setTestMode($testMode);
 	}
 
-	/**
-	 * @return float
-	 */
-	public function getGopayId()
+	public function getGopayId(): float
 	{
 		return $this->gopayId;
 	}
 
-	/**
-	 * @param float $id
-	 * @return void
-	 */
-	protected function setGopayId($id)
+	protected function setGopayId(?float $id): void
 	{
 		$this->gopayId = (float) $id;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getGopaySecretKey()
+	public function getGopaySecretKey(): string
 	{
 		return $this->gopaySecretKey;
 	}
 
-	/**
-	 * @param string $secretKey
-	 * @return void
-	 */
-	protected function setGopaySecretKey($secretKey)
+	protected function setGopaySecretKey($secretKey): void
 	{
 		$this->gopaySecretKey = (string) $secretKey;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isTestMode()
+	public function isTestMode(): bool
 	{
 		return $this->testMode;
 	}
 
-	/**
-	 * @param bool $testMode
-	 * @return void
-	 */
-	protected function setTestMode($testMode = true)
+	protected function setTestMode($testMode = true): void
 	{
 		$this->testMode = (bool) $testMode;
 		GopayConfig::$version = $this->testMode ? GopayConfig::TEST : GopayConfig::PROD;

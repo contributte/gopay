@@ -16,9 +16,8 @@ class Binder
 	 * @param AbstractPaymentService $service
 	 * @param Container $container
 	 * @param array|callable $callbacks
-	 * @return void
 	 */
-	public function bindPaymentButtons(AbstractPaymentService $service, Container $container, $callbacks)
+	public function bindPaymentButtons(AbstractPaymentService $service, Container $container, $callbacks): void
 	{
 		foreach ($service->getChannels() as $channel) {
 			$this->bindPaymentButton($channel, $container, $callbacks);
@@ -33,9 +32,8 @@ class Binder
 	 * @param Container $container
 	 * @param array|callable $callbacks
 	 * @throws InvalidArgumentException
-	 * @return IPaymentButton
 	 */
-	public function bindPaymentButton($channel, Container $container, $callbacks = [])
+	public function bindPaymentButton(stdClass $channel, Container $container, $callbacks = []): IPaymentButton
 	{
 		if (!isset($channel->logo)) {
 			$button = $container['gopayChannel' . $channel->code] = new PaymentButton($channel->code, $channel->name);

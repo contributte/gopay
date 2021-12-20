@@ -33,10 +33,8 @@ class Extension extends CompilerExtension
 
 	/**
 	 * Register services
-	 *
-	 * @return void
 	 */
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$this->setupGopay();
 		$this->setupServices();
@@ -45,10 +43,8 @@ class Extension extends CompilerExtension
 
 	/**
 	 * Register gopay services
-	 *
-	 * @return void
 	 */
-	private function setupGopay()
+	private function setupGopay(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
@@ -76,10 +72,8 @@ class Extension extends CompilerExtension
 
 	/**
 	 * Register gopay payment services
-	 *
-	 * @return void
 	 */
-	private function setupServices()
+	private function setupServices(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->validateConfig($this->defaults);
@@ -120,10 +114,8 @@ class Extension extends CompilerExtension
 
 	/**
 	 * Register form services
-	 *
-	 * @return void
 	 */
-	private function setupForms()
+	private function setupForms(): void
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -133,9 +125,8 @@ class Extension extends CompilerExtension
 
 	/**
 	 * @param ClassType $class
-	 * @return void
 	 */
-	public function afterCompile(ClassType $class)
+	public function afterCompile(ClassType $class): void
 	{
 		$initialize = $class->methods['initialize'];
 		$initialize->addBody('Markette\Gopay\DI\Helpers::registerAddPaymentButtonsUsingDependencyContainer($this, ?);', [

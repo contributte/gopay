@@ -20,9 +20,8 @@ class RecurrentPaymentService extends AbstractPaymentService
 	 * Creates new RecurrentPayment with given default values
 	 *
 	 * @param array $values
-	 * @return RecurrentPayment
 	 */
-	public function createPayment(array $values = [])
+	public function createPayment(array $values = []): RecurrentPayment
 	{
 		return new RecurrentPayment($values);
 	}
@@ -30,15 +29,11 @@ class RecurrentPaymentService extends AbstractPaymentService
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 *
-	 * @param RecurrentPayment $payment
-	 * @param string $channel
-	 * @param callable $callback
-	 * @return RedirectResponse
 	 * @throws InvalidArgumentException on undefined channel
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function payRecurrent(RecurrentPayment $payment, $channel, $callback)
+	public function payRecurrent(RecurrentPayment $payment, string $channel, callable $callback): RedirectResponse
 	{
 		$paymentSessionId = $this->buildRecurrentPayment($payment, $channel);
 
@@ -55,15 +50,11 @@ class RecurrentPaymentService extends AbstractPaymentService
 	/**
 	 * Executes payment via INLINE GoPay payment gate
 	 *
-	 * @param RecurrentPayment $payment
-	 * @param string $channel
-	 * @param callable $callback
-	 * @return array
 	 * @throws InvalidArgumentException on undefined channel
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function payRecurrentInline(RecurrentPayment $payment, $channel, $callback)
+	public function payRecurrentInline(RecurrentPayment $payment, string $channel, callable $callback): array
 	{
 		$paymentSessionId = $this->buildRecurrentPayment($payment, $channel);
 
@@ -80,11 +71,9 @@ class RecurrentPaymentService extends AbstractPaymentService
 	/**
 	 * Cancel recurrent payment via GoPay gateway
 	 *
-	 * @param float $paymentSessionId
 	 * @throws GopayException
-	 * @return void
 	 */
-	public function cancelRecurrent($paymentSessionId)
+	public function cancelRecurrent(float $paymentSessionId): void
 	{
 		try {
 			$this->gopay->soap->voidRecurrentPayment(
@@ -100,21 +89,19 @@ class RecurrentPaymentService extends AbstractPaymentService
 	/**
 	 * Check and create recurrent payment
 	 *
-	 * @param RecurrentPayment $payment
-	 * @param string $channel
-	 * @return int
 	 * @throws InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	protected function buildRecurrentPayment(RecurrentPayment $payment, $channel)
+	protected function buildRecurrentPayment(RecurrentPayment $payment, string $channel)
 	{
+		/** @var string $channels */
 		$channels = $this->getPaymentChannels($channel);
 
 		try {
 			$customer = $payment->getCustomer();
 			return $this->gopay->soap->createRecurrentPayment(
-				$this->gopay->config->getGopayId(),
+				(string) $this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
 				$payment->getCurrency(),
@@ -135,10 +122,10 @@ class RecurrentPaymentService extends AbstractPaymentService
 				$customer->countryCode,
 				$customer->email,
 				$customer->phoneNumber,
-				null,
-				null,
-				null,
-				null,
+				'',
+				'',
+				'',
+				'',
 				$this->lang
 			);
 		} catch (Throwable $e) {

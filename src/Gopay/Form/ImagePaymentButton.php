@@ -15,22 +15,14 @@ class ImagePaymentButton extends ImageButton implements IPaymentButton
 	/** @var string */
 	private $channel;
 
-	/**
-	 * @param string $channel
-	 * @param string $src
-	 * @param string $alt
-	 */
-	public function __construct($channel, $src = null, $alt = null)
+	public function __construct(string $channel, ?string $src = null, ?string $alt = null)
 	{
 		parent::__construct($src, $alt);
 		$this->channel = $channel;
 		$this->control->title = $alt;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getChannel()
+	public function getChannel(): string
 	{
 		return $this->channel;
 	}

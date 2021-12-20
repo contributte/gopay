@@ -20,9 +20,8 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	 * Creates new PreAuthorizedPayment with given default values
 	 *
 	 * @param array $values
-	 * @return PreAuthorizedPayment
 	 */
-	public function createPayment(array $values = [])
+	public function createPayment(array $values = []): PreAuthorizedPayment
 	{
 		return new PreAuthorizedPayment($values);
 	}
@@ -30,15 +29,11 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 *
-	 * @param PreAuthorizedPayment $payment
-	 * @param string $channel
-	 * @param callable $callback
-	 * @return RedirectResponse
 	 * @throws InvalidArgumentException on undefined channel
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function payPreAuthorized(PreAuthorizedPayment $payment, $channel, $callback)
+	public function payPreAuthorized(PreAuthorizedPayment $payment, string $channel, callable $callback): RedirectResponse
 	{
 		$paymentSessionId = $this->buildPreAuthorizedPayment($payment, $channel);
 
@@ -55,15 +50,12 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	/**
 	 * Executes payment via INLINE GoPay payment gate
 	 *
-	 * @param PreAuthorizedPayment $payment
-	 * @param string $channel
-	 * @param callable $callback
 	 * @return array
 	 * @throws InvalidArgumentException on undefined channel
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function payPreAuthorizedInline(PreAuthorizedPayment $payment, $channel, $callback)
+	public function payPreAuthorizedInline(PreAuthorizedPayment $payment, string $channel, callable $callback): array
 	{
 		$paymentSessionId = $this->buildPreAuthorizedPayment($payment, $channel);
 
@@ -80,11 +72,9 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	/**
 	 * Capture pre authorized payment via GoPay gateway
 	 *
-	 * @param float $paymentSessionId
 	 * @throws GopayException
-	 * @return void
 	 */
-	public function capturePreAuthorized($paymentSessionId)
+	public function capturePreAuthorized($paymentSessionId): void
 	{
 		try {
 			$this->gopay->soap->capturePayment(
@@ -100,11 +90,9 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	/**
 	 * Cancel pre authorized payment via GoPay gateway
 	 *
-	 * @param float $paymentSessionId
 	 * @throws GopayException
-	 * @return void
 	 */
-	public function cancelPreAuthorized($paymentSessionId)
+	public function cancelPreAuthorized($paymentSessionId): void
 	{
 		try {
 			$this->gopay->soap->voidAuthorization(
@@ -120,21 +108,19 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 	/**
 	 * Check and create pre authorized payment
 	 *
-	 * @param PreAuthorizedPayment $payment
-	 * @param string $channel
-	 * @return int
 	 * @throws InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	protected function buildPreAuthorizedPayment(PreAuthorizedPayment $payment, $channel)
+	protected function buildPreAuthorizedPayment(PreAuthorizedPayment $payment, string $channel)
 	{
+		/** @var string $channels */
 		$channels = $this->getPaymentChannels($channel);
 
 		try {
 			$customer = $payment->getCustomer();
 			return $this->gopay->soap->createPreAutorizedPayment(
-				$this->gopay->config->getGopayId(),
+				(string) $this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
 				$payment->getCurrency(),
@@ -152,10 +138,10 @@ class PreAuthorizedPaymentService extends AbstractPaymentService
 				$customer->countryCode,
 				$customer->email,
 				$customer->phoneNumber,
-				null,
-				null,
-				null,
-				null,
+				'',
+				'',
+				'',
+				'',
 				$this->lang
 			);
 		} catch (Throwable $e) {

@@ -10,9 +10,7 @@ interface IPaymentButton
 
 	/**
 	 * Returns name (title) of payment channel.
-	 *
-	 * @return string
 	 */
-	public function getChannel();
+	public function getChannel(): string;
 
 }

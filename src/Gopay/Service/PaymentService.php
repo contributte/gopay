@@ -21,9 +21,8 @@ class PaymentService extends AbstractPaymentService
 	 * Creates new Payment with given default values
 	 *
 	 * @param array $values
-	 * @return Payment
 	 */
-	public function createPayment(array $values = [])
+	public function createPayment(array $values = []): Payment
 	{
 		return new Payment($values);
 	}
@@ -31,15 +30,11 @@ class PaymentService extends AbstractPaymentService
 	/**
 	 * Executes payment via redirecting to GoPay payment gate
 	 *
-	 * @param Payment $payment
-	 * @param string $channel
-	 * @param callable $callback
-	 * @return RedirectResponse
 	 * @throws InvalidArgumentException on undefined channel
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function pay(Payment $payment, $channel, $callback)
+	public function pay(Payment $payment, string $channel, callable $callback): RedirectResponse
 	{
 		$paymentSessionId = $this->buildPayment($payment, $channel);
 
@@ -56,15 +51,12 @@ class PaymentService extends AbstractPaymentService
 	/**
 	 * Executes payment via INLINE GoPay payment gate
 	 *
-	 * @param Payment $payment
-	 * @param string $channel
-	 * @param callable $callback
 	 * @return array
 	 * @throws InvalidArgumentException on undefined channel
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	public function payInline(Payment $payment, $channel, $callback)
+	public function payInline(Payment $payment, string $channel, callable $callback): array
 	{
 		$paymentSessionId = $this->buildPayment($payment, $channel);
 
@@ -81,25 +73,23 @@ class PaymentService extends AbstractPaymentService
 	/**
 	 * Check and create payment
 	 *
-	 * @param Payment $payment
-	 * @param string $channel
-	 * @return int
 	 * @throws InvalidArgumentException on undefined channel or provided ReturnedPayment
 	 * @throws GopayFatalException on maldefined parameters
 	 * @throws GopayException on failed communication with WS
 	 */
-	protected function buildPayment(Payment $payment, $channel)
+	protected function buildPayment(Payment $payment, string $channel)
 	{
 		if ($payment instanceof ReturnedPayment) {
 			throw new InvalidArgumentException("Cannot use instance of 'ReturnedPayment'! This payment has been already used for paying");
 		}
 
+		/** @var string $channels */
 		$channels = $this->getPaymentChannels($channel);
 
 		try {
 			$customer = $payment->getCustomer();
 			return $this->gopay->soap->createPayment(
-				$this->gopay->config->getGopayId(),
+				(string) $this->gopay->config->getGopayId(),
 				$payment->getProductName(),
 				$payment->getSumInCents(),
 				$payment->getCurrency(),
@@ -117,10 +107,10 @@ class PaymentService extends AbstractPaymentService
 				$customer->countryCode,
 				$customer->email,
 				$customer->phoneNumber,
-				null,
-				null,
-				null,
-				null,
+				'',
+				'',
+				'',
+				'',
 				$this->lang
 			);
 		} catch (Throwable $e) {

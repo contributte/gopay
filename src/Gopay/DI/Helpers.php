@@ -19,9 +19,8 @@ class Helpers
 	 * Registers 'addPaymentButtons' & 'addPaymentButton' methods to form using DI container
 	 *
 	 * @param Container $container
-	 * @return void
 	 */
-	public static function registerAddPaymentButtonsUsingDependencyContainer(Container $container)
+	public static function registerAddPaymentButtonsUsingDependencyContainer(Container $container): void
 	{
 		$binder = $container->getByType(Binder::class);
 		$services = $container->findByType(AbstractPaymentService::class);
@@ -33,12 +32,8 @@ class Helpers
 
 	/**
 	 * Registers 'add*Buttons' & 'add*Button' methods to form
-	 *
-	 * @param Binder $binder
-	 * @param AbstractPaymentService $service
-	 * @return void
 	 */
-	public static function registerAddPaymentButtons(Binder $binder, AbstractPaymentService $service)
+	public static function registerAddPaymentButtons(Binder $binder, AbstractPaymentService $service): void
 	{
 		$class = new ReflectionClass($service);
 		$method = ucfirst(str_replace('Service', '', $class->getShortName()));

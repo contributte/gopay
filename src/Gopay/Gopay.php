@@ -143,26 +143,17 @@ class Gopay
 		$this->helper = $helper;
 	}
 
-	/**
-	 * @return Config
-	 */
-	public function getConfig()
+	public function getConfig(): Config
 	{
 		return $this->config;
 	}
 
-	/**
-	 * @return GopayHelper
-	 */
-	public function getHelper()
+	public function getHelper(): GopayHelper
 	{
 		return $this->helper;
 	}
 
-	/**
-	 * @return GopaySoap
-	 */
-	public function getSoap()
+	public function getSoap(): GopaySoap
 	{
 		return $this->soap;
 	}

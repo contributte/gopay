@@ -20,7 +20,7 @@ class ReturnedPayment extends Payment
 	/** @var array */
 	private $result;
 
-	/** @var Gopay */
+	/** @var Gopay|null */
 	private $gopay;
 
 	/**
@@ -33,20 +33,15 @@ class ReturnedPayment extends Payment
 		$this->valuesToBeVerified = $valuesToBeVerified;
 	}
 
-	/**
-	 * @param Gopay $gopay
-	 * @return void
-	 */
-	public function setGopay(Gopay $gopay)
+	public function setGopay(Gopay $gopay): void
 	{
 		$this->gopay = $gopay;
 	}
 
 	/**
-	 * @return Gopay
 	 * @throws GopayException
 	 */
-	protected function getGopay()
+	protected function getGopay(): Gopay
 	{
 		if (!$this->gopay) {
 			throw new GopayException('No gopay set');
@@ -58,16 +53,15 @@ class ReturnedPayment extends Payment
 	/**
 	 * Returns TRUE if payment is declared fraud by Gopay
 	 *
-	 * @return bool
 	 * @throws GopayFatalException
 	 */
-	public function isFraud()
+	public function isFraud(): bool
 	{
 		try {
 			$this->getGopay()->getHelper()->checkPaymentIdentity(
 				(float) $this->valuesToBeVerified['targetGoId'],
 				(float) $this->valuesToBeVerified['paymentSessionId'],
-				null,
+				0,
 				$this->valuesToBeVerified['orderNumber'],
 				$this->valuesToBeVerified['encryptedSignature'],
 				(float) $this->getGopay()->getConfig()->getGopayId(),
@@ -85,10 +79,8 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is verified by Gopay as paid
-	 *
-	 * @return bool
 	 */
-	public function isPaid()
+	public function isPaid(): bool
 	{
 		$this->getStatus();
 
@@ -97,10 +89,8 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is waiting to be paid
-	 *
-	 * @return bool
 	 */
-	public function isWaiting()
+	public function isWaiting(): bool
 	{
 		$this->getStatus();
 
@@ -109,10 +99,8 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is canceled
-	 *
-	 * @return bool
 	 */
-	public function isCanceled()
+	public function isCanceled(): bool
 	{
 		$this->getStatus();
 
@@ -121,10 +109,8 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is refunded
-	 *
-	 * @return bool
 	 */
-	public function isRefunded()
+	public function isRefunded(): bool
 	{
 		$this->getStatus();
 
@@ -133,10 +119,8 @@ class ReturnedPayment extends Payment
 
 	/**
 	 * Returns TRUE if payment is authorized
-	 *
-	 * @return bool
 	 */
-	public function isAuthorized()
+	public function isAuthorized(): bool
 	{
 		$this->getStatus();
 
@@ -148,7 +132,7 @@ class ReturnedPayment extends Payment
 	 *
 	 * @return bool
 	 */
-	public function isTimeouted()
+	public function isTimeouted(): bool
 	{
 		$this->getStatus();
 
@@ -160,7 +144,7 @@ class ReturnedPayment extends Payment
 	 *
 	 * @return array
 	 */
-	public function getStatus()
+	public function getStatus(): array
 	{
 		if ($this->result !== null) {
 			return $this->result;

@@ -35,11 +35,7 @@ abstract class AbstractService
 		Gopay::LANG_RU,
 	];
 
-	/**
-	 * @param bool $changeChannel
-	 * @return static
-	 */
-	public function allowChangeChannel($changeChannel = true)
+	public function allowChangeChannel(?bool $changeChannel = true): self
 	{
 		$this->changeChannel = (bool) $changeChannel;
 
@@ -49,11 +45,9 @@ abstract class AbstractService
 	/**
 	 * Sets payment gateway language
 	 *
-	 * @param string $lang
 	 * @throws InvalidArgumentException if language is not supported
-	 * @return static
 	 */
-	public function setLang($lang)
+	public function setLang(string $lang): self
 	{
 		if (!in_array($lang, $this->allowedLang)) {
 			throw new InvalidArgumentException('Not supported language "' . $lang . '".');
@@ -66,21 +60,16 @@ abstract class AbstractService
 
 	/**
 	 * Returns success URL
-	 *
-	 * @return string
 	 */
-	public function getSuccessUrl()
+	public function getSuccessUrl(): string
 	{
 		return $this->successUrl;
 	}
 
 	/**
 	 * Sets URL when successful
-	 *
-	 * @param string $url
-	 * @return static
 	 */
-	public function setSuccessUrl($url)
+	public function setSuccessUrl(string $url): self
 	{
 		if (substr($url, 0, 4) !== 'http') {
 			$url = 'http://' . $url;
@@ -93,21 +82,16 @@ abstract class AbstractService
 
 	/**
 	 * Returns failed URL
-	 *
-	 * @return string
 	 */
-	public function getFailureUrl()
+	public function getFailureUrl(): string
 	{
 		return $this->failureUrl;
 	}
 
 	/**
 	 * Sets URL when failed
-	 *
-	 * @param string $url
-	 * @return static
 	 */
-	public function setFailureUrl($url)
+	public function setFailureUrl(string $url): self
 	{
 		if (substr($url, 0, 4) !== 'http') {
 			$url = 'http://' . $url;
@@ -128,9 +112,15 @@ abstract class AbstractService
 	 * @param string $description
 	 * @param array $params
 	 * @throws InvalidArgumentException on channel name conflict
-	 * @return static
 	 */
-	public function addChannel($code, $name, $logo = null, $offline = null, $description = null, array $params = [])
+	public function addChannel(
+		string $code,
+		string $name,
+		?string $logo = null,
+		?string $offline = null,
+		?string $description = null,
+		array $params = []
+	): self
 	{
 		if (isset($this->channels[$code])) {
 			throw new InvalidArgumentException(sprintf('Channel with name \'%s\' is already defined.', $code));
@@ -149,10 +139,8 @@ abstract class AbstractService
 
 	/**
 	 * Returns list of payment channels
-	 *
-	 * @return array
 	 */
-	public function getChannels()
+	public function getChannels(): array
 	{
 		return $this->channels;
 	}

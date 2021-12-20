@@ -12,6 +12,8 @@ use Markette\Gopay\Service\PreAuthorizedPaymentService;
 use Markette\Gopay\Service\RecurrentPaymentService;
 use Nette\DI\CompilerExtension;
 use Nette\PhpGenerator\ClassType;
+use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 use ReflectionClass;
 
 /**
@@ -20,16 +22,18 @@ use ReflectionClass;
 class Extension extends CompilerExtension
 {
 
-	/** @var array */
-	private $defaults = [
-		'gopayId' => null,
-		'gopaySecretKey' => null,
-		'testMode' => true,
-		'payments' => [
-			'changeChannel' => null,
-			'channels' => [],
-		],
-	];
+	public function getConfigSchema(): Schema
+	{
+		return Expect::structure([
+			'gopayId' => Expect::int()->nullable(),
+			'gopaySecretKey' => Expect::string()->nullable(),
+			'testMode' => Expect::bool(),
+			'payments' => Expect::structure([
+				'changeChannel' => Expect::bool(),
+				'channels' => Expect::array()->nullable(),
+			]),
+		]);
+	}
 
 	/**
 	 * Register services
@@ -47,7 +51,7 @@ class Extension extends CompilerExtension
 	private function setupGopay(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
+		$config = (array) $this->getConfig();
 
 		$driver = $builder->addDefinition($this->prefix('driver'))
 			->setType(GopaySoap::class);
@@ -76,7 +80,7 @@ class Extension extends CompilerExtension
 	private function setupServices(): void
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->validateConfig($this->defaults);
+		$config = (array) $this->getConfig();
 		$gopay = $builder->getDefinition($this->prefix('gopay'));
 
 		$services = [

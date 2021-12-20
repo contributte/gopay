@@ -3,7 +3,6 @@
 namespace Markette\Gopay\Service;
 
 use Markette\Gopay\Api\GopayHelper;
-use Markette\Gopay\Entity\BasePayment;
 use Markette\Gopay\Entity\ReturnedPayment;
 use Markette\Gopay\Exception\InvalidArgumentException;
 use Markette\Gopay\Gopay;
@@ -42,7 +41,7 @@ abstract class AbstractPaymentService extends AbstractService
 	 *
 	 * @param array $values
 	 */
-	abstract public function createPayment(array $values): BasePayment;
+	abstract public function createPayment(array $values = []);
 
 	/**
 	 * HELPERS *****************************************************************

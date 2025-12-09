@@ -1,4 +1,4 @@
-![](https://heatbadger.now.sh/github/readme/contributte/gopay/?deprecated=1)
+![](https://heatbadger.vercel.app/github/readme/contributte/gopay/?deprecated=1)
 
 <p align=center>
     <a href="https://bit.ly/ctteg"><img src="https://badgen.net/badge/support/gitter/cyan"></a>
